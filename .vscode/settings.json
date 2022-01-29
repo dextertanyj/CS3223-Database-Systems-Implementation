@@ -1,16 +1,20 @@
 {
-    "files.exclude": {
-        "**/.git": true,
-        "**/.svn": true,
-        "**/.hg": true,
-        "**/CVS": true,
-        "**/.DS_Store": true,
-        "**/Thumbs.db": true
-    },
-    "java.project.sourcePaths": [
-        "SimpleDBEngine/src",
-        "SimpleDBClients/src",
-        "test"
-    ],
-    "java.project.outputPath": "build/bin"
+  "files.exclude": {
+    "**/.git": true,
+    "**/.svn": true,
+    "**/.hg": true,
+    "**/CVS": true,
+    "**/.DS_Store": true,
+    "**/Thumbs.db": true
+  },
+  "java.project.sourcePaths": [
+    "SimpleDBEngine/src",
+    "SimpleDBClients/src",
+    "test"
+  ],
+  "java.project.outputPath": "build/bin",
+  "java.project.referencedLibraries": [
+    "lib/junit-platform-console-standalone.jar"
+  ],
+  "java.configuration.updateBuildConfiguration": "interactive"
 }

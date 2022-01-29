@@ -85,3 +85,9 @@ local.properties
 .cache-main
 .scala_dependencies
 .worksheet
+
+# Ignore Gradle project-specific cache directory
+.gradle
+
+# Ignore Gradle build output directory
+build
