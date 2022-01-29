@@ -5,41 +5,61 @@ import simpledb.record.*;
 
 /**
  * A term is a comparison between two expressions.
+ * 
  * @author Edward Sciore
  *
  */
 public class Term {
    private Expression lhs, rhs;
-   
+   private Operator op;
+
    /**
     * Create a new term that compares two expressions
     * for equality.
-    * @param lhs  the LHS expression
-    * @param rhs  the RHS expression
+    * 
+    * @param lhs the LHS expression
+    * @param rhs the RHS expression
     */
-   public Term(Expression lhs, Expression rhs) {
+   public Term(Operator op, Expression lhs, Expression rhs) {
+      this.op = op;
       this.lhs = lhs;
       this.rhs = rhs;
    }
-   
+
    /**
     * Return true if both of the term's expressions
     * evaluate to the same constant,
     * with respect to the specified scan.
+    * 
     * @param s the scan
     * @return true if both expressions have the same value in the scan
     */
    public boolean isSatisfied(Scan s) {
       Constant lhsval = lhs.evaluate(s);
       Constant rhsval = rhs.evaluate(s);
-      return rhsval.equals(lhsval);
+      switch (op) {
+         case EQ:
+            return lhsval.equals(rhsval);
+         case NEQ:
+            return !lhsval.equals(rhsval);
+         case GTE:
+            return lhsval.compareTo(rhsval) >= 0;
+         case GT:
+            return lhsval.compareTo(rhsval) > 0;
+         case LTE:
+            return lhsval.compareTo(rhsval) <= 0;
+         case LT:
+            return lhsval.compareTo(rhsval) < 0;
+      }
+      return false;
    }
-   
+
    /**
-    * Calculate the extent to which selecting on the term reduces 
+    * Calculate the extent to which selecting on the term reduces
     * the number of records output by a query.
     * For example if the reduction factor is 2, then the
     * term cuts the size of the output in half.
+    * 
     * @param p the query's plan
     * @return the integer reduction factor.
     */
@@ -49,7 +69,7 @@ public class Term {
          lhsName = lhs.asFieldName();
          rhsName = rhs.asFieldName();
          return Math.max(p.distinctValues(lhsName),
-                         p.distinctValues(rhsName));
+               p.distinctValues(rhsName));
       }
       if (lhs.isFieldName()) {
          lhsName = lhs.asFieldName();
@@ -65,60 +85,76 @@ public class Term {
       else
          return Integer.MAX_VALUE;
    }
-   
+
    /**
     * Determine if this term is of the form "F=c"
     * where F is the specified field and c is some constant.
     * If so, the method returns that constant.
     * If not, the method returns null.
+    * 
     * @param fldname the name of the field
     * @return either the constant or null
     */
    public Constant equatesWithConstant(String fldname) {
       if (lhs.isFieldName() &&
-          lhs.asFieldName().equals(fldname) &&
-          !rhs.isFieldName())
+            lhs.asFieldName().equals(fldname) &&
+            !rhs.isFieldName())
          return rhs.asConstant();
       else if (rhs.isFieldName() &&
-               rhs.asFieldName().equals(fldname) &&
-               !lhs.isFieldName())
+            rhs.asFieldName().equals(fldname) &&
+            !lhs.isFieldName())
          return lhs.asConstant();
       else
          return null;
    }
-   
+
    /**
     * Determine if this term is of the form "F1=F2"
     * where F1 is the specified field and F2 is another field.
     * If so, the method returns the name of that field.
     * If not, the method returns null.
+    * 
     * @param fldname the name of the field
     * @return either the name of the other field, or null
     */
    public String equatesWithField(String fldname) {
       if (lhs.isFieldName() &&
-          lhs.asFieldName().equals(fldname) &&
-          rhs.isFieldName())
+            lhs.asFieldName().equals(fldname) &&
+            rhs.isFieldName())
          return rhs.asFieldName();
       else if (rhs.isFieldName() &&
-               rhs.asFieldName().equals(fldname) &&
-               lhs.isFieldName())
+            rhs.asFieldName().equals(fldname) &&
+            lhs.isFieldName())
          return lhs.asFieldName();
       else
          return null;
    }
-   
+
    /**
     * Return true if both of the term's expressions
     * apply to the specified schema.
+    * 
     * @param sch the schema
     * @return true if both expressions apply to the schema
     */
    public boolean appliesTo(Schema sch) {
       return lhs.appliesTo(sch) && rhs.appliesTo(sch);
    }
-   
+
+   public boolean equals(Object obj) {
+      if (this == obj) {
+         return true;
+      }
+      if (obj == null || !(obj instanceof Term)) {
+         return false;
+      }
+      Term term = (Term) obj;
+      return this.op.equals(term.op)
+            && this.rhs.equals(term.rhs)
+            && this.lhs.equals(term.lhs);
+   }
+
    public String toString() {
-      return lhs.toString() + "=" + rhs.toString();
+      return lhs.toString() + op.toString() + rhs.toString();
    }
 }
