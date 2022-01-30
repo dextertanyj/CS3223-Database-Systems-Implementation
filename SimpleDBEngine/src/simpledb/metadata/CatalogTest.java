@@ -1,8 +1,9 @@
 package simpledb.metadata;
 
+import simpledb.record.Layout;
+import simpledb.record.TableScan;
 import simpledb.server.SimpleDB;
 import simpledb.tx.Transaction;
-import simpledb.record.*;
 
 public class CatalogTest {
    public static void main(String[] args) throws Exception {
@@ -26,10 +27,9 @@ public class CatalogTest {
       while (ts.next()) {
          String tname = ts.getString("tblname");
          String fname = ts.getString("fldname");
-         int offset   = ts.getInt("offset");
+         int offset = ts.getInt("offset");
          System.out.println(tname + " " + fname + " " + offset);
       }
       ts.close();
    }
 }
-

@@ -1,14 +1,23 @@
 package simpledb.tx.recovery;
 
-import java.util.*;
-import simpledb.file.*;
-import simpledb.log.*;
-import simpledb.buffer.*;
+import static simpledb.tx.recovery.LogRecord.CHECKPOINT;
+import static simpledb.tx.recovery.LogRecord.COMMIT;
+import static simpledb.tx.recovery.LogRecord.ROLLBACK;
+import static simpledb.tx.recovery.LogRecord.START;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Iterator;
+
+import simpledb.buffer.Buffer;
+import simpledb.buffer.BufferMgr;
+import simpledb.file.BlockId;
+import simpledb.log.LogMgr;
 import simpledb.tx.Transaction;
-import static simpledb.tx.recovery.LogRecord.*;
 
 /**
- * The recovery manager.  Each transaction has its own recovery manager.
+ * The recovery manager. Each transaction has its own recovery manager.
+ * 
  * @author Edward Sciore
  */
 public class RecoveryMgr {
@@ -19,6 +28,7 @@ public class RecoveryMgr {
 
    /**
     * Create a recovery manager for the specified transaction.
+    * 
     * @param txnum the ID of the specified transaction
     */
    public RecoveryMgr(Transaction tx, int txnum, LogMgr lm, BufferMgr bm) {
@@ -61,7 +71,8 @@ public class RecoveryMgr {
 
    /**
     * Write a setint record to the log and return its lsn.
-    * @param buff the buffer containing the page
+    * 
+    * @param buff   the buffer containing the page
     * @param offset the offset of the value in the page
     * @param newval the value to be written
     */
@@ -73,7 +84,8 @@ public class RecoveryMgr {
 
    /**
     * Write a setstring record to the log and return its lsn.
-    * @param buff the buffer containing the page
+    * 
+    * @param buff   the buffer containing the page
     * @param offset the offset of the value in the page
     * @param newval the value to be written
     */
@@ -85,7 +97,7 @@ public class RecoveryMgr {
 
    /**
     * Rollback the transaction, by iterating
-    * through the log records until it finds 
+    * through the log records until it finds
     * the transaction's START record,
     * calling undo() for each of the transaction's
     * log records.
@@ -94,7 +106,7 @@ public class RecoveryMgr {
       Iterator<byte[]> iter = lm.iterator();
       while (iter.hasNext()) {
          byte[] bytes = iter.next();
-         LogRecord rec = LogRecord.createLogRecord(bytes); 
+         LogRecord rec = LogRecord.createLogRecord(bytes);
          if (rec.txNumber() == txnum) {
             if (rec.op() == START)
                return;

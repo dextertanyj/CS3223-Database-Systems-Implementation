@@ -1,19 +1,22 @@
 package simpledb.jdbc.embedded;
 
-import java.util.Properties;
 import java.sql.SQLException;
-import simpledb.server.SimpleDB;
+import java.util.Properties;
+
 import simpledb.jdbc.DriverAdapter;
+import simpledb.server.SimpleDB;
 
 /**
  * The RMI server-side implementation of RemoteDriver.
+ * 
  * @author Edward Sciore
  */
 
-public class EmbeddedDriver extends DriverAdapter {   
+public class EmbeddedDriver extends DriverAdapter {
    /**
-    * Creates a new RemoteConnectionImpl object and 
+    * Creates a new RemoteConnectionImpl object and
     * returns it.
+    * 
     * @see simpledb.jdbc.network.RemoteDriver#connect()
     */
    public EmbeddedConnection connect(String url, Properties p) throws SQLException {
@@ -22,4 +25,3 @@ public class EmbeddedDriver extends DriverAdapter {
       return new EmbeddedConnection(db);
    }
 }
-

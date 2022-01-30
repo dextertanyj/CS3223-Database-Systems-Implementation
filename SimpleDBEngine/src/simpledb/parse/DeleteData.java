@@ -1,15 +1,16 @@
 package simpledb.parse;
 
-import simpledb.query.*;
+import simpledb.query.Predicate;
 
 /**
  * Data for the SQL <i>delete</i> statement.
+ * 
  * @author Edward Sciore
  */
 public class DeleteData {
    private String tblname;
    private Predicate pred;
-   
+
    /**
     * Saves the table name and predicate.
     */
@@ -17,22 +18,23 @@ public class DeleteData {
       this.tblname = tblname;
       this.pred = pred;
    }
-   
+
    /**
     * Returns the name of the affected table.
+    * 
     * @return the name of the affected table
     */
    public String tableName() {
       return tblname;
    }
-   
+
    /**
     * Returns the predicate that describes which
     * records should be deleted.
+    * 
     * @return the deletion predicate
     */
    public Predicate pred() {
       return pred;
    }
 }
-

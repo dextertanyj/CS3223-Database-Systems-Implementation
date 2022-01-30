@@ -1,13 +1,17 @@
 package simpledb.jdbc.embedded;
 
-import java.sql.*;
-import simpledb.record.Schema;
-import simpledb.query.Scan;
-import simpledb.plan.Plan;
+import java.rmi.RemoteException;
+import java.sql.ResultSetMetaData;
+import java.sql.SQLException;
+
 import simpledb.jdbc.ResultSetAdapter;
+import simpledb.plan.Plan;
+import simpledb.query.Scan;
+import simpledb.record.Schema;
 
 /**
  * The embedded implementation of ResultSet.
+ * 
  * @author Edward Sciore
  */
 public class EmbeddedResultSet extends ResultSetAdapter {
@@ -17,6 +21,7 @@ public class EmbeddedResultSet extends ResultSetAdapter {
 
    /**
     * Creates a Scan object from the specified plan.
+    * 
     * @param plan the query plan
     * @param conn the connection
     * @throws RemoteException
@@ -34,8 +39,7 @@ public class EmbeddedResultSet extends ResultSetAdapter {
    public boolean next() throws SQLException {
       try {
          return s.next();
-      }
-      catch(RuntimeException e) {
+      } catch (RuntimeException e) {
          conn.rollback();
          throw new SQLException(e);
       }
@@ -49,8 +53,7 @@ public class EmbeddedResultSet extends ResultSetAdapter {
       try {
          fldname = fldname.toLowerCase(); // to ensure case-insensitivity
          return s.getInt(fldname);
-      }
-      catch(RuntimeException e) {
+      } catch (RuntimeException e) {
          conn.rollback();
          throw new SQLException(e);
       }
@@ -64,8 +67,7 @@ public class EmbeddedResultSet extends ResultSetAdapter {
       try {
          fldname = fldname.toLowerCase(); // to ensure case-insensitivity
          return s.getString(fldname);
-      }
-      catch(RuntimeException e) {
+      } catch (RuntimeException e) {
          conn.rollback();
          throw new SQLException(e);
       }
@@ -87,4 +89,3 @@ public class EmbeddedResultSet extends ResultSetAdapter {
       conn.commit();
    }
 }
-

@@ -21,7 +21,7 @@ public class PredParser {
    public void expression() {
       if (lex.matchId())
          field();
-      else 
+      else
          constant();
    }
 
@@ -39,4 +39,3 @@ public class PredParser {
       }
    }
 }
-

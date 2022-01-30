@@ -1,9 +1,11 @@
 package simpledb.metadata;
 
-import simpledb.server.SimpleDB;
 import static java.sql.Types.INTEGER;
+
+import simpledb.record.Layout;
+import simpledb.record.Schema;
+import simpledb.server.SimpleDB;
 import simpledb.tx.Transaction;
-import simpledb.record.*;
 
 public class TableMgrTest {
    public static void main(String[] args) throws Exception {
@@ -34,4 +36,3 @@ public class TableMgrTest {
       tx.commit();
    }
 }
-

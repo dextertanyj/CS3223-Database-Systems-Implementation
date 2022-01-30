@@ -1,25 +1,30 @@
 package simpledb.index.query;
 
 import java.util.Map;
+
+import simpledb.index.Index;
+import simpledb.index.planner.IndexJoinPlan;
+import simpledb.metadata.IndexInfo;
+import simpledb.metadata.MetadataMgr;
+import simpledb.plan.Plan;
+import simpledb.plan.TablePlan;
+import simpledb.query.Constant;
+import simpledb.query.Scan;
+import simpledb.record.RID;
+import simpledb.record.TableScan;
 import simpledb.server.SimpleDB;
 import simpledb.tx.Transaction;
-import simpledb.record.*;
-import simpledb.metadata.*;
-import simpledb.plan.*;
-import simpledb.query.*;
-import simpledb.index.*;
-import simpledb.index.planner.IndexJoinPlan;
 
 // Find the grades of all students.
 
 public class IndexJoinTest {
 	public static void main(String[] args) {
 		SimpleDB db = new SimpleDB("studentdb");
-      MetadataMgr mdm = db.mdMgr();
-      Transaction tx = db.newTx();
+		MetadataMgr mdm = db.mdMgr();
+		Transaction tx = db.newTx();
 
 		// Find the index on StudentId.
-		Map<String,IndexInfo> indexes = mdm.getIndexInfo("enroll", tx);
+		Map<String, IndexInfo> indexes = mdm.getIndexInfo("enroll", tx);
 		IndexInfo sidIdx = indexes.get("studentid");
 
 		// Get plans for the Student and Enroll tables
@@ -27,7 +32,7 @@ public class IndexJoinTest {
 		Plan enrollplan = new TablePlan(tx, "enroll", mdm);
 
 		// Two different ways to use the index in simpledb:
-		useIndexManually(studentplan, enrollplan, sidIdx, "sid");		
+		useIndexManually(studentplan, enrollplan, sidIdx, "sid");
 		useIndexScan(studentplan, enrollplan, sidIdx, "sid");
 
 		tx.commit();
@@ -36,10 +41,10 @@ public class IndexJoinTest {
 	private static void useIndexManually(Plan p1, Plan p2, IndexInfo ii, String joinfield) {
 		// Open scans on the tables.
 		Scan s1 = p1.open();
-		TableScan s2 = (TableScan) p2.open();  //must be a table scan
+		TableScan s2 = (TableScan) p2.open(); // must be a table scan
 		Index idx = ii.open();
 
-		// Loop through s1 records. For each value of the join field, 
+		// Loop through s1 records. For each value of the join field,
 		// use the index to find the matching s2 records.
 		while (s1.next()) {
 			Constant c = s1.getVal(joinfield);
@@ -47,7 +52,7 @@ public class IndexJoinTest {
 			while (idx.next()) {
 				// Use each datarid to go to the corresponding Enroll record.
 				RID datarid = idx.getDataRid();
-				s2.moveToRid(datarid);  // table scans can move to a specified RID.
+				s2.moveToRid(datarid); // table scans can move to a specified RID.
 				System.out.println(s2.getString("grade"));
 			}
 		}

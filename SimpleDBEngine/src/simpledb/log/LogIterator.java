@@ -1,7 +1,10 @@
 package simpledb.log;
 
 import java.util.Iterator;
-import simpledb.file.*;
+
+import simpledb.file.BlockId;
+import simpledb.file.FileMgr;
+import simpledb.file.Page;
 
 /**
  * A class that provides the ability to move through the
@@ -31,10 +34,11 @@ class LogIterator implements Iterator<byte[]> {
    /**
     * Determines if the current log record
     * is the earliest record in the log file.
+    * 
     * @return true if there is an earlier record
     */
    public boolean hasNext() {
-      return currentpos<fm.blockSize() || blk.number()>0;
+      return currentpos < fm.blockSize() || blk.number() > 0;
    }
 
    /**
@@ -42,11 +46,12 @@ class LogIterator implements Iterator<byte[]> {
     * If there are no more log records in the block,
     * then move to the previous block
     * and return the log record from there.
+    * 
     * @return the next earliest log record
     */
    public byte[] next() {
       if (currentpos == fm.blockSize()) {
-         blk = new BlockId(blk.fileName(), blk.number()-1);
+         blk = new BlockId(blk.fileName(), blk.number() - 1);
          moveToBlock(blk);
       }
       byte[] rec = p.getBytes(currentpos);

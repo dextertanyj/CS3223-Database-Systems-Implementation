@@ -1,29 +1,33 @@
 package simpledb.tx.concurrency;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.Map;
+
 import simpledb.file.BlockId;
 
 /**
  * The concurrency manager for the transaction.
- * Each transaction has its own concurrency manager. 
- * The concurrency manager keeps track of which locks the 
+ * Each transaction has its own concurrency manager.
+ * The concurrency manager keeps track of which locks the
  * transaction currently has, and interacts with the
- * global lock table as needed. 
+ * global lock table as needed.
+ * 
  * @author Edward Sciore
  */
 public class ConcurrencyMgr {
 
    /**
-    * The global lock table. This variable is static because 
+    * The global lock table. This variable is static because
     * all transactions share the same table.
     */
    private static LockTable locktbl = new LockTable();
-   private Map<BlockId,String> locks  = new HashMap<BlockId,String>();
+   private Map<BlockId, String> locks = new HashMap<BlockId, String>();
 
    /**
     * Obtain an SLock on the block, if necessary.
     * The method will ask the lock table for an SLock
     * if the transaction currently has no locks on that block.
+    * 
     * @param blk a reference to the disk block
     */
    public void sLock(BlockId blk) {
@@ -38,6 +42,7 @@ public class ConcurrencyMgr {
     * If the transaction does not have an XLock on that block,
     * then the method first gets an SLock on that block
     * (if necessary), and then upgrades it to an XLock.
+    * 
     * @param blk a reference to the disk block
     */
    public void xLock(BlockId blk) {
@@ -53,7 +58,7 @@ public class ConcurrencyMgr {
     * unlock each one.
     */
    public void release() {
-      for (BlockId blk : locks.keySet()) 
+      for (BlockId blk : locks.keySet())
          locktbl.unlock(blk);
       locks.clear();
    }

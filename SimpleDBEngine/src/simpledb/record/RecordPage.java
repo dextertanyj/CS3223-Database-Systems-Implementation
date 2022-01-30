@@ -1,11 +1,13 @@
 package simpledb.record;
 
 import static java.sql.Types.INTEGER;
-import simpledb.file.*;
+
+import simpledb.file.BlockId;
 import simpledb.tx.Transaction;
 
 /**
- * Store a record at a given location in a block. 
+ * Store a record at a given location in a block.
+ * 
  * @author Edward Sciore
  */
 public class RecordPage {
@@ -24,6 +26,7 @@ public class RecordPage {
    /**
     * Return the integer value stored for the
     * specified field of a specified slot.
+    * 
     * @param fldname the name of the field.
     * @return the integer stored in that field
     */
@@ -35,6 +38,7 @@ public class RecordPage {
    /**
     * Return the string value stored for the
     * specified field of the specified slot.
+    * 
     * @param fldname the name of the field.
     * @return the string stored in that field
     */
@@ -46,8 +50,9 @@ public class RecordPage {
    /**
     * Store an integer at the specified field
     * of the specified slot.
+    * 
     * @param fldname the name of the field
-    * @param val the integer value stored in that field
+    * @param val     the integer value stored in that field
     */
    public void setInt(int slot, String fldname, int val) {
       int fldpos = offset(slot) + layout.offset(fldname);
@@ -57,26 +62,28 @@ public class RecordPage {
    /**
     * Store a string at the specified field
     * of the specified slot.
+    * 
     * @param fldname the name of the field
-    * @param val the string value stored in that field
+    * @param val     the string value stored in that field
     */
    public void setString(int slot, String fldname, String val) {
       int fldpos = offset(slot) + layout.offset(fldname);
       tx.setString(blk, fldpos, val, true);
    }
-   
+
    public void delete(int slot) {
       setFlag(slot, EMPTY);
    }
-   
-   /** Use the layout to format a new block of records.
-    *  These values should not be logged 
-    *  (because the old values are meaningless).
-    */ 
+
+   /**
+    * Use the layout to format a new block of records.
+    * These values should not be logged
+    * (because the old values are meaningless).
+    */
    public void format() {
       int slot = 0;
       while (isValidSlot(slot)) {
-         tx.setInt(blk, offset(slot), EMPTY, false); 
+         tx.setInt(blk, offset(slot), EMPTY, false);
          Schema sch = layout.schema();
          for (String fldname : sch.fields()) {
             int fldpos = offset(slot) + layout.offset(fldname);
@@ -92,25 +99,25 @@ public class RecordPage {
    public int nextAfter(int slot) {
       return searchAfter(slot, USED);
    }
- 
+
    public int insertAfter(int slot) {
       int newslot = searchAfter(slot, EMPTY);
       if (newslot >= 0)
          setFlag(newslot, USED);
       return newslot;
    }
-  
+
    public BlockId block() {
       return blk;
    }
-   
+
    // Private auxiliary methods
-   
+
    /**
     * Set the record's empty/inuse flag.
     */
    private void setFlag(int slot, int flag) {
-      tx.setInt(blk, offset(slot), flag, true); 
+      tx.setInt(blk, offset(slot), flag, true);
    }
 
    private int searchAfter(int slot, int flag) {
@@ -124,18 +131,10 @@ public class RecordPage {
    }
 
    private boolean isValidSlot(int slot) {
-      return offset(slot+1) <= tx.blockSize();
+      return offset(slot + 1) <= tx.blockSize();
    }
 
    private int offset(int slot) {
       return slot * layout.slotSize();
    }
 }
-
-
-
-
-
-
-
-

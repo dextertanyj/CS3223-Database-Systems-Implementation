@@ -1,12 +1,13 @@
 package simpledb.query;
 
-import simpledb.record.*;
+import simpledb.record.RID;
 
 /**
  * The scan class corresponding to the <i>select</i> relational
  * algebra operator.
  * All methods except next delegate their work to the
  * underlying scan.
+ * 
  * @author Edward Sciore
  */
 public class SelectScan implements UpdateScan {
@@ -16,7 +17,8 @@ public class SelectScan implements UpdateScan {
 	/**
 	 * Create a select scan having the specified underlying
 	 * scan and predicate.
-	 * @param s the scan of the underlying query
+	 * 
+	 * @param s    the scan of the underlying query
 	 * @param pred the selection predicate
 	 */
 	public SelectScan(Scan s, Predicate pred) {
@@ -46,17 +48,17 @@ public class SelectScan implements UpdateScan {
 		return s.getString(fldname);
 	}
 
-   public Constant getVal(String fldname) {
-      return s.getVal(fldname);
-   }
+	public Constant getVal(String fldname) {
+		return s.getVal(fldname);
+	}
 
 	public boolean hasField(String fldname) {
 		return s.hasField(fldname);
 	}
 
-   public void close() {
-      s.close();
-   }
+	public void close() {
+		s.close();
+	}
 
 	// UpdateScan methods
 
@@ -70,10 +72,10 @@ public class SelectScan implements UpdateScan {
 		us.setString(fldname, val);
 	}
 
-   public void setVal(String fldname, Constant val) {
-      UpdateScan us = (UpdateScan) s;
-      us.setVal(fldname, val);
-   }
+	public void setVal(String fldname, Constant val) {
+		UpdateScan us = (UpdateScan) s;
+		us.setVal(fldname, val);
+	}
 
 	public void delete() {
 		UpdateScan us = (UpdateScan) s;

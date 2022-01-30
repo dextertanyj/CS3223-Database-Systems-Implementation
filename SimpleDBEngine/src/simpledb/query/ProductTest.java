@@ -1,8 +1,10 @@
 package simpledb.query;
 
+import simpledb.record.Layout;
+import simpledb.record.Schema;
+import simpledb.record.TableScan;
 import simpledb.server.SimpleDB;
 import simpledb.tx.Transaction;
-import simpledb.record.*;
 
 public class ProductTest {
    public static void main(String[] args) throws Exception {
@@ -24,19 +26,19 @@ public class ProductTest {
       ts1.beforeFirst();
       int n = 200;
       System.out.println("Inserting " + n + " records into T1.");
-      for (int i=0; i<n; i++) {
+      for (int i = 0; i < n; i++) {
          ts1.insert();
          ts1.setInt("A", i);
-         ts1.setString("B", "aaa"+i);
+         ts1.setString("B", "aaa" + i);
       }
       ts1.close();
 
       ts2.beforeFirst();
       System.out.println("Inserting " + n + " records into T2.");
-      for (int i=0; i<n; i++) {
+      for (int i = 0; i < n; i++) {
          ts2.insert();
-         ts2.setInt("C", n-i-1);
-         ts2.setString("D", "bbb"+(n-i-1));
+         ts2.setInt("C", n - i - 1);
+         ts2.setString("D", "bbb" + (n - i - 1));
       }
       ts2.close();
 
@@ -44,7 +46,7 @@ public class ProductTest {
       Scan s2 = new TableScan(tx, "T2", layout2);
       Scan s3 = new ProductScan(s1, s2);
       while (s3.next())
-         System.out.println(s3.getString("B")); 
+         System.out.println(s3.getString("B"));
       s3.close();
       tx.commit();
    }

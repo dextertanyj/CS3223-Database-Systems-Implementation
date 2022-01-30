@@ -1,8 +1,12 @@
 package simpledb.plan;
 
-import simpledb.server.SimpleDB;
 import simpledb.metadata.MetadataMgr;
-import simpledb.query.*;
+import simpledb.query.Expression;
+import simpledb.query.Operator;
+import simpledb.query.Predicate;
+import simpledb.query.Scan;
+import simpledb.query.Term;
+import simpledb.server.SimpleDB;
 import simpledb.tx.Transaction;
 
 public class MultiTablePlanTest {

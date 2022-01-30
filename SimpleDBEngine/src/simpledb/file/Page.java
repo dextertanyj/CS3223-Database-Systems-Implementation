@@ -1,7 +1,8 @@
 package simpledb.file;
 
 import java.nio.ByteBuffer;
-import java.nio.charset.*;
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 
 public class Page {
    private ByteBuffer bb;
@@ -11,7 +12,7 @@ public class Page {
    public Page(int blocksize) {
       bb = ByteBuffer.allocateDirect(blocksize);
    }
-   
+
    // For creating log pages
    public Page(byte[] b) {
       bb = ByteBuffer.wrap(b);
@@ -38,7 +39,7 @@ public class Page {
       bb.putInt(b.length);
       bb.put(b);
    }
-   
+
    public String getString(int offset) {
       byte[] b = getBytes(offset);
       return new String(b, CHARSET);
@@ -51,7 +52,7 @@ public class Page {
 
    public static int maxLength(int strlen) {
       float bytesPerChar = CHARSET.newEncoder().maxBytesPerChar();
-      return Integer.BYTES + (strlen * (int)bytesPerChar);
+      return Integer.BYTES + (strlen * (int) bytesPerChar);
    }
 
    // a package private method, needed by FileMgr

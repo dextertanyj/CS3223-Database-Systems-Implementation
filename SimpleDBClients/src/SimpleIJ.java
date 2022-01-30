@@ -1,5 +1,12 @@
-import java.sql.*;
+import java.sql.Connection;
+import java.sql.Driver;
+import java.sql.ResultSet;
+import java.sql.ResultSetMetaData;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.sql.Types;
 import java.util.Scanner;
+
 import simpledb.jdbc.embedded.EmbeddedDriver;
 import simpledb.jdbc.network.NetworkDriver;
 
@@ -11,7 +18,7 @@ public class SimpleIJ {
       Driver d = (s.contains("//")) ? new NetworkDriver() : new EmbeddedDriver();
 
       try (Connection conn = d.connect(s, null);
-           Statement stmt = conn.createStatement()) {
+            Statement stmt = conn.createStatement()) {
          System.out.print("\nSQL> ");
          while (sc.hasNextLine()) {
             // process one line of input
@@ -24,8 +31,7 @@ public class SimpleIJ {
                doUpdate(stmt, cmd);
             System.out.print("\nSQL> ");
          }
-      }
-      catch (SQLException e) {
+      } catch (SQLException e) {
          e.printStackTrace();
       }
       sc.close();
@@ -38,7 +44,7 @@ public class SimpleIJ {
          int totalwidth = 0;
 
          // print header
-         for(int i=1; i<=numcols; i++) {
+         for (int i = 1; i <= numcols; i++) {
             String fldname = md.getColumnName(i);
             int width = md.getColumnDisplaySize(i);
             totalwidth += width;
@@ -46,29 +52,27 @@ public class SimpleIJ {
             System.out.format(fmt, fldname);
          }
          System.out.println();
-         for(int i=0; i<totalwidth; i++)
+         for (int i = 0; i < totalwidth; i++)
             System.out.print("-");
          System.out.println();
 
          // print records
-         while(rs.next()) {
-            for (int i=1; i<=numcols; i++) {
+         while (rs.next()) {
+            for (int i = 1; i <= numcols; i++) {
                String fldname = md.getColumnName(i);
                int fldtype = md.getColumnType(i);
                String fmt = "%" + md.getColumnDisplaySize(i);
                if (fldtype == Types.INTEGER) {
                   int ival = rs.getInt(fldname);
                   System.out.format(fmt + "d", ival);
-               }
-               else {
+               } else {
                   String sval = rs.getString(fldname);
                   System.out.format(fmt + "s", sval);
                }
             }
             System.out.println();
          }
-      }
-      catch (SQLException e) {
+      } catch (SQLException e) {
          System.out.println("SQL Exception: " + e.getMessage());
       }
    }
@@ -77,8 +81,7 @@ public class SimpleIJ {
       try {
          int howmany = stmt.executeUpdate(cmd);
          System.out.println(howmany + " records processed");
-      }
-      catch (SQLException e) {
+      } catch (SQLException e) {
          System.out.println("SQL Exception: " + e.getMessage());
       }
    }

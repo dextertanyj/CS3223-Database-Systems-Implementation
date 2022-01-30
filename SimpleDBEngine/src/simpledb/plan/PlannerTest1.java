@@ -1,8 +1,8 @@
 package simpledb.plan;
 
+import simpledb.query.Scan;
 import simpledb.server.SimpleDB;
 import simpledb.tx.Transaction;
-import simpledb.query.Scan;
 
 public class PlannerTest1 {
    public static void main(String[] args) {
@@ -14,7 +14,7 @@ public class PlannerTest1 {
 
       int n = 200;
       System.out.println("Inserting " + n + " random records.");
-      for (int i=0; i<n; i++) {
+      for (int i = 0; i < n; i++) {
          int a = (int) Math.round(Math.random() * 50);
          String b = "rec" + a;
          cmd = "insert into T1(A,B) values(" + a + ", '" + b + "')";
@@ -25,9 +25,8 @@ public class PlannerTest1 {
       Plan p = planner.createQueryPlan(qry, tx);
       Scan s = p.open();
       while (s.next())
-         System.out.println(s.getString("b")); 
+         System.out.println(s.getString("b"));
       s.close();
       tx.commit();
    }
 }
-

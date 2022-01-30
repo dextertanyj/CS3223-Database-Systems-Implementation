@@ -1,7 +1,7 @@
 package simpledb.record;
 
-import simpledb.server.SimpleDB;
 import simpledb.file.BlockId;
+import simpledb.server.SimpleDB;
 import simpledb.tx.Transaction;
 
 public class RecordTest {
@@ -24,11 +24,11 @@ public class RecordTest {
 
       System.out.println("Filling the page with random records.");
       int slot = rp.insertAfter(-1);
-      while (slot >= 0) {  
+      while (slot >= 0) {
          int n = (int) Math.round(Math.random() * 50);
          rp.setInt(slot, "A", n);
-         rp.setString(slot, "B", "rec"+n);
-         System.out.println("inserting into slot " + slot + ": {" + n + ", " + "rec"+n + "}");
+         rp.setString(slot, "B", "rec" + n);
+         System.out.println("inserting into slot " + slot + ": {" + n + ", " + "rec" + n + "}");
          slot = rp.insertAfter(slot);
       }
 

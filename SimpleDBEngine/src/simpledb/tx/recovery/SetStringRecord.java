@@ -1,6 +1,7 @@
 package simpledb.tx.recovery;
 
-import simpledb.file.*;
+import simpledb.file.BlockId;
+import simpledb.file.Page;
 import simpledb.log.LogMgr;
 import simpledb.tx.Transaction;
 
@@ -11,6 +12,7 @@ public class SetStringRecord implements LogRecord {
 
    /**
     * Create a new setint log record.
+    * 
     * @param bb the bytebuffer containing the log values
     */
    public SetStringRecord(Page p) {
@@ -23,7 +25,7 @@ public class SetStringRecord implements LogRecord {
       blk = new BlockId(filename, blknum);
       int opos = bpos + Integer.BYTES;
       offset = p.getInt(opos);
-      int vpos = opos + Integer.BYTES;      
+      int vpos = opos + Integer.BYTES;
       val = p.getString(vpos);
    }
 
@@ -44,6 +46,7 @@ public class SetStringRecord implements LogRecord {
     * The method pins a buffer to the specified block,
     * calls setInt to restore the saved value,
     * and unpins the buffer.
+    * 
     * @see simpledb.tx.recovery.LogRecord#undo(int)
     */
    public void undo(Transaction tx) {
@@ -58,6 +61,7 @@ public class SetStringRecord implements LogRecord {
     * followed by the transaction id, the filename, number,
     * and offset of the modified block, and the previous
     * integer value at that offset.
+    * 
     * @return the LSN of the last log value
     */
    public static int writeToLog(LogMgr lm, int txnum, BlockId blk, int offset, String val) {

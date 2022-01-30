@@ -1,11 +1,11 @@
-package integration;
+package test.integration;
 
 import java.util.Scanner;
 
-import simpledb.server.SimpleDB;
 import simpledb.plan.Plan;
 import simpledb.plan.Planner;
 import simpledb.query.Scan;
+import simpledb.server.SimpleDB;
 import simpledb.tx.Transaction;
 
 public class FindMajorsTest {

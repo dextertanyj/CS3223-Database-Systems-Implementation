@@ -2,11 +2,12 @@ package simpledb.index.btree;
 
 import simpledb.file.BlockId;
 import simpledb.query.Constant;
-import simpledb.tx.Transaction;
 import simpledb.record.Layout;
+import simpledb.tx.Transaction;
 
 /**
  * A B-tree directory block.
+ * 
  * @author Edward Sciore
  */
 public class BTreeDir {
@@ -18,9 +19,10 @@ public class BTreeDir {
    /**
     * Creates an object to hold the contents of the specified
     * B-tree block.
-    * @param blk a reference to the specified B-tree block
+    * 
+    * @param blk    a reference to the specified B-tree block
     * @param layout the metadata of the B-tree directory file
-    * @param tx the calling transaction
+    * @param tx     the calling transaction
     */
    BTreeDir(Transaction tx, BlockId blk, Layout layout) {
       this.tx = tx;
@@ -39,6 +41,7 @@ public class BTreeDir {
    /**
     * Returns the block number of the B-tree leaf block
     * that contains the specified search key.
+    * 
     * @param searchkey the search key value
     * @return the block number of the leaf block containing that search key
     */
@@ -58,16 +61,17 @@ public class BTreeDir {
     * the old root, and the specified block.
     * Since the root must always be in block 0 of the file,
     * the contents of the old root will get transferred to a new block.
+    * 
     * @param e the directory entry to be added as a child of the new root
     */
    public void makeNewRoot(DirEntry e) {
       Constant firstval = contents.getDataVal(0);
       int level = contents.getFlag();
-      BlockId newblk = contents.split(0, level); //ie, transfer all the records
+      BlockId newblk = contents.split(0, level); // ie, transfer all the records
       DirEntry oldroot = new DirEntry(firstval, newblk.number());
       insertEntry(oldroot);
       insertEntry(e);
-      contents.setFlag(level+1);
+      contents.setFlag(level + 1);
    }
 
    /**
@@ -81,8 +85,10 @@ public class BTreeDir {
     * If this block splits, then the method similarly returns
     * the entry information of the new block to its caller;
     * otherwise, the method returns null.
+    * 
     * @param e the directory entry to be inserted
-    * @return the directory entry of the newly-split block, if one exists; otherwise, null
+    * @return the directory entry of the newly-split block, if one exists;
+    *         otherwise, null
     */
    public DirEntry insert(DirEntry e) {
       if (contents.getFlag() == 0)
@@ -109,7 +115,7 @@ public class BTreeDir {
 
    private BlockId findChildBlock(Constant searchkey) {
       int slot = contents.findSlotBefore(searchkey);
-      if (contents.getDataVal(slot+1).equals(searchkey))
+      if (contents.getDataVal(slot + 1).equals(searchkey))
          slot++;
       int blknum = contents.getChildNum(slot);
       return new BlockId(filename, blknum);

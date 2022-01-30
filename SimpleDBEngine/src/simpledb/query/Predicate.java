@@ -1,12 +1,15 @@
 package simpledb.query;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 
 import simpledb.plan.Plan;
-import simpledb.record.*;
+import simpledb.record.Schema;
 
 /**
  * A predicate is a Boolean combination of terms.
+ * 
  * @author Edward Sciore
  *
  */
@@ -16,10 +19,12 @@ public class Predicate {
    /**
     * Create an empty predicate, corresponding to "true".
     */
-   public Predicate() {}
+   public Predicate() {
+   }
 
    /**
     * Create a predicate containing a single term.
+    * 
     * @param t the term
     */
    public Predicate(Term t) {
@@ -29,6 +34,7 @@ public class Predicate {
    /**
     * Modifies the predicate to be the conjunction of
     * itself and the specified predicate.
+    * 
     * @param pred the other predicate
     */
    public void conjoinWith(Predicate pred) {
@@ -38,6 +44,7 @@ public class Predicate {
    /**
     * Returns true if the predicate evaluates to true
     * with respect to the specified scan.
+    * 
     * @param s the scan
     * @return true if the predicate is true in the scan
     */
@@ -48,14 +55,15 @@ public class Predicate {
       return true;
    }
 
-   /** 
-    * Calculate the extent to which selecting on the predicate 
+   /**
+    * Calculate the extent to which selecting on the predicate
     * reduces the number of records output by a query.
     * For example if the reduction factor is 2, then the
     * predicate cuts the size of the output in half.
+    * 
     * @param p the query's plan
     * @return the integer reduction factor.
-    */ 
+    */
    public int reductionFactor(Plan p) {
       int factor = 1;
       for (Term t : terms)
@@ -65,6 +73,7 @@ public class Predicate {
 
    /**
     * Return the subpredicate that applies to the specified schema.
+    * 
     * @param sch the schema
     * @return the subpredicate applying to the schema
     */
@@ -81,11 +90,13 @@ public class Predicate {
 
    /**
     * Return the subpredicate consisting of terms that apply
-    * to the union of the two specified schemas, 
+    * to the union of the two specified schemas,
     * but not to either schema separately.
+    * 
     * @param sch1 the first schema
     * @param sch2 the second schema
-    * @return the subpredicate whose terms apply to the union of the two schemas but not either schema separately.
+    * @return the subpredicate whose terms apply to the union of the two schemas
+    *         but not either schema separately.
     */
    public Predicate joinSubPred(Schema sch1, Schema sch2) {
       Predicate result = new Predicate();
@@ -93,7 +104,7 @@ public class Predicate {
       newsch.addAll(sch1);
       newsch.addAll(sch2);
       for (Term t : terms)
-         if (!t.appliesTo(sch1)  &&
+         if (!t.appliesTo(sch1) &&
                !t.appliesTo(sch2) &&
                t.appliesTo(newsch))
             result.terms.add(t);
@@ -108,6 +119,7 @@ public class Predicate {
     * where F is the specified field and c is some constant.
     * If so, the method returns that constant.
     * If not, the method returns null.
+    * 
     * @param fldname the name of the field
     * @return either the constant or null
     */
@@ -125,6 +137,7 @@ public class Predicate {
     * where F1 is the specified field and F2 is another field.
     * If so, the method returns the name of that field.
     * If not, the method returns null.
+    * 
     * @param fldname the name of the field
     * @return the name of the other field, or null
     */
@@ -139,7 +152,7 @@ public class Predicate {
 
    public String toString() {
       Iterator<Term> iter = terms.iterator();
-      if (!iter.hasNext()) 
+      if (!iter.hasNext())
          return "";
       String result = iter.next().toString();
       while (iter.hasNext())

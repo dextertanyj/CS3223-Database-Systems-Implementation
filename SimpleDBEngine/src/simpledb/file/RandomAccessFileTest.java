@@ -1,9 +1,12 @@
 package simpledb.file;
-import java.io.*;
+
+import java.io.File;
+import java.io.IOException;
+import java.io.RandomAccessFile;
 
 public class RandomAccessFileTest {
    public static void main(String[] args) throws IOException {
-      File file = new File("testfile");            
+      File file = new File("testfile");
       try {
          // initialize the file
          RandomAccessFile f1 = new RandomAccessFile(file, "rws");
@@ -16,7 +19,7 @@ public class RandomAccessFileTest {
          f2.seek(123);
          int n = f2.readInt();
          f2.seek(123);
-         f2.writeInt(n+1);
+         f2.writeInt(n + 1);
          f2.close();
 
          // re-read the file
@@ -24,8 +27,7 @@ public class RandomAccessFileTest {
          f3.seek(123);
          System.out.println("The new value is " + f3.readInt());
          f3.close();
-      }
-      catch (IOException e) {
+      } catch (IOException e) {
          e.printStackTrace();
       }
    }

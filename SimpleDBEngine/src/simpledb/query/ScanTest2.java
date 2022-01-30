@@ -1,9 +1,13 @@
 package simpledb.query;
 
-import java.util.*;
+import java.util.Arrays;
+import java.util.List;
+
+import simpledb.record.Layout;
+import simpledb.record.Schema;
+import simpledb.record.TableScan;
 import simpledb.server.SimpleDB;
 import simpledb.tx.Transaction;
-import simpledb.record.*;
 
 public class ScanTest2 {
    public static void main(String[] args) throws Exception {
