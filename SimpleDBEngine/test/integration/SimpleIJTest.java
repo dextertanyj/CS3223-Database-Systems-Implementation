@@ -1,3 +1,7 @@
+package integration;
+
+import static java.sql.Types.INTEGER;
+
 import java.util.List;
 import java.util.Scanner;
 import static java.sql.Types.*;

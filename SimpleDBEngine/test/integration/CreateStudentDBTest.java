@@ -1,5 +1,7 @@
-import simpledb.server.SimpleDB;
+package integration;
+
 import simpledb.plan.Planner;
+import simpledb.server.SimpleDB;
 import simpledb.tx.Transaction;
 
 public class CreateStudentDBTest {

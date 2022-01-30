@@ -1,3 +1,5 @@
+package integration;
+
 import java.util.Scanner;
 
 import simpledb.server.SimpleDB;
