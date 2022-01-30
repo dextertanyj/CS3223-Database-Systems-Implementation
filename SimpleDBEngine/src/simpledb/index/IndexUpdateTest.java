@@ -17,22 +17,22 @@ public class IndexUpdateTest {
       UpdateScan studentscan = (UpdateScan) studentplan.open();
 
       // Create a map containing all indexes for STUDENT.
-      Map<String,Index> indexes = new HashMap<>();
-      Map<String,IndexInfo> idxinfo = mdm.getIndexInfo("student", tx);
+      Map<String, Index> indexes = new HashMap<>();
+      Map<String, IndexInfo> idxinfo = mdm.getIndexInfo("student", tx);
       for (String fldname : idxinfo.keySet()) {
          Index idx = idxinfo.get(fldname).open();
          indexes.put(fldname, idx);
       }
 
       // Task 1: insert a new STUDENT record for Sam
-      //    First, insert the record into STUDENT.
+      // First, insert the record into STUDENT.
       studentscan.insert();
       studentscan.setInt("sid", 11);
       studentscan.setString("sname", "sam");
       studentscan.setInt("gradyear", 2023);
-      studentscan.setInt("majorid",  30);
+      studentscan.setInt("majorid", 30);
 
-      //    Then insert a record into each of the indexes.
+      // Then insert a record into each of the indexes.
       RID datarid = studentscan.getRid();
       for (String fldname : indexes.keySet()) {
          Constant dataval = studentscan.getVal(fldname);
@@ -58,14 +58,14 @@ public class IndexUpdateTest {
             break;
          }
       }
-      
+
       // Print the records to verify the updates.
       studentscan.beforeFirst();
       while (studentscan.next()) {
          System.out.println(studentscan.getString("sname") + " " + studentscan.getInt("sid"));
       }
       studentscan.close();
-      
+
       for (Index idx : indexes.values())
          idx.close();
       tx.commit();

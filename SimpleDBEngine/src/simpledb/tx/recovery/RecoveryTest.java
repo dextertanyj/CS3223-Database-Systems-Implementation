@@ -1,8 +1,10 @@
 package simpledb.tx.recovery;
 
-import simpledb.server.SimpleDB;
-import simpledb.file.*;
 import simpledb.buffer.BufferMgr;
+import simpledb.file.BlockId;
+import simpledb.file.FileMgr;
+import simpledb.file.Page;
+import simpledb.server.SimpleDB;
 import simpledb.tx.Transaction;
 
 public class RecoveryTest {
@@ -21,8 +23,7 @@ public class RecoveryTest {
       if (fm.length("testfile") == 0) {
          initialize();
          modify();
-      }
-      else {
+      } else {
          recover();
       }
    }
@@ -33,7 +34,7 @@ public class RecoveryTest {
       tx1.pin(blk0);
       tx2.pin(blk1);
       int pos = 0;
-      for (int i=0; i<6; i++) {
+      for (int i = 0; i < 6; i++) {
          tx1.setInt(blk0, pos, pos, false);
          tx2.setInt(blk1, pos, pos, false);
          pos += Integer.BYTES;
@@ -51,9 +52,9 @@ public class RecoveryTest {
       tx3.pin(blk0);
       tx4.pin(blk1);
       int pos = 0;
-      for (int i=0; i<6; i++) {
-         tx3.setInt(blk0, pos, pos+100, true);
-         tx4.setInt(blk1, pos, pos+100, true);
+      for (int i = 0; i < 6; i++) {
+         tx3.setInt(blk0, pos, pos + 100, true);
+         tx4.setInt(blk1, pos, pos + 100, true);
          pos += Integer.BYTES;
       }
       tx3.setString(blk0, 30, "uvw", true);
@@ -82,13 +83,13 @@ public class RecoveryTest {
       fm.read(blk0, p0);
       fm.read(blk1, p1);
       int pos = 0;
-      for (int i=0; i<6; i++) {
+      for (int i = 0; i < 6; i++) {
          System.out.print(p0.getInt(pos) + " ");
          System.out.print(p1.getInt(pos) + " ");
          pos += Integer.BYTES;
       }
       System.out.print(p0.getString(30) + " ");
       System.out.print(p1.getString(30) + " ");
-      System.out.println(); 
+      System.out.println();
    }
 }

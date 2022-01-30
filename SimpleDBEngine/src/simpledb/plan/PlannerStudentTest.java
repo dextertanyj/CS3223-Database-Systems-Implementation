@@ -8,7 +8,7 @@ public class PlannerStudentTest {
    public static void main(String[] args) {
       SimpleDB db = new SimpleDB("studentdb");
       Planner planner = db.planner();
-      Transaction tx  = db.newTx();
+      Transaction tx = db.newTx();
 
       // part 1: Process a query
       String qry = "select sname, gradyear from student";

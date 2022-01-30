@@ -9,6 +9,7 @@ import simpledb.record.*;
 
 /**
  * The class for the <i>chunk</i> operator.
+ * 
  * @author Edward Sciore
  */
 public class ChunkScan implements Scan {
@@ -21,19 +22,20 @@ public class ChunkScan implements Scan {
    private int currentslot;
 
    /**
-    * Create a chunk consisting of the specified pages. 
-    * @param layout the metadata for the chunked table
+    * Create a chunk consisting of the specified pages.
+    * 
+    * @param layout    the metadata for the chunked table
     * @param startbnum the starting block number
-    * @param endbnum  the ending block number
-    * @param tx the current transaction
-    */ 
+    * @param endbnum   the ending block number
+    * @param tx        the current transaction
+    */
    public ChunkScan(Transaction tx, String filename, Layout layout, int startbnum, int endbnum) {
       this.tx = tx;
       this.filename = filename;
       this.layout = layout;
       this.startbnum = startbnum;
-      this.endbnum   = endbnum;
-      for (int i=startbnum; i<=endbnum; i++) {
+      this.endbnum = endbnum;
+      for (int i = startbnum; i <= endbnum; i++) {
          BlockId blk = new BlockId(filename, i);
          buffs.add(new RecordPage(tx, blk, layout));
       }
@@ -44,8 +46,8 @@ public class ChunkScan implements Scan {
     * @see simpledb.query.Scan#close()
     */
    public void close() {
-      for (int i=0; i<buffs.size(); i++) {
-         BlockId blk = new BlockId(filename, startbnum+i);
+      for (int i = 0; i < buffs.size(); i++) {
+         BlockId blk = new BlockId(filename, startbnum + i);
          tx.unpin(blk);
       }
    }
@@ -62,14 +64,15 @@ public class ChunkScan implements Scan {
     * If there are no more records, then make
     * the next block be current.
     * If there are no more blocks in the chunk, return false.
-    * @see simpledb.query.Scan#next()  
+    * 
+    * @see simpledb.query.Scan#next()
     */
    public boolean next() {
       currentslot = rp.nextAfter(currentslot);
       while (currentslot < 0) {
          if (currentbnum == endbnum)
             return false;
-         moveToBlock(rp.block().number()+1);
+         moveToBlock(rp.block().number() + 1);
          currentslot = rp.nextAfter(currentslot);
       }
       return true;
@@ -99,7 +102,7 @@ public class ChunkScan implements Scan {
          return new Constant(getString(fldname));
    }
 
-  /**
+   /**
     * @see simpledb.query.Scan#hasField(java.lang.String)
     */
    public boolean hasField(String fldname) {

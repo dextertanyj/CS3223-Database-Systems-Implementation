@@ -1,4 +1,5 @@
 package simpledb.tx;
+
 import simpledb.server.SimpleDB;
 import simpledb.buffer.BufferMgr;
 import simpledb.file.*;
@@ -6,10 +7,10 @@ import simpledb.log.LogMgr;
 
 public class TxTest {
    public static void main(String[] args) throws Exception {
-      SimpleDB db = new SimpleDB("txtest", 400, 8); 
+      SimpleDB db = new SimpleDB("txtest", 400, 8);
       FileMgr fm = db.fileMgr();
       LogMgr lm = db.logMgr();
-     
+
       BufferMgr bm = db.bufferMgr();
 
       Transaction tx1 = new Transaction(fm, lm, bm);
@@ -17,7 +18,7 @@ public class TxTest {
       tx1.pin(blk);
       // The block initially contains unknown bytes,
       // so don't log those values here.
-      tx1.setInt(blk, 80, 1, false); 
+      tx1.setInt(blk, 80, 1, false);
       tx1.setString(blk, 40, "one", false);
       tx1.commit();
 

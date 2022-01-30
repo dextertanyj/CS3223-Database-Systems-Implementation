@@ -4,13 +4,12 @@ import static java.sql.Types.INTEGER;
 
 import java.util.List;
 import java.util.Scanner;
-import static java.sql.Types.*;
 
-import simpledb.server.SimpleDB;
 import simpledb.plan.Plan;
 import simpledb.plan.Planner;
 import simpledb.query.Scan;
 import simpledb.record.Schema;
+import simpledb.server.SimpleDB;
 import simpledb.tx.Transaction;
 
 public class SimpleIJTest {

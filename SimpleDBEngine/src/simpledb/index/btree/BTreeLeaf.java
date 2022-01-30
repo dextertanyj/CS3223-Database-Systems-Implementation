@@ -1,12 +1,14 @@
 package simpledb.index.btree;
 
 import simpledb.file.BlockId;
-import simpledb.tx.Transaction;
-import simpledb.record.*;
 import simpledb.query.Constant;
+import simpledb.record.Layout;
+import simpledb.record.RID;
+import simpledb.tx.Transaction;
 
 /**
  * An object that holds the contents of a B-tree leaf block.
+ * 
  * @author Edward Sciore
  */
 public class BTreeLeaf {
@@ -21,10 +23,11 @@ public class BTreeLeaf {
     * Opens a buffer to hold the specified leaf block.
     * The buffer is positioned immediately before the first record
     * having the specified search key (if any).
-    * @param blk a reference to the disk block
-    * @param layout the metadata of the B-tree leaf file
+    * 
+    * @param blk       a reference to the disk block
+    * @param layout    the metadata of the B-tree leaf file
     * @param searchkey the search key value
-    * @param tx the calling transaction
+    * @param tx        the calling transaction
     */
    public BTreeLeaf(Transaction tx, BlockId blk, Layout layout, Constant searchkey) {
       this.tx = tx;
@@ -32,7 +35,7 @@ public class BTreeLeaf {
       this.searchkey = searchkey;
       contents = new BTPage(tx, blk, layout);
       currentslot = contents.findSlotBefore(searchkey);
-      filename = blk.fileName();            
+      filename = blk.fileName();
    }
 
    /**
@@ -43,23 +46,25 @@ public class BTreeLeaf {
    }
 
    /**
-    * Moves to the next leaf record having the 
+    * Moves to the next leaf record having the
     * previously-specified search key.
     * Returns false if there is no more such records.
+    * 
     * @return false if there are no more leaf records for the search key
     */
    public boolean next() {
       currentslot++;
-      if (currentslot >= contents.getNumRecs()) 
+      if (currentslot >= contents.getNumRecs())
          return tryOverflow();
       else if (contents.getDataVal(currentslot).equals(searchkey))
          return true;
-      else 
+      else
          return tryOverflow();
    }
 
    /**
     * Returns the dataRID value of the current leaf record.
+    * 
     * @return the dataRID of the current record
     */
    public RID getDataRid() {
@@ -68,11 +73,12 @@ public class BTreeLeaf {
 
    /**
     * Deletes the leaf record having the specified dataRID
+    * 
     * @param datarid the dataRId whose record is to be deleted
     */
    public void delete(RID datarid) {
-      while(next())
-         if(getDataRid().equals(datarid)) {
+      while (next())
+         if (getDataRid().equals(datarid)) {
             contents.delete(currentslot);
             return;
          }
@@ -81,13 +87,14 @@ public class BTreeLeaf {
    /**
     * Inserts a new leaf record having the specified dataRID
     * and the previously-specified search key.
-    * If the record does not fit in the page, then 
+    * If the record does not fit in the page, then
     * the page splits and the method returns the
     * directory entry for the new page;
-    * otherwise, the method returns null.  
+    * otherwise, the method returns null.
     * If all of the records in the page have the same dataval,
     * then the block does not split; instead, all but one of the
     * records are placed into an overflow block.
+    * 
     * @param datarid the dataRID value of the new record
     * @return the directory entry of the newly-split page, if one exists.
     */
@@ -97,8 +104,8 @@ public class BTreeLeaf {
          BlockId newblk = contents.split(0, contents.getFlag());
          currentslot = 0;
          contents.setFlag(-1);
-         contents.insertLeaf(currentslot, searchkey, datarid); 
-         return new DirEntry(firstval, newblk.number());  
+         contents.insertLeaf(currentslot, searchkey, datarid);
+         return new DirEntry(firstval, newblk.number());
       }
 
       currentslot++;
@@ -107,14 +114,13 @@ public class BTreeLeaf {
          return null;
       // else page is full, so split it
       Constant firstkey = contents.getDataVal(0);
-      Constant lastkey  = contents.getDataVal(contents.getNumRecs()-1);
+      Constant lastkey = contents.getDataVal(contents.getNumRecs() - 1);
       if (lastkey.equals(firstkey)) {
          // create an overflow block to hold all but the first record
          BlockId newblk = contents.split(1, contents.getFlag());
          contents.setFlag(newblk.number());
          return null;
-      }
-      else {
+      } else {
          int splitpos = contents.getNumRecs() / 2;
          Constant splitkey = contents.getDataVal(splitpos);
          if (splitkey.equals(firstkey)) {
@@ -122,10 +128,9 @@ public class BTreeLeaf {
             while (contents.getDataVal(splitpos).equals(splitkey))
                splitpos++;
             splitkey = contents.getDataVal(splitpos);
-         }
-         else {
+         } else {
             // move left, looking for first entry having that key
-            while (contents.getDataVal(splitpos-1).equals(splitkey))
+            while (contents.getDataVal(splitpos - 1).equals(splitkey))
                splitpos--;
          }
          BlockId newblk = contents.split(splitpos, -1);

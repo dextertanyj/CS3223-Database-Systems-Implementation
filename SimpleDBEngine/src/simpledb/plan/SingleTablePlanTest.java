@@ -1,10 +1,17 @@
 package simpledb.plan;
 
+import java.util.Arrays;
+import java.util.List;
+
+import simpledb.metadata.MetadataMgr;
+import simpledb.query.Constant;
+import simpledb.query.Expression;
+import simpledb.query.Operator;
+import simpledb.query.Predicate;
+import simpledb.query.Scan;
+import simpledb.query.Term;
 import simpledb.server.SimpleDB;
 import simpledb.tx.Transaction;
-import simpledb.metadata.MetadataMgr;
-import simpledb.query.*;
-import java.util.*;
 
 public class SingleTablePlanTest {
 	public static void main(String[] args) throws Exception {

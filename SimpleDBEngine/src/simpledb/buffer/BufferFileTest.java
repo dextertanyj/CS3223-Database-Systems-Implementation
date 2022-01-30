@@ -11,7 +11,7 @@ public class BufferFileTest {
       BufferMgr bm = db.bufferMgr();
       BlockId blk = new BlockId("testfile", 2);
       int pos1 = 88;
-      
+
       Buffer b1 = bm.pin(blk);
       Page p1 = b1.contents();
       p1.setString(pos1, "abcdefghijklm");
@@ -20,7 +20,7 @@ public class BufferFileTest {
       p1.setInt(pos2, 345);
       b1.setModified(1, 0);
       bm.unpin(b1);
-      
+
       Buffer b2 = bm.pin(blk);
       Page p2 = b2.contents();
       System.out.println("offset " + pos2 + " contains " + p2.getInt(pos2));

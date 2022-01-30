@@ -1,5 +1,9 @@
 package network;
-import java.sql.*;
+
+import java.sql.Connection;
+import java.sql.Driver;
+import java.sql.ResultSet;
+import java.sql.Statement;
 import java.util.Scanner;
 
 import simpledb.jdbc.network.NetworkDriver;
@@ -18,7 +22,7 @@ public class FindMajors {
             + "from student, dept "
             + "where did = majorid "
             + "and dname = '" + major + "'";
- 
+
       Driver d = new NetworkDriver();
       try (Connection conn = d.connect(url, null);
             Statement stmt = conn.createStatement();
@@ -28,8 +32,7 @@ public class FindMajors {
             int gradyear = rs.getInt("gradyear");
             System.out.println(sname + "\t" + gradyear);
          }
-      }
-      catch(Exception e) {
+      } catch (Exception e) {
          e.printStackTrace();
       }
    }

@@ -1,7 +1,7 @@
 package simpledb.query;
 
 import simpledb.plan.Plan;
-import simpledb.record.*;
+import simpledb.record.Schema;
 
 /**
  * A term is a comparison between two expressions.

@@ -10,33 +10,36 @@ import simpledb.record.*;
  * The manager does not store this information in the database.
  * Instead, it calculates this information on system startup,
  * and periodically refreshes it.
+ * 
  * @author Edward Sciore
  */
 class StatMgr {
    private TableMgr tblMgr;
-   private Map<String,StatInfo> tablestats;
+   private Map<String, StatInfo> tablestats;
    private int numcalls;
-   
+
    /**
     * Create the statistics manager.
     * The initial statistics are calculated by
     * traversing the entire database.
+    * 
     * @param tx the startup transaction
     */
    public StatMgr(TableMgr tblMgr, Transaction tx) {
       this.tblMgr = tblMgr;
       refreshStatistics(tx);
    }
-   
+
    /**
     * Return the statistical information about the specified table.
+    * 
     * @param tblname the name of the table
-    * @param layout the table's layout
-    * @param tx the calling transaction
+    * @param layout  the table's layout
+    * @param tx      the calling transaction
     * @return the statistical information about the table
     */
-   public synchronized StatInfo getStatInfo(String tblname, 
-                              Layout layout, Transaction tx) {
+   public synchronized StatInfo getStatInfo(String tblname,
+         Layout layout, Transaction tx) {
       numcalls++;
       if (numcalls > 100)
          refreshStatistics(tx);
@@ -47,13 +50,13 @@ class StatMgr {
       }
       return si;
    }
-   
+
    private synchronized void refreshStatistics(Transaction tx) {
-      tablestats = new HashMap<String,StatInfo>();
+      tablestats = new HashMap<String, StatInfo>();
       numcalls = 0;
       Layout tcatlayout = tblMgr.getLayout("tblcat", tx);
       TableScan tcat = new TableScan(tx, "tblcat", tcatlayout);
-      while(tcat.next()) {
+      while (tcat.next()) {
          String tblname = tcat.getString("tblname");
          Layout layout = tblMgr.getLayout(tblname, tx);
          StatInfo si = calcTableStats(tblname, layout, tx);
@@ -61,9 +64,9 @@ class StatMgr {
       }
       tcat.close();
    }
-   
-   private synchronized StatInfo calcTableStats(String tblname, 
-                              Layout layout, Transaction tx) {
+
+   private synchronized StatInfo calcTableStats(String tblname,
+         Layout layout, Transaction tx) {
       int numRecs = 0;
       int numblocks = 0;
       TableScan ts = new TableScan(tx, tblname, layout);

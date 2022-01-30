@@ -6,6 +6,7 @@ import simpledb.tx.Transaction;
 
 /**
  * The ROLLBACK log record.
+ * 
  * @author Edward Sciore
  */
 public class RollbackRecord implements LogRecord {
@@ -13,6 +14,7 @@ public class RollbackRecord implements LogRecord {
 
    /**
     * Create a RollbackRecord object.
+    * 
     * @param txnum the ID of the specified transaction
     */
    public RollbackRecord(Page p) {
@@ -32,20 +34,22 @@ public class RollbackRecord implements LogRecord {
     * Does nothing, because a rollback record
     * contains no undo information.
     */
-   public void undo(Transaction tx) {}
+   public void undo(Transaction tx) {
+   }
 
    public String toString() {
       return "<ROLLBACK " + txnum + ">";
    }
 
-   /** 
+   /**
     * A static method to write a rollback record to the log.
     * This log record contains the ROLLBACK operator,
     * followed by the transaction id.
+    * 
     * @return the LSN of the last log value
     */
    public static int writeToLog(LogMgr lm, int txnum) {
-      byte[] rec = new byte[2*Integer.BYTES];
+      byte[] rec = new byte[2 * Integer.BYTES];
       Page p = new Page(rec);
       p.setInt(0, ROLLBACK);
       p.setInt(Integer.BYTES, txnum);

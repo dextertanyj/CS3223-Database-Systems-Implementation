@@ -1,4 +1,5 @@
 package simpledb.parse;
+
 import java.util.Scanner;
 
 public class ParserTest {
@@ -14,8 +15,7 @@ public class ParserTest {
             else
                p.updateCmd();
             System.out.println("yes");
-         }
-         catch (BadSyntaxException ex) {
+         } catch (BadSyntaxException ex) {
             System.out.println("no");
          }
          System.out.print("Enter an SQL statement: ");
@@ -23,5 +23,3 @@ public class ParserTest {
       sc.close();
    }
 }
-
-

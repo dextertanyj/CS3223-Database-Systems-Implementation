@@ -19,12 +19,12 @@ public class TableScanTest {
 
       System.out.println("Filling the table with 50 random records.");
       TableScan ts = new TableScan(tx, "T", layout);
-      for (int i=0; i<50;  i++) {
+      for (int i = 0; i < 50; i++) {
          ts.insert();
          int n = (int) Math.round(Math.random() * 50);
          ts.setInt("A", n);
-         ts.setString("B", "rec"+n);
-         System.out.println("inserting into slot " + ts.getRid() + ": {" + n + ", " + "rec"+n + "}");
+         ts.setString("B", "rec" + n);
+         System.out.println("inserting into slot " + ts.getRid() + ": {" + n + ", " + "rec" + n + "}");
       }
 
       System.out.println("Deleting these records, whose A-values are less than 25.");

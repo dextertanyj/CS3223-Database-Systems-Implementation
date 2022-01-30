@@ -2,7 +2,7 @@ package integration;
 
 import simpledb.plan.Plan;
 import simpledb.plan.Planner;
-import simpledb.query.*;
+import simpledb.query.Scan;
 import simpledb.server.SimpleDB;
 import simpledb.tx.Transaction;
 

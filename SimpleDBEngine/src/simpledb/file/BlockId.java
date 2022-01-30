@@ -6,7 +6,7 @@ public class BlockId {
 
    public BlockId(String filename, int blknum) {
       this.filename = filename;
-      this.blknum   = blknum;
+      this.blknum = blknum;
    }
 
    public String fileName() {
@@ -16,16 +16,16 @@ public class BlockId {
    public int number() {
       return blknum;
    }
-   
+
    public boolean equals(Object obj) {
       BlockId blk = (BlockId) obj;
       return filename.equals(blk.filename) && blknum == blk.blknum;
    }
-   
+
    public String toString() {
       return "[file " + filename + ", block " + blknum + "]";
    }
-   
+
    public int hashCode() {
       return toString().hashCode();
    }

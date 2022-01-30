@@ -1,5 +1,9 @@
 package network;
-import java.sql.*;
+
+import java.sql.Connection;
+import java.sql.Driver;
+import java.sql.SQLException;
+import java.sql.Statement;
 
 import simpledb.jdbc.network.NetworkDriver;
 
@@ -8,14 +12,13 @@ public class ChangeMajor {
       Driver d = new NetworkDriver();
       String url = "jdbc:simpledb://localhost";
 
-      try (Connection conn = d.connect(url, null); 
+      try (Connection conn = d.connect(url, null);
             Statement stmt = conn.createStatement()) {
          String cmd = "update STUDENT set MajorId=30 "
                + "where SName = 'amy'";
          stmt.executeUpdate(cmd);
          System.out.println("Amy is now a drama major.");
-      }
-      catch(SQLException e) {
+      } catch (SQLException e) {
          e.printStackTrace();
       }
    }

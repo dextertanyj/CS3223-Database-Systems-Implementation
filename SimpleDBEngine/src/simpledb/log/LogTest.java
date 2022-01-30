@@ -11,7 +11,7 @@ public class LogTest {
       SimpleDB db = new SimpleDB("logtest", 400, 8);
       lm = db.logMgr();
 
-      printLogRecords("The initial empty log file:");  //print an empty log file
+      printLogRecords("The initial empty log file:"); // print an empty log file
       System.out.println("done");
       createRecords(1, 35);
       printLogRecords("The log file now has these records:");
@@ -36,8 +36,8 @@ public class LogTest {
 
    private static void createRecords(int start, int end) {
       System.out.print("Creating records: ");
-      for (int i=start; i<=end; i++) {
-         byte[] rec = createLogRecord("record"+i, i+100);
+      for (int i = start; i <= end; i++) {
+         byte[] rec = createLogRecord("record" + i, i + 100);
          int lsn = lm.append(rec);
          System.out.print(lsn + " ");
       }

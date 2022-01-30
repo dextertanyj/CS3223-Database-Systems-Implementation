@@ -11,17 +11,20 @@ public class ConcurrencyTest {
    private static BufferMgr bm;
 
    public static void main(String[] args) {
-      //initialize the database system
-      SimpleDB db = new SimpleDB("concurrencytest", 400, 8); 
+      // initialize the database system
+      SimpleDB db = new SimpleDB("concurrencytest", 400, 8);
       fm = db.fileMgr();
       lm = db.logMgr();
       bm = db.bufferMgr();
-      A a = new A(); new Thread(a).start();
-      B b = new B(); new Thread(b).start();
-      C c = new C(); new Thread(c).start();
+      A a = new A();
+      new Thread(a).start();
+      B b = new B();
+      new Thread(b).start();
+      C c = new C();
+      new Thread(c).start();
    }
 
-   static class A implements Runnable { 
+   static class A implements Runnable {
       public void run() {
          try {
             Transaction txA = new Transaction(fm, lm, bm);
@@ -38,9 +41,10 @@ public class ConcurrencyTest {
             System.out.println("Tx A: receive slock 2");
             txA.commit();
             System.out.println("Tx A: commit");
-            
+
+         } catch (InterruptedException e) {
          }
-         catch(InterruptedException e) {};
+         ;
       }
    }
 
@@ -61,8 +65,9 @@ public class ConcurrencyTest {
             System.out.println("Tx B: receive slock 1");
             txB.commit();
             System.out.println("Tx B: commit");
+         } catch (InterruptedException e) {
          }
-         catch(InterruptedException e) {};
+         ;
       }
    }
 
@@ -84,8 +89,9 @@ public class ConcurrencyTest {
             System.out.println("Tx C: receive slock 2");
             txC.commit();
             System.out.println("Tx C: commit");
+         } catch (InterruptedException e) {
          }
-         catch(InterruptedException e) {};
+         ;
       }
    }
 }

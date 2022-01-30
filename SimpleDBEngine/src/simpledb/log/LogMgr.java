@@ -1,13 +1,17 @@
 package simpledb.log;
 
 import java.util.Iterator;
-import simpledb.file.*;
+
+import simpledb.file.BlockId;
+import simpledb.file.FileMgr;
+import simpledb.file.Page;
 
 /**
- * The log manager, which is responsible for 
- * writing log records into a log file. The tail of 
+ * The log manager, which is responsible for
+ * writing log records into a log file. The tail of
  * the log is kept in a bytebuffer, which is flushed
- * to disk when needed. 
+ * to disk when needed.
+ * 
  * @author Edward Sciore
  */
 public class LogMgr {
@@ -22,6 +26,7 @@ public class LogMgr {
     * Creates the manager for the specified log file.
     * If the log file does not yet exist, it is created
     * with an empty first block.
+    * 
     * @param FileMgr the file manager
     * @param logfile the name of the log file
     */
@@ -34,7 +39,7 @@ public class LogMgr {
       if (logsize == 0)
          currentblk = appendNewBlock();
       else {
-         currentblk = new BlockId(logfile, logsize-1);
+         currentblk = new BlockId(logfile, logsize - 1);
          fm.read(currentblk, logpage);
       }
    }
@@ -43,6 +48,7 @@ public class LogMgr {
     * Ensures that the log record corresponding to the
     * specified LSN has been written to disk.
     * All earlier log records will also be written to disk.
+    * 
     * @param lsn the LSN of a log record
     */
    public void flush(int lsn) {
@@ -56,14 +62,15 @@ public class LogMgr {
    }
 
    /**
-    * Appends a log record to the log buffer. 
-    * The record consists of an arbitrary array of bytes. 
+    * Appends a log record to the log buffer.
+    * The record consists of an arbitrary array of bytes.
     * Log records are written right to left in the buffer.
     * The size of the record is written before the bytes.
     * The beginning of the buffer contains the location
     * of the last-written record (the "boundary").
     * Storing the records backwards makes it easy to read
     * them in reverse order.
+    * 
     * @param logrec a byte buffer containing the bytes.
     * @return the LSN of the final value
     */
@@ -72,7 +79,7 @@ public class LogMgr {
       int recsize = logrec.length;
       int bytesneeded = recsize + Integer.BYTES;
       if (boundary - bytesneeded < Integer.BYTES) { // the log record doesn't fit,
-         flush();        // so move to the next block.
+         flush(); // so move to the next block.
          currentblk = appendNewBlock();
          boundary = logpage.getInt(0);
       }
@@ -88,7 +95,7 @@ public class LogMgr {
     * Initialize the bytebuffer and append it to the log file.
     */
    private BlockId appendNewBlock() {
-      BlockId blk = fm.append(logfile);     
+      BlockId blk = fm.append(logfile);
       logpage.setInt(0, fm.blockSize());
       fm.write(blk, logpage);
       return blk;

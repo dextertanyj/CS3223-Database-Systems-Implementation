@@ -8,6 +8,7 @@ import simpledb.tx.Transaction;
 /**
  * Provides the abstraction of an arbitrarily large array
  * of records.
+ * 
  * @author sciore
  */
 public class TableScan implements UpdateScan {
@@ -23,7 +24,7 @@ public class TableScan implements UpdateScan {
       filename = tblname + ".tbl";
       if (tx.size(filename) == 0)
          moveToNewBlock();
-      else 
+      else
          moveToBlock(0);
    }
 
@@ -38,7 +39,7 @@ public class TableScan implements UpdateScan {
       while (currentslot < 0) {
          if (atLastBlock())
             return false;
-         moveToBlock(rp.block().number()+1);
+         moveToBlock(rp.block().number() + 1);
          currentslot = rp.nextAfter(currentslot);
       }
       return true;
@@ -73,7 +74,7 @@ public class TableScan implements UpdateScan {
    public void setInt(String fldname, int val) {
       rp.setInt(currentslot, fldname, val);
    }
-   
+
    public void setString(String fldname, String val) {
       rp.setString(currentslot, fldname, val);
    }
@@ -88,10 +89,10 @@ public class TableScan implements UpdateScan {
    public void insert() {
       currentslot = rp.insertAfter(currentslot);
       while (currentslot < 0) {
-         if (atLastBlock()) 
+         if (atLastBlock())
             moveToNewBlock();
-         else 
-            moveToBlock(rp.block().number()+1);
+         else
+            moveToBlock(rp.block().number() + 1);
          currentslot = rp.insertAfter(currentslot);
       }
    }

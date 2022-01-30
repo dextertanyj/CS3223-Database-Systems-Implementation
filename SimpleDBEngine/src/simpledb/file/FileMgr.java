@@ -7,7 +7,7 @@ public class FileMgr {
    private File dbDirectory;
    private int blocksize;
    private boolean isNew;
-   private Map<String,RandomAccessFile> openFiles = new HashMap<>();
+   private Map<String, RandomAccessFile> openFiles = new HashMap<>();
 
    public FileMgr(File dbDirectory, int blocksize) {
       this.dbDirectory = dbDirectory;
@@ -21,7 +21,7 @@ public class FileMgr {
       // remove any leftover temporary tables
       for (String filename : dbDirectory.list())
          if (filename.startsWith("temp"))
-         		new File(dbDirectory, filename).delete();
+            new File(dbDirectory, filename).delete();
    }
 
    public synchronized void read(BlockId blk, Page p) {
@@ -29,8 +29,7 @@ public class FileMgr {
          RandomAccessFile f = getFile(blk.fileName());
          f.seek(blk.number() * blocksize);
          f.getChannel().read(p.contents());
-      }
-      catch (IOException e) {
+      } catch (IOException e) {
          throw new RuntimeException("cannot read block " + blk);
       }
    }
@@ -40,8 +39,7 @@ public class FileMgr {
          RandomAccessFile f = getFile(blk.fileName());
          f.seek(blk.number() * blocksize);
          f.getChannel().write(p.contents());
-      }
-      catch (IOException e) {
+      } catch (IOException e) {
          throw new RuntimeException("cannot write block" + blk);
       }
    }
@@ -54,8 +52,7 @@ public class FileMgr {
          RandomAccessFile f = getFile(blk.fileName());
          f.seek(blk.number() * blocksize);
          f.write(b);
-      }
-      catch (IOException e) {
+      } catch (IOException e) {
          throw new RuntimeException("cannot append block" + blk);
       }
       return blk;
@@ -64,9 +61,8 @@ public class FileMgr {
    public int length(String filename) {
       try {
          RandomAccessFile f = getFile(filename);
-         return (int)(f.length() / blocksize);
-      }
-      catch (IOException e) {
+         return (int) (f.length() / blocksize);
+      } catch (IOException e) {
          throw new RuntimeException("cannot access " + filename);
       }
    }
@@ -74,7 +70,7 @@ public class FileMgr {
    public boolean isNew() {
       return isNew;
    }
-   
+
    public int blockSize() {
       return blocksize;
    }

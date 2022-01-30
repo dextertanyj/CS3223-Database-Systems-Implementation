@@ -1,13 +1,16 @@
 package simpledb.jdbc.embedded;
 
+import java.rmi.RemoteException;
 import java.sql.SQLException;
+
+import simpledb.jdbc.ConnectionAdapter;
+import simpledb.plan.Planner;
 import simpledb.server.SimpleDB;
 import simpledb.tx.Transaction;
-import simpledb.plan.Planner;
-import simpledb.jdbc.ConnectionAdapter;
 
 /**
  * The embedded implementation of Connection.
+ * 
  * @author Edward Sciore
  */
 
@@ -19,6 +22,7 @@ class EmbeddedConnection extends ConnectionAdapter {
    /**
     * Creates a connection
     * and begins a new transaction for it.
+    * 
     * @throws RemoteException
     */
    public EmbeddedConnection(SimpleDB db) {
@@ -60,10 +64,10 @@ class EmbeddedConnection extends ConnectionAdapter {
    /**
     * Returns the transaction currently associated with
     * this connection. Not public. Called by other JDBC classes.
+    * 
     * @return the transaction associated with this connection
     */
-   Transaction getTransaction() {  
+   Transaction getTransaction() {
       return currentTx;
    }
 }
-

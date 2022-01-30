@@ -1,9 +1,12 @@
 package simpledb.tx.recovery;
 
 import java.util.Iterator;
+
+import simpledb.file.BlockId;
+import simpledb.file.FileMgr;
+import simpledb.file.Page;
+import simpledb.log.LogMgr;
 import simpledb.server.SimpleDB;
-import simpledb.file.*;
-import simpledb.log.*;
 
 public class PrintLogFile {
    public static void main(String[] args) {

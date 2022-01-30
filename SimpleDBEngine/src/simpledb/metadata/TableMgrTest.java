@@ -34,4 +34,3 @@ public class TableMgrTest {
       tx.commit();
    }
 }
-
