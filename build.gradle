@@ -37,3 +37,6 @@ test {
     useJUnitPlatform()
 }
 
+clean.doFirst {
+    delete "${rootDir}/studentdb/"
+}
