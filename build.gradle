@@ -28,7 +28,7 @@ sourceSets {
     }
     test {
         java {
-            srcDirs = ['SimpleDBClients/src', 'SimpleDBEngine/src', 'test']
+            srcDirs = ['SimpleDBClients/src', 'SimpleDBEngine/src']
         }
     }
 }
