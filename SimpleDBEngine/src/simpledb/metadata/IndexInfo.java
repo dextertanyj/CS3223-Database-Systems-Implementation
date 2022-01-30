@@ -1,11 +1,12 @@
 package simpledb.metadata;
 
 import static java.sql.Types.INTEGER;
-import simpledb.tx.Transaction;
-import simpledb.record.*;
+
 import simpledb.index.Index;
 import simpledb.index.hash.HashIndex;
-import simpledb.index.btree.BTreeIndex; //in case we change to btree indexing
+import simpledb.record.Layout;
+import simpledb.record.Schema;
+import simpledb.tx.Transaction;
 
 /**
  * The information about an index.

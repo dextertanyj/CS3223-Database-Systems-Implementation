@@ -1,8 +1,11 @@
 package simpledb.materialize;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
-import simpledb.query.*;
+import simpledb.query.Constant;
+import simpledb.query.Scan;
 
 /**
  * An object that holds the values of the grouping fields

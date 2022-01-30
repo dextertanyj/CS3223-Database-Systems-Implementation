@@ -1,8 +1,8 @@
-import simpledb.tx.Transaction;
 import simpledb.plan.Plan;
 import simpledb.plan.Planner;
-import simpledb.query.*;
+import simpledb.query.Scan;
 import simpledb.server.SimpleDB;
+import simpledb.tx.Transaction;
 
 /* This is a version of the StudentMajor program that
  * accesses the SimpleDB classes directly (instead of

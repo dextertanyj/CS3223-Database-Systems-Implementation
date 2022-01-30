@@ -1,7 +1,8 @@
 package simpledb.buffer;
 
+import simpledb.file.BlockId;
+import simpledb.file.Page;
 import simpledb.server.SimpleDB;
-import simpledb.file.*;
 
 public class BufferTest {
    public static void main(String[] args) {

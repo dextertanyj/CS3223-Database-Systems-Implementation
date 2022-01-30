@@ -1,8 +1,9 @@
 package simpledb.materialize;
 
-import java.util.*;
+import java.util.List;
 
-import simpledb.query.*;
+import simpledb.query.Constant;
+import simpledb.query.Scan;
 
 /**
  * The Scan class for the <i>groupby</i> operator.

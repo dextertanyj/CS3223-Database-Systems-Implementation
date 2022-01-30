@@ -1,9 +1,14 @@
 package simpledb.index;
 
-import java.util.*;
-import simpledb.metadata.*;
-import simpledb.plan.*;
-import simpledb.query.*;
+import java.util.HashMap;
+import java.util.Map;
+
+import simpledb.metadata.IndexInfo;
+import simpledb.metadata.MetadataMgr;
+import simpledb.plan.Plan;
+import simpledb.plan.TablePlan;
+import simpledb.query.Constant;
+import simpledb.query.UpdateScan;
 import simpledb.record.RID;
 import simpledb.server.SimpleDB;
 import simpledb.tx.Transaction;

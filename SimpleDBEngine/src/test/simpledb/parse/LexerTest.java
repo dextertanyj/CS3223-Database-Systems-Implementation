@@ -1,10 +1,12 @@
 package test.simpledb.parse;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import org.junit.jupiter.api.Test;
 
-import simpledb.parse.*;
+import simpledb.parse.BadSyntaxException;
+import simpledb.parse.Lexer;
 import simpledb.query.Operator;
 
 public class LexerTest {

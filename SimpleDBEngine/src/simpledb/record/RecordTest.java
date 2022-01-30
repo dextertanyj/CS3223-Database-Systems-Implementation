@@ -1,7 +1,7 @@
 package simpledb.record;
 
-import simpledb.server.SimpleDB;
 import simpledb.file.BlockId;
+import simpledb.server.SimpleDB;
 import simpledb.tx.Transaction;
 
 public class RecordTest {

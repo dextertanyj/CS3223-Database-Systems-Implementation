@@ -1,10 +1,11 @@
 package simpledb.materialize;
 
-import java.util.*;
-import simpledb.tx.Transaction;
-import simpledb.record.Schema;
+import java.util.List;
+
 import simpledb.plan.Plan;
-import simpledb.query.*;
+import simpledb.query.Scan;
+import simpledb.record.Schema;
+import simpledb.tx.Transaction;
 
 /**
  * The Plan class for the <i>groupby</i> operator.

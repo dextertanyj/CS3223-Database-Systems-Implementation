@@ -1,8 +1,10 @@
 package simpledb.plan;
 
 import java.util.List;
+
+import simpledb.query.ProjectScan;
+import simpledb.query.Scan;
 import simpledb.record.Schema;
-import simpledb.query.*;
 
 /**
  * The Plan class corresponding to the <i>project</i>

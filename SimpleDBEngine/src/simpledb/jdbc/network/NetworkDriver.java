@@ -1,8 +1,11 @@
 package simpledb.jdbc.network;
 
-import java.rmi.registry.*;
-import java.sql.*;
+import java.rmi.registry.LocateRegistry;
+import java.rmi.registry.Registry;
+import java.sql.Connection;
+import java.sql.SQLException;
 import java.util.Properties;
+
 import simpledb.jdbc.DriverAdapter;
 
 /**

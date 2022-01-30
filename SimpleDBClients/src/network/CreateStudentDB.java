@@ -1,6 +1,9 @@
 package network;
 
-import java.sql.*;
+import java.sql.Connection;
+import java.sql.Driver;
+import java.sql.SQLException;
+import java.sql.Statement;
 
 import simpledb.jdbc.network.NetworkDriver;
 

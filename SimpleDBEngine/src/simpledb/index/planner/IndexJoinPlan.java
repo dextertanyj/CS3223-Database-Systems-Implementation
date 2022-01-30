@@ -1,11 +1,12 @@
 package simpledb.index.planner;
 
-import simpledb.record.*;
-import simpledb.query.*;
-import simpledb.metadata.IndexInfo;
-import simpledb.plan.Plan;
 import simpledb.index.Index;
 import simpledb.index.query.IndexJoinScan;
+import simpledb.metadata.IndexInfo;
+import simpledb.plan.Plan;
+import simpledb.query.Scan;
+import simpledb.record.Schema;
+import simpledb.record.TableScan;
 
 /**
  * The Plan class corresponding to the <i>indexjoin</i>

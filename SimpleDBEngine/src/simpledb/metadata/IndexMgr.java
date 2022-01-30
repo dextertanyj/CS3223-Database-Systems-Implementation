@@ -1,10 +1,14 @@
 package simpledb.metadata;
 
-import java.util.*;
 import static simpledb.metadata.TableMgr.MAX_NAME;
-import simpledb.tx.Transaction;
+
+import java.util.HashMap;
+import java.util.Map;
+
+import simpledb.record.Layout;
+import simpledb.record.Schema;
 import simpledb.record.TableScan;
-import simpledb.record.*;
+import simpledb.tx.Transaction;
 
 /**
  * The index manager.

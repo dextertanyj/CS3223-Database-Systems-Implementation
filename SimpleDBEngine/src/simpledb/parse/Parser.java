@@ -1,9 +1,15 @@
 package simpledb.parse;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 
-import simpledb.query.*;
-import simpledb.record.*;
+import simpledb.query.Constant;
+import simpledb.query.Expression;
+import simpledb.query.Operator;
+import simpledb.query.Predicate;
+import simpledb.query.Term;
+import simpledb.record.Schema;
 
 /**
  * The SimpleDB parser.

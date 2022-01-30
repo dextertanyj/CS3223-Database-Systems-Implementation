@@ -1,11 +1,16 @@
 package simpledb.multibuffer;
 
 import static java.sql.Types.INTEGER;
-import java.util.*;
+
+import java.util.ArrayList;
+import java.util.List;
+
 import simpledb.file.BlockId;
-import simpledb.query.*;
+import simpledb.query.Constant;
+import simpledb.query.Scan;
+import simpledb.record.Layout;
+import simpledb.record.RecordPage;
 import simpledb.tx.Transaction;
-import simpledb.record.*;
 
 /**
  * The class for the <i>chunk</i> operator.

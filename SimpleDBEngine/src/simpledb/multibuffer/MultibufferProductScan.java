@@ -1,8 +1,10 @@
 package simpledb.multibuffer;
 
+import simpledb.query.Constant;
+import simpledb.query.ProductScan;
+import simpledb.query.Scan;
+import simpledb.record.Layout;
 import simpledb.tx.Transaction;
-import simpledb.query.*;
-import simpledb.record.*;
 
 /**
  * The Scan class for the multi-buffer version of the

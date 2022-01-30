@@ -1,6 +1,7 @@
 package simpledb.materialize;
 
-import simpledb.query.*;
+import simpledb.query.Constant;
+import simpledb.query.Scan;
 
 /**
  * The <i>count</i> aggregation function.

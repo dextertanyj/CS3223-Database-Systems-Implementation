@@ -1,10 +1,13 @@
 package simpledb.jdbc.network;
 
-import simpledb.record.Schema;
 import static java.sql.Types.INTEGER;
+
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+
+import simpledb.record.Schema;
 
 /**
  * The RMI server-side implementation of RemoteMetaData.

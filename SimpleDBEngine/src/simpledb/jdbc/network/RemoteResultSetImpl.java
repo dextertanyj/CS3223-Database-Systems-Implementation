@@ -1,11 +1,11 @@
 package simpledb.jdbc.network;
 
-import simpledb.plan.Plan;
-import simpledb.query.*;
-import simpledb.record.Schema;
-
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
+
+import simpledb.plan.Plan;
+import simpledb.query.Scan;
+import simpledb.record.Schema;
 
 /**
  * The RMI server-side implementation of RemoteResultSet.

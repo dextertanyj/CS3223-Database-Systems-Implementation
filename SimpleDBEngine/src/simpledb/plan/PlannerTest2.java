@@ -1,8 +1,8 @@
 package simpledb.plan;
 
+import simpledb.query.Scan;
 import simpledb.server.SimpleDB;
 import simpledb.tx.Transaction;
-import simpledb.query.Scan;
 
 public class PlannerTest2 {
    public static void main(String[] args) {

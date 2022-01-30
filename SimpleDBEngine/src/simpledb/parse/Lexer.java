@@ -1,7 +1,10 @@
 package simpledb.parse;
 
-import java.io.*;
-import java.util.*;
+import java.io.IOException;
+import java.io.StreamTokenizer;
+import java.io.StringReader;
+import java.util.Arrays;
+import java.util.Collection;
 
 import simpledb.query.Operator;
 

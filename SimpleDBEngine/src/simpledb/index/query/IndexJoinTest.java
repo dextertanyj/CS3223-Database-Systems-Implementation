@@ -1,14 +1,19 @@
 package simpledb.index.query;
 
 import java.util.Map;
+
+import simpledb.index.Index;
+import simpledb.index.planner.IndexJoinPlan;
+import simpledb.metadata.IndexInfo;
+import simpledb.metadata.MetadataMgr;
+import simpledb.plan.Plan;
+import simpledb.plan.TablePlan;
+import simpledb.query.Constant;
+import simpledb.query.Scan;
+import simpledb.record.RID;
+import simpledb.record.TableScan;
 import simpledb.server.SimpleDB;
 import simpledb.tx.Transaction;
-import simpledb.record.*;
-import simpledb.metadata.*;
-import simpledb.plan.*;
-import simpledb.query.*;
-import simpledb.index.*;
-import simpledb.index.planner.IndexJoinPlan;
 
 // Find the grades of all students.
 

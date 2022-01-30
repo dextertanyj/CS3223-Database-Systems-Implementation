@@ -1,8 +1,15 @@
 package simpledb.parse;
 
-import java.io.*;
-import java.util.*;
-import static java.io.StreamTokenizer.*;
+import static java.io.StreamTokenizer.TT_EOF;
+import static java.io.StreamTokenizer.TT_NUMBER;
+import static java.io.StreamTokenizer.TT_WORD;
+
+import java.io.IOException;
+import java.io.StreamTokenizer;
+import java.io.StringReader;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Scanner;
 
 public class TokenizerTest {
    private static Collection<String> keywords = Arrays.asList("select", "from", "where", "and",

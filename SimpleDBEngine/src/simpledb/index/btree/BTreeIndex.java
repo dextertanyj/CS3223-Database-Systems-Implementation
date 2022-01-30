@@ -1,11 +1,14 @@
 package simpledb.index.btree;
 
 import static java.sql.Types.INTEGER;
+
 import simpledb.file.BlockId;
-import simpledb.tx.Transaction;
-import simpledb.record.*;
 import simpledb.index.Index;
 import simpledb.query.Constant;
+import simpledb.record.Layout;
+import simpledb.record.RID;
+import simpledb.record.Schema;
+import simpledb.tx.Transaction;
 
 /**
  * A B-tree implementation of the Index interface.

@@ -1,11 +1,11 @@
 package simpledb.jdbc.network;
 
+import java.rmi.RemoteException;
+import java.rmi.server.UnicastRemoteObject;
+
 import simpledb.plan.Plan;
 import simpledb.plan.Planner;
 import simpledb.tx.Transaction;
-
-import java.rmi.RemoteException;
-import java.rmi.server.UnicastRemoteObject;
 
 /**
  * The RMI server-side implementation of RemoteStatement.

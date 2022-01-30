@@ -1,12 +1,14 @@
 package simpledb.metadata;
 
-import simpledb.server.SimpleDB;
 import static java.sql.Types.INTEGER;
 
 import java.util.Map;
 
+import simpledb.record.Layout;
+import simpledb.record.Schema;
+import simpledb.record.TableScan;
+import simpledb.server.SimpleDB;
 import simpledb.tx.Transaction;
-import simpledb.record.*;
 
 public class MetadataMgrTest {
    public static void main(String[] args) throws Exception {

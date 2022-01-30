@@ -1,7 +1,8 @@
 package simpledb.tx;
 
 import simpledb.buffer.BufferMgr;
-import simpledb.file.*;
+import simpledb.file.BlockId;
+import simpledb.file.FileMgr;
 import simpledb.log.LogMgr;
 import simpledb.server.SimpleDB;
 

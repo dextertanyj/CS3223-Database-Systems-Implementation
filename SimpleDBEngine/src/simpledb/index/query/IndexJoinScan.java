@@ -1,8 +1,9 @@
 package simpledb.index.query;
 
 import simpledb.index.Index;
+import simpledb.query.Constant;
+import simpledb.query.Scan;
 import simpledb.record.TableScan;
-import simpledb.query.*;
 
 /**
  * The scan class corresponding to the indexjoin relational
