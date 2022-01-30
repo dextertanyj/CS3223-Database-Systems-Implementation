@@ -1,4 +1,4 @@
-package integration;
+package test.integration;
 
 import static java.sql.Types.INTEGER;
 

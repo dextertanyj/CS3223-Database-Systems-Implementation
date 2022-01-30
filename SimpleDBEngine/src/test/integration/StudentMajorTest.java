@@ -1,4 +1,4 @@
-package integration;
+package test.integration;
 
 import simpledb.plan.Plan;
 import simpledb.plan.Planner;

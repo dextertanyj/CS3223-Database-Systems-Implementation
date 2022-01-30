@@ -1,4 +1,4 @@
-package integration;
+package test.integration;
 
 import java.util.Scanner;
 
