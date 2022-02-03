@@ -18,6 +18,18 @@ public class CreateStudentDBTest {
          tx = db.newTx();
          System.out.println("Table STUDENT created.");
 
+         stmt = "create index studentid on STUDENT(SId)";
+         planner.executeUpdate(stmt, tx);
+         tx.commit();
+         tx = db.newTx();
+         System.out.println("Index studentid on STUDENT created.");
+
+         stmt = "create index majorid on STUDENT(MajorId)";
+         planner.executeUpdate(stmt, tx);
+         tx.commit();
+         tx = db.newTx();
+         System.out.println("Index majorid on STUDENT created.");
+
          stmt = "insert into STUDENT(SId, SName, MajorId, GradYear) values ";
          String[] studvals = { "(1, 'joe', 10, 2021)",
                "(2, 'amy', 20, 2020)",
@@ -96,6 +108,12 @@ public class CreateStudentDBTest {
          tx.commit();
          tx = db.newTx();
          System.out.println("Table ENROLL created.");
+
+         stmt = "create index studentid on ENROLL(StudentId)";
+         planner.executeUpdate(stmt, tx);
+         tx.commit();
+         tx = db.newTx();
+         System.out.println("Index studentid on ENROLL created.");
 
          stmt = "insert into ENROLL(EId, StudentId, SectionId, Grade) values ";
          String[] enrollvals = { "(14, 1, 13, 'A')",
