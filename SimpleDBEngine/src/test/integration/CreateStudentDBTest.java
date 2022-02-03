@@ -11,7 +11,7 @@ import simpledb.tx.Transaction;
 
 public class CreateStudentDBTest {
    public static void main(String[] args) {
-      setup("simpledb");
+      setup("studentdb");
    }
 
    public static void setup(String path) {
@@ -28,13 +28,13 @@ public class CreateStudentDBTest {
          tx = db.newTx();
          System.out.println("Table STUDENT created.");
 
-         stmt = "create index studentid on STUDENT(SId)";
+         stmt = "create index studentid on STUDENT(SId) using hash";
          planner.executeUpdate(stmt, tx);
          tx.commit();
          tx = db.newTx();
          System.out.println("Index studentid on STUDENT created.");
 
-         stmt = "create index majorid on STUDENT(MajorId)";
+         stmt = "create index majorid on STUDENT(MajorId) using tree";
          planner.executeUpdate(stmt, tx);
          tx.commit();
          tx = db.newTx();
@@ -119,7 +119,7 @@ public class CreateStudentDBTest {
          tx = db.newTx();
          System.out.println("Table ENROLL created.");
 
-         stmt = "create index studentid on ENROLL(StudentId)";
+         stmt = "create index studentid on ENROLL(StudentId) using hash";
          planner.executeUpdate(stmt, tx);
          tx.commit();
          tx = db.newTx();

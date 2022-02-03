@@ -4,6 +4,7 @@ import static java.sql.Types.INTEGER;
 
 import java.util.Map;
 
+import simpledb.index.IndexType;
 import simpledb.record.Layout;
 import simpledb.record.Schema;
 import simpledb.record.TableScan;
@@ -59,8 +60,8 @@ public class MetadataMgrTest {
       System.out.println("View def = " + v);
 
       // Part 4: Index Metadata
-      mdm.createIndex("indexA", "MyTable", "A", tx);
-      mdm.createIndex("indexB", "MyTable", "B", tx);
+      mdm.createIndex("indexA", "MyTable", "A", IndexType.HASH, tx);
+      mdm.createIndex("indexB", "MyTable", "B", IndexType.TREE, tx);
       Map<String, IndexInfo> idxmap = mdm.getIndexInfo("MyTable", tx);
 
       IndexInfo ii = idxmap.get("A");
