@@ -1,13 +1,23 @@
 package test.integration;
 
+import java.io.File;
+import java.io.IOException;
+
+import org.apache.commons.io.FileUtils;
+
 import simpledb.plan.Planner;
 import simpledb.server.SimpleDB;
 import simpledb.tx.Transaction;
 
 public class CreateStudentDBTest {
    public static void main(String[] args) {
+      setup("simpledb");
+   }
+
+   public static void setup(String path) {
+      System.out.println("Setting up...");
       try {
-         SimpleDB db = new SimpleDB("studentdb");
+         SimpleDB db = new SimpleDB(path);
 
          Transaction tx = db.newTx();
          Planner planner = db.planner();
@@ -133,5 +143,16 @@ public class CreateStudentDBTest {
       } catch (Exception e) {
          e.printStackTrace();
       }
+      System.out.println("Setup complete.");
+   }
+
+   public static void teardown(String path) {
+      System.out.println("Tearing down...");
+      try {
+         FileUtils.deleteDirectory(new File(path));
+      } catch (IOException e) {
+         // Ignore the error
+      }
+      System.out.println("Teardown complete.");
    }
 }
