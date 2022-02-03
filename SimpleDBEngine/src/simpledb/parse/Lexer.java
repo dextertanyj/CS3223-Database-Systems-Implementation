@@ -6,6 +6,7 @@ import java.io.StringReader;
 import java.util.Arrays;
 import java.util.Collection;
 
+import simpledb.parse.CreateIndexData.IndexType;
 import simpledb.query.Operator;
 
 /**
@@ -184,6 +185,7 @@ public class Lexer {
    private void initKeywords() {
       keywords = Arrays.asList("select", "from", "where", "and",
             "insert", "into", "values", "delete", "update", "set",
-            "create", "table", "int", "varchar", "view", "as", "index", "on");
+            "create", "table", "int", "varchar", "view", "as", "index", "on",
+            "using", IndexType.BTREE.getVal(), IndexType.HASH.getVal());
    }
 }

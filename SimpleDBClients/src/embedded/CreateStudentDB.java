@@ -18,6 +18,14 @@ public class CreateStudentDB {
          stmt.executeUpdate(s);
          System.out.println("Table STUDENT created.");
 
+         String indexStmt = "create index majorid on STUDENT(MajorId) using hash";
+         stmt.executeUpdate(indexStmt);
+         System.out.println("Index majorId on STUDENT created.");
+
+         String indexSid = "create index studentid on STUDENT(Sid) using btree";
+         stmt.executeUpdate(indexSid);
+         System.out.println("Index studentid on STUDENT created.");
+
          s = "insert into STUDENT(SId, SName, MajorId, GradYear) values ";
          String[] studvals = { "(1, 'joe', 10, 2021)",
                "(2, 'amy', 20, 2020)",
@@ -76,6 +84,10 @@ public class CreateStudentDB {
          s = "create table ENROLL(EId int, StudentId int, SectionId int, Grade varchar(2))";
          stmt.executeUpdate(s);
          System.out.println("Table ENROLL created.");
+
+         String indexSidEnroll = "create index studentid on ENROLL(StudentId) using btree";
+         stmt.executeUpdate(indexSidEnroll);
+         System.out.println("Index studentid on ENROLL created.");
 
          s = "insert into ENROLL(EId, StudentId, SectionId, Grade) values ";
          String[] enrollvals = { "(14, 1, 13, 'A')",

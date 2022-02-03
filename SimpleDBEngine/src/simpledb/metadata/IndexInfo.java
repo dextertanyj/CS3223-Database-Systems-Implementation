@@ -3,7 +3,9 @@ package simpledb.metadata;
 import static java.sql.Types.INTEGER;
 
 import simpledb.index.Index;
+import simpledb.index.btree.BTreeIndex;
 import simpledb.index.hash.HashIndex;
+import simpledb.parse.CreateIndexData.IndexType;
 import simpledb.record.Layout;
 import simpledb.record.Schema;
 import simpledb.tx.Transaction;
@@ -23,6 +25,7 @@ public class IndexInfo {
    private Schema tblSchema;
    private Layout idxLayout;
    private StatInfo si;
+   private IndexType idxType;
 
    /**
     * Create an IndexInfo object for the specified index.
@@ -41,7 +44,20 @@ public class IndexInfo {
       this.tblSchema = tblSchema;
       this.idxLayout = createIdxLayout();
       this.si = si;
+      this.idxType = IndexType.HASH;
    }
+
+   public IndexInfo(String idxname, String fldname, Schema tblSchema,
+         Transaction tx, StatInfo si, IndexType idxType) {
+      this.idxname = idxname;
+      this.fldname = fldname;
+      this.tx = tx;
+      this.tblSchema = tblSchema;
+      this.idxLayout = createIdxLayout();
+      this.si = si;
+      this.idxType = idxType;
+      }
+
 
    /**
     * Open the index described by this object.
@@ -49,8 +65,11 @@ public class IndexInfo {
     * @return the Index object associated with this information
     */
    public Index open() {
-      return new HashIndex(tx, idxname, idxLayout);
-      // return new BTreeIndex(tx, idxname, idxLayout);
+      if (idxType == IndexType.HASH) {
+         return new HashIndex(tx, idxname, idxLayout);
+      } else {
+         return new BTreeIndex(tx, idxname, idxLayout);
+      }
    }
 
    /**
@@ -68,8 +87,11 @@ public class IndexInfo {
    public int blocksAccessed() {
       int rpb = tx.blockSize() / idxLayout.slotSize();
       int numblocks = si.recordsOutput() / rpb;
-      return HashIndex.searchCost(numblocks, rpb);
-      // return BTreeIndex.searchCost(numblocks, rpb);
+      if (idxType == IndexType.HASH) {
+         return HashIndex.searchCost(numblocks, rpb);
+      } else {
+         return BTreeIndex.searchCost(numblocks, rpb);
+      }
    }
 
    /**

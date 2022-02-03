@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+import simpledb.parse.CreateIndexData.IndexType;
 import simpledb.query.Constant;
 import simpledb.query.Expression;
 import simpledb.query.Operator;
@@ -245,6 +246,13 @@ public class Parser {
       lex.eatDelim('(');
       String fldname = field();
       lex.eatDelim(')');
-      return new CreateIndexData(idxname, tblname, fldname);
+      lex.eatKeyword("using");
+      if (lex.matchKeyword(IndexType.BTREE.getVal())) {
+         lex.eatKeyword(IndexType.BTREE.getVal());
+         return new CreateIndexData(idxname, tblname, fldname, IndexType.BTREE);
+      } else {
+         lex.eatKeyword(IndexType.HASH.getVal());
+         return new CreateIndexData(idxname, tblname, fldname, IndexType.HASH);
+      }
    }
 }
