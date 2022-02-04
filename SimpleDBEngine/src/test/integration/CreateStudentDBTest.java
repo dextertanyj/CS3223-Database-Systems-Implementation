@@ -34,7 +34,7 @@ public class CreateStudentDBTest {
          tx = db.newTx();
          System.out.println("Index studentid on STUDENT created.");
 
-         stmt = "create index majorid on STUDENT(MajorId) using tree";
+         stmt = "create index majorid on STUDENT(MajorId) using btree";
          planner.executeUpdate(stmt, tx);
          tx.commit();
          tx = db.newTx();
