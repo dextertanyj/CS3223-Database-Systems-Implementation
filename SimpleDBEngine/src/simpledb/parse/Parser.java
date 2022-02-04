@@ -247,10 +247,12 @@ public class Parser {
       String fldname = field();
       lex.eatDelim(')');
       lex.eatKeyword("using");
-      if (lex.matchKeyword("hash")) {
+      if (lex.matchKeyword(IndexType.HASH.toString())) {
+         lex.eatKeyword(IndexType.HASH.toString());
          return new CreateIndexData(idxname, tblname, fldname, IndexType.HASH);
       }
-      if (lex.matchKeyword("tree")) {
+      if (lex.matchKeyword(IndexType.TREE.toString())) {
+         lex.eatKeyword(IndexType.TREE.toString());
          return new CreateIndexData(idxname, tblname, fldname, IndexType.TREE);
       }
       throw new BadSyntaxException();

@@ -1,7 +1,7 @@
 package simpledb.index;
 
 public enum IndexType {
-    TREE("tree"),
+    TREE("btree"),
     HASH("hash");
 
     private final String str;
