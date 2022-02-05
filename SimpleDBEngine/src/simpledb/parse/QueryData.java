@@ -1,5 +1,6 @@
 package simpledb.parse;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
@@ -14,6 +15,7 @@ public class QueryData {
    private List<String> fields;
    private Collection<String> tables;
    private Predicate pred;
+   private List<SortField> sortFields;
 
    /**
     * Saves the field and table list and predicate.
@@ -22,6 +24,14 @@ public class QueryData {
       this.fields = fields;
       this.tables = tables;
       this.pred = pred;
+      this.sortFields = new ArrayList<>();
+   }
+
+   public QueryData(List<String> fields, Collection<String> tables, Predicate pred, List<SortField> sortFields) {
+      this.fields = fields;
+      this.tables = tables;
+      this.pred = pred;
+      this.sortFields = sortFields;
    }
 
    /**
@@ -31,6 +41,14 @@ public class QueryData {
     */
    public List<String> fields() {
       return fields;
+   }
+
+   public List<SortField> sortFields() {
+      return sortFields;
+   }
+
+   public boolean isSortFieldEmpty() {
+      return sortFields.size() == 0;
    }
 
    /**
@@ -64,6 +82,13 @@ public class QueryData {
       String predstring = pred.toString();
       if (!predstring.equals(""))
          result += " where " + predstring;
+      if (!isSortFieldEmpty()) {
+         result += " order by ";
+         for (SortField fld : sortFields) {
+            result += fld.getField() + "(" + fld.getSortOrder().toString() + ")" + ", ";
+         }
+         result = result.substring(0, result.length() - 2); 
+      }
       return result;
    }
 }

@@ -11,6 +11,7 @@ import simpledb.query.Operator;
 import simpledb.query.Predicate;
 import simpledb.query.Term;
 import simpledb.record.Schema;
+import simpledb.parse.SortField.SortOrder;
 
 /**
  * The SimpleDB parser.
@@ -72,7 +73,49 @@ public class Parser {
          lex.eatKeyword("where");
          pred = predicate();
       }
-      return new QueryData(fields, tables, pred);
+
+      List<SortField> sortFields = new ArrayList<>();
+      if (lex.matchKeyword("order")) {
+         lex.eatKeyword("order");
+         lex.eatKeyword("by");
+         sortFields.addAll(setSortOrder(fields)); 
+      }
+      
+      System.out.println("XXXXX");
+      for (SortField sf : sortFields) {
+         System.out.println(sf.getField() + " " + sf.getSortOrder().toString());
+      }
+      return new QueryData(fields, tables, pred, sortFields);
+   }
+
+   private void setQueryField(String fieldStr, List<SortField> sortFields, List<String> fields, SortOrder ord) {
+      for (String field : fields) {
+         if (fieldStr.equals(field)) {
+            sortFields.add(new SortField(fieldStr, ord));
+            return;
+         }
+      }
+      throw new BadSyntaxException();
+   }
+
+   private List<SortField> setSortOrder(List<String> fields) {
+      List<SortField> sortFields = new ArrayList<>(); 
+      String fieldStr = field();
+      SortOrder ord = SortOrder.Asc;
+      if (lex.matchKeyword("desc")) {
+         lex.eatKeyword("desc");
+         ord = SortOrder.Desc;
+      } else if (lex.matchKeyword("asc")) {
+         lex.eatKeyword("asc");
+      }
+      setQueryField(fieldStr, sortFields, fields, ord);
+
+      if (lex.matchDelim(',')) {
+         lex.eatDelim(',');
+         sortFields.addAll(setSortOrder(fields));
+      }
+
+      return sortFields;
    }
 
    private List<String> selectList() {

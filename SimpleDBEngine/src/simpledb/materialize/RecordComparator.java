@@ -3,6 +3,8 @@ package simpledb.materialize;
 import java.util.Comparator;
 import java.util.List;
 
+import simpledb.parse.SortField;
+import simpledb.parse.SortField.SortOrder;
 import simpledb.query.Constant;
 import simpledb.query.Scan;
 
@@ -12,7 +14,7 @@ import simpledb.query.Scan;
  * @author Edward Sciore
  */
 public class RecordComparator implements Comparator<Scan> {
-   private List<String> fields;
+   private List<SortField> fields;
 
    /**
     * Create a comparator using the specified fields,
@@ -20,8 +22,16 @@ public class RecordComparator implements Comparator<Scan> {
     * 
     * @param fields a list of field names
     */
-   public RecordComparator(List<String> fields) {
+   public RecordComparator(List<SortField> fields) {
       this.fields = fields;
+   }
+
+   private int compare(Constant val1, Constant val2, SortOrder ord) {
+      int result = val1.compareTo(val2);
+      if (SortOrder.Desc.equals(ord)) {
+         return -1 * result;
+      }
+      return result;
    }
 
    /**
@@ -39,10 +49,10 @@ public class RecordComparator implements Comparator<Scan> {
     *         field list
     */
    public int compare(Scan s1, Scan s2) {
-      for (String fldname : fields) {
-         Constant val1 = s1.getVal(fldname);
-         Constant val2 = s2.getVal(fldname);
-         int result = val1.compareTo(val2);
+      for (SortField qf : fields) {
+         Constant val1 = s1.getVal(qf.getField());
+         Constant val2 = s2.getVal(qf.getField());
+         int result = compare(val1, val2, qf.getSortOrder());
          if (result != 0)
             return result;
       }

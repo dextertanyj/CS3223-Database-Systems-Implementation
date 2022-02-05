@@ -2,6 +2,7 @@ package embedded;
 
 import java.sql.Connection;
 import java.sql.Driver;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 
@@ -87,6 +88,16 @@ public class CreateStudentDB {
          for (int i = 0; i < enrollvals.length; i++)
             stmt.executeUpdate(s + enrollvals[i]);
          System.out.println("ENROLL records inserted.");
+
+         String queryStr = "Select SId, SName, MajorId, GradYear from student order by GradYear, MajorId Desc;";
+         ResultSet rs = stmt.executeQuery(queryStr);
+         while (rs.next()) {
+            int id = rs.getInt("Sid");
+            String name = rs.getString("Sname");
+            int year = rs.getInt("GradYear");
+            int major = rs.getInt("MajorId");
+            System.out.println(id + "\t" + name + "\t" + year + "\t" + major);
+         }
       } catch (SQLException e) {
          e.printStackTrace();
       }
