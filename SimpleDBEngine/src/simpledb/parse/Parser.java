@@ -5,6 +5,8 @@ import java.util.Collection;
 import java.util.List;
 
 import simpledb.index.IndexType;
+import simpledb.materialize.SortClause;
+import simpledb.materialize.SortOrder;
 import simpledb.query.Constant;
 import simpledb.query.Expression;
 import simpledb.query.Operator;
@@ -72,6 +74,12 @@ public class Parser {
          lex.eatKeyword("where");
          pred = predicate();
       }
+      if (lex.matchKeyword("order")) {
+         lex.eatKeyword("order");
+         lex.eatKeyword("by");
+         List<SortClause> orderclauses = orderList();
+         return new QueryData(fields, tables, pred, orderclauses);
+      }
       return new QueryData(fields, tables, pred);
    }
 
@@ -91,6 +99,25 @@ public class Parser {
       if (lex.matchDelim(',')) {
          lex.eatDelim(',');
          L.addAll(tableList());
+      }
+      return L;
+   }
+
+   private List<SortClause> orderList() {
+      List<SortClause> L = new ArrayList<SortClause>();
+      String fieldname = field();
+      if (lex.matchKeyword(SortOrder.DESCENING.toString())) {
+         lex.eatKeyword(SortOrder.DESCENING.toString());
+         L.add(new SortClause(fieldname, SortOrder.DESCENING));
+      } else {
+         if (lex.matchKeyword(SortOrder.ASCENDING.toString())) {
+            lex.eatKeyword(SortOrder.ASCENDING.toString());
+         }
+         L.add(new SortClause(fieldname, SortOrder.ASCENDING));
+      }
+      if (lex.matchDelim(',')) {
+         lex.eatDelim(',');
+         L.addAll(orderList());
       }
       return L;
    }

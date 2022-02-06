@@ -6,6 +6,8 @@ import java.io.StringReader;
 import java.util.Arrays;
 import java.util.Collection;
 
+import javax.swing.SortOrder;
+
 import simpledb.index.IndexType;
 import simpledb.query.Operator;
 
@@ -186,6 +188,7 @@ public class Lexer {
       keywords = Arrays.asList("select", "from", "where", "and",
             "insert", "into", "values", "delete", "update", "set",
             "create", "table", "int", "varchar", "view", "as", "index", "on",
-            "using", IndexType.HASH.toString(), IndexType.TREE.toString());
+            "using", IndexType.HASH.toString(), IndexType.TREE.toString(),
+            "order", "by", SortOrder.ASCENDING.toString(), SortOrder.DESCENDING.toString());
    }
 }

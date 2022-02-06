@@ -1,8 +1,11 @@
 package simpledb.parse;
 
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Iterator;
 import java.util.List;
 
+import simpledb.materialize.SortClause;
 import simpledb.query.Predicate;
 
 /**
@@ -14,14 +17,20 @@ public class QueryData {
    private List<String> fields;
    private Collection<String> tables;
    private Predicate pred;
+   private List<SortClause> sortclauses;
 
    /**
     * Saves the field and table list and predicate.
     */
    public QueryData(List<String> fields, Collection<String> tables, Predicate pred) {
+      this(fields, tables, pred, null);
+   }
+
+   public QueryData(List<String> fields, Collection<String> tables, Predicate pred, List<SortClause> sortclauses) {
       this.fields = fields;
       this.tables = tables;
       this.pred = pred;
+      this.sortclauses = sortclauses;
    }
 
    /**
@@ -52,6 +61,10 @@ public class QueryData {
       return pred;
    }
 
+   public List<SortClause> sortclauses() {
+      return sortclauses;
+   }
+
    public String toString() {
       String result = "select ";
       for (String fldname : fields)
@@ -64,6 +77,14 @@ public class QueryData {
       String predstring = pred.toString();
       if (!predstring.equals(""))
          result += " where " + predstring;
+      if (sortclauses != null) {
+         result += " order by ";
+         Iterator<SortClause> iter = sortclauses.iterator();
+         result += iter.next().toString();
+         while (iter.hasNext()) {
+            result += ", " + iter.next().toString();
+         }
+      }
       return result;
    }
 }

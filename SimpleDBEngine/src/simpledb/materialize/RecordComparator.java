@@ -1,5 +1,6 @@
 package simpledb.materialize;
 
+import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
 
@@ -12,7 +13,7 @@ import simpledb.query.Scan;
  * @author Edward Sciore
  */
 public class RecordComparator implements Comparator<Scan> {
-   private List<String> fields;
+   private List<SortClause> clauses;
 
    /**
     * Create a comparator using the specified fields,
@@ -20,8 +21,8 @@ public class RecordComparator implements Comparator<Scan> {
     * 
     * @param fields a list of field names
     */
-   public RecordComparator(List<String> fields) {
-      this.fields = fields;
+   public RecordComparator(List<SortClause> clauses) {
+      this.clauses = clauses;
    }
 
    /**
@@ -39,12 +40,13 @@ public class RecordComparator implements Comparator<Scan> {
     *         field list
     */
    public int compare(Scan s1, Scan s2) {
-      for (String fldname : fields) {
-         Constant val1 = s1.getVal(fldname);
-         Constant val2 = s2.getVal(fldname);
+      for (SortClause clause : clauses) {
+         String field = clause.getField();
+         Constant val1 = s1.getVal(field);
+         Constant val2 = s2.getVal(field);
          int result = val1.compareTo(val2);
          if (result != 0)
-            return result;
+            return clause.getOrder().getModifier() * result;
       }
       return 0;
    }

@@ -20,6 +20,14 @@ public class SortPlan implements Plan {
    private Schema sch;
    private RecordComparator comp;
 
+   public static List<SortClause> generateDefaultSort(List<String> fieldnames) {
+      List<SortClause> sortclauses = new ArrayList<>();
+      for (String field : fieldnames) {
+         sortclauses.add(new SortClause(field, SortOrder.ASCENDING));
+      }
+      return sortclauses;
+   }
+
    /**
     * Create a sort plan for the specified query.
     * 
@@ -27,11 +35,11 @@ public class SortPlan implements Plan {
     * @param sortfields the fields to sort by
     * @param tx         the calling transaction
     */
-   public SortPlan(Transaction tx, Plan p, List<String> sortfields) {
+   public SortPlan(Transaction tx, Plan p, List<SortClause> sortclauses) {
       this.tx = tx;
       this.p = p;
       sch = p.schema();
-      comp = new RecordComparator(sortfields);
+      comp = new RecordComparator(sortclauses);
    }
 
    /**
