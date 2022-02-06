@@ -16,7 +16,7 @@ import simpledb.tx.Transaction;
 
 public class IndexUpdateTest {
    public static void main(String[] args) {
-      CreateStudentDBTest.setup("studentdbtest");
+      TestUtils.setup("studentdbtest");
 
       SimpleDB db = new SimpleDB("studentdbtest");
       Transaction tx = db.newTx();
@@ -78,6 +78,6 @@ public class IndexUpdateTest {
          idx.close();
       tx.commit();
 
-      CreateStudentDBTest.teardown("studentdbtest");
+      TestUtils.teardown("studentdbtest");
    }
 }
