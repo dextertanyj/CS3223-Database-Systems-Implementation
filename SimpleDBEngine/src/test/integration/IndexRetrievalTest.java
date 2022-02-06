@@ -1,7 +1,8 @@
-package simpledb.index;
+package test.integration;
 
 import java.util.Map;
 
+import simpledb.index.Index;
 import simpledb.metadata.IndexInfo;
 import simpledb.metadata.MetadataMgr;
 import simpledb.plan.Plan;
@@ -14,7 +15,11 @@ import simpledb.tx.Transaction;
 
 public class IndexRetrievalTest {
    public static void main(String[] args) {
-      SimpleDB db = new SimpleDB("studentdb");
+      CreateStudentDBTest.setup("studentdbtest");
+
+      System.out.println("Start test");
+
+      SimpleDB db = new SimpleDB("studentdbtest");
       Transaction tx = db.newTx();
       MetadataMgr mdm = db.mdMgr();
 
@@ -40,5 +45,9 @@ public class IndexRetrievalTest {
       idx.close();
       studentscan.close();
       tx.commit();
+
+      System.out.println("End test");
+
+      CreateStudentDBTest.teardown("studentdbtest");
    }
 }

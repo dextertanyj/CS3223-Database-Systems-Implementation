@@ -1,8 +1,9 @@
-package simpledb.index;
+package test.integration;
 
 import java.util.HashMap;
 import java.util.Map;
 
+import simpledb.index.Index;
 import simpledb.metadata.IndexInfo;
 import simpledb.metadata.MetadataMgr;
 import simpledb.plan.Plan;
@@ -15,7 +16,9 @@ import simpledb.tx.Transaction;
 
 public class IndexUpdateTest {
    public static void main(String[] args) {
-      SimpleDB db = new SimpleDB("studentdb");
+      CreateStudentDBTest.setup("studentdbtest");
+
+      SimpleDB db = new SimpleDB("studentdbtest");
       Transaction tx = db.newTx();
       MetadataMgr mdm = db.mdMgr();
       Plan studentplan = new TablePlan(tx, "student", mdm);
@@ -74,5 +77,7 @@ public class IndexUpdateTest {
       for (Index idx : indexes.values())
          idx.close();
       tx.commit();
+
+      CreateStudentDBTest.teardown("studentdbtest");
    }
 }

@@ -3,6 +3,8 @@ package simpledb.metadata;
 import static java.sql.Types.INTEGER;
 
 import simpledb.index.Index;
+import simpledb.index.IndexType;
+import simpledb.index.btree.BTreeIndex;
 import simpledb.index.hash.HashIndex;
 import simpledb.record.Layout;
 import simpledb.record.Schema;
@@ -19,6 +21,7 @@ import simpledb.tx.Transaction;
  */
 public class IndexInfo {
    private String idxname, fldname;
+   private IndexType type;
    private Transaction tx;
    private Schema tblSchema;
    private Layout idxLayout;
@@ -33,10 +36,11 @@ public class IndexInfo {
     * @param tblSchema the schema of the table
     * @param si        the statistics for the table
     */
-   public IndexInfo(String idxname, String fldname, Schema tblSchema,
+   public IndexInfo(String idxname, String fldname, IndexType type, Schema tblSchema,
          Transaction tx, StatInfo si) {
       this.idxname = idxname;
       this.fldname = fldname;
+      this.type = type;
       this.tx = tx;
       this.tblSchema = tblSchema;
       this.idxLayout = createIdxLayout();
@@ -49,8 +53,13 @@ public class IndexInfo {
     * @return the Index object associated with this information
     */
    public Index open() {
-      return new HashIndex(tx, idxname, idxLayout);
-      // return new BTreeIndex(tx, idxname, idxLayout);
+      if (this.type.equals(IndexType.HASH)) {
+         return new HashIndex(tx, idxname, idxLayout);
+      }
+      if (this.type.equals(IndexType.TREE)) {
+         return new BTreeIndex(tx, idxname, idxLayout);
+      }
+      throw new RuntimeException();
    }
 
    /**
@@ -68,8 +77,13 @@ public class IndexInfo {
    public int blocksAccessed() {
       int rpb = tx.blockSize() / idxLayout.slotSize();
       int numblocks = si.recordsOutput() / rpb;
-      return HashIndex.searchCost(numblocks, rpb);
-      // return BTreeIndex.searchCost(numblocks, rpb);
+      if (this.type.equals(IndexType.HASH)) {
+         return HashIndex.searchCost(numblocks, rpb);
+      }
+      if (this.type.equals(IndexType.TREE)) {
+         return BTreeIndex.searchCost(numblocks, rpb);
+      }
+      throw new RuntimeException();
    }
 
    /**

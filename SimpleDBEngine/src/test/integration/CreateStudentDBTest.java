@@ -1,13 +1,23 @@
 package test.integration;
 
+import java.io.File;
+import java.io.IOException;
+
+import org.apache.commons.io.FileUtils;
+
 import simpledb.plan.Planner;
 import simpledb.server.SimpleDB;
 import simpledb.tx.Transaction;
 
 public class CreateStudentDBTest {
    public static void main(String[] args) {
+      setup("studentdb");
+   }
+
+   public static void setup(String path) {
+      System.out.println("Setting up...");
       try {
-         SimpleDB db = new SimpleDB("studentdb");
+         SimpleDB db = new SimpleDB(path);
 
          Transaction tx = db.newTx();
          Planner planner = db.planner();
@@ -17,6 +27,18 @@ public class CreateStudentDBTest {
          tx.commit();
          tx = db.newTx();
          System.out.println("Table STUDENT created.");
+
+         stmt = "create index studentid on STUDENT(SId) using hash";
+         planner.executeUpdate(stmt, tx);
+         tx.commit();
+         tx = db.newTx();
+         System.out.println("Index studentid on STUDENT created.");
+
+         stmt = "create index majorid on STUDENT(MajorId) using btree";
+         planner.executeUpdate(stmt, tx);
+         tx.commit();
+         tx = db.newTx();
+         System.out.println("Index majorid on STUDENT created.");
 
          stmt = "insert into STUDENT(SId, SName, MajorId, GradYear) values ";
          String[] studvals = { "(1, 'joe', 10, 2021)",
@@ -97,6 +119,12 @@ public class CreateStudentDBTest {
          tx = db.newTx();
          System.out.println("Table ENROLL created.");
 
+         stmt = "create index studentid on ENROLL(StudentId) using hash";
+         planner.executeUpdate(stmt, tx);
+         tx.commit();
+         tx = db.newTx();
+         System.out.println("Index studentid on ENROLL created.");
+
          stmt = "insert into ENROLL(EId, StudentId, SectionId, Grade) values ";
          String[] enrollvals = { "(14, 1, 13, 'A')",
                "(24, 1, 43, 'C' )",
@@ -115,5 +143,16 @@ public class CreateStudentDBTest {
       } catch (Exception e) {
          e.printStackTrace();
       }
+      System.out.println("Setup complete.");
+   }
+
+   public static void teardown(String path) {
+      System.out.println("Tearing down...");
+      try {
+         FileUtils.deleteDirectory(new File(path));
+      } catch (IOException e) {
+         // Ignore the error
+      }
+      System.out.println("Teardown complete.");
    }
 }

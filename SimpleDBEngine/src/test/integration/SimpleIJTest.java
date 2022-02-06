@@ -14,8 +14,9 @@ import simpledb.tx.Transaction;
 
 public class SimpleIJTest {
    public static void main(String[] args) {
+      CreateStudentDBTest.setup("studentdbtest");
       try (Scanner sc = new Scanner(System.in)) {
-         SimpleDB db = new SimpleDB("studentdb");
+         SimpleDB db = new SimpleDB("studentdbtest");
 
          Transaction tx = db.newTx();
          Planner planner = db.planner();
@@ -37,6 +38,7 @@ public class SimpleIJTest {
       } catch (Exception e) {
          e.printStackTrace();
       }
+      CreateStudentDBTest.teardown("studentdbtest");
    }
 
    private static void doQuery(Planner planner, Transaction tx, String cmd) {

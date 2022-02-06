@@ -1,4 +1,4 @@
-package simpledb.index.query;
+package test.integration;
 
 import java.util.Map;
 
@@ -19,7 +19,9 @@ import simpledb.tx.Transaction;
 
 public class IndexSelectTest {
 	public static void main(String[] args) {
-		SimpleDB db = new SimpleDB("studentdb");
+		CreateStudentDBTest.setup("studentdbtest");
+
+		SimpleDB db = new SimpleDB("studentdbtest");
 		MetadataMgr mdm = db.mdMgr();
 		Transaction tx = db.newTx();
 
@@ -38,6 +40,8 @@ public class IndexSelectTest {
 		useIndexScan(sidIdx, enrollplan, c);
 
 		tx.commit();
+
+		CreateStudentDBTest.teardown("studentdbtest");
 	}
 
 	private static void useIndexManually(IndexInfo ii, Plan p, Constant c) {

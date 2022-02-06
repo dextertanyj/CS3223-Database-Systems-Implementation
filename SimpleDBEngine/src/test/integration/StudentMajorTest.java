@@ -16,9 +16,15 @@ import simpledb.tx.Transaction;
 
 public class StudentMajorTest {
    public static void main(String[] args) {
+      CreateStudentDBTest.setup("studentdbtest");
+      run("studentdbtest");
+      CreateStudentDBTest.teardown("studentdbtest");
+   }
+
+   public static void run(String path) {
       try {
          // analogous to the driver
-         SimpleDB db = new SimpleDB("studentdb");
+         SimpleDB db = new SimpleDB(path);
 
          // analogous to the connection
          Transaction tx = db.newTx();

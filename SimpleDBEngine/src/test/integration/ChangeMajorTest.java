@@ -6,8 +6,9 @@ import simpledb.tx.Transaction;
 
 public class ChangeMajorTest {
    public static void main(String[] args) {
+      CreateStudentDBTest.setup("studentdbtest");
       try {
-         SimpleDB db = new SimpleDB("studentdb");
+         SimpleDB db = new SimpleDB("studentdbtest");
 
          Transaction tx = db.newTx();
          Planner planner = db.planner();
@@ -20,5 +21,9 @@ public class ChangeMajorTest {
       } catch (Exception e) {
          e.printStackTrace();
       }
+
+      StudentMajorTest.run("studentdbtest");
+
+      CreateStudentDBTest.teardown("studentdbtest");
    }
 }
