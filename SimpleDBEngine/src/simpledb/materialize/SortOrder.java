@@ -2,7 +2,7 @@ package simpledb.materialize;
 
 public enum SortOrder {
     ASCENDING("asc", 1),
-    DESCENING("desc", -1);
+    DESCENDING("desc", -1);
 
     private final String token;
     private final int modifier;

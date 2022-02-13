@@ -106,9 +106,9 @@ public class Parser {
    private List<SortClause> orderList() {
       List<SortClause> L = new ArrayList<SortClause>();
       String fieldname = field();
-      if (lex.matchKeyword(SortOrder.DESCENING.toString())) {
-         lex.eatKeyword(SortOrder.DESCENING.toString());
-         L.add(new SortClause(fieldname, SortOrder.DESCENING));
+      if (lex.matchKeyword(SortOrder.DESCENDING.toString())) {
+         lex.eatKeyword(SortOrder.DESCENDING.toString());
+         L.add(new SortClause(fieldname, SortOrder.DESCENDING));
       } else {
          if (lex.matchKeyword(SortOrder.ASCENDING.toString())) {
             lex.eatKeyword(SortOrder.ASCENDING.toString());

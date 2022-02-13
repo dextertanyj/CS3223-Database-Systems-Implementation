@@ -6,8 +6,7 @@ import java.io.StringReader;
 import java.util.Arrays;
 import java.util.Collection;
 
-import javax.swing.SortOrder;
-
+import simpledb.materialize.SortOrder;
 import simpledb.index.IndexType;
 import simpledb.query.Operator;
 
