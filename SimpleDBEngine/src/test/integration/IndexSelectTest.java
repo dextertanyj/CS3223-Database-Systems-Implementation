@@ -19,7 +19,7 @@ import simpledb.tx.Transaction;
 
 public class IndexSelectTest {
 	public static void main(String[] args) {
-		CreateStudentDBTest.setup("studentdbtest");
+		TestUtils.setup("studentdbtest");
 
 		SimpleDB db = new SimpleDB("studentdbtest");
 		MetadataMgr mdm = db.mdMgr();
@@ -41,7 +41,7 @@ public class IndexSelectTest {
 
 		tx.commit();
 
-		CreateStudentDBTest.teardown("studentdbtest");
+		TestUtils.teardown("studentdbtest");
 	}
 
 	private static void useIndexManually(IndexInfo ii, Plan p, Constant c) {

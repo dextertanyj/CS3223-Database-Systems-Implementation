@@ -15,7 +15,7 @@ import simpledb.tx.Transaction;
 
 public class IndexRetrievalTest {
    public static void main(String[] args) {
-      CreateStudentDBTest.setup("studentdbtest");
+      TestUtils.setup("studentdbtest");
 
       System.out.println("Start test");
 
@@ -48,6 +48,6 @@ public class IndexRetrievalTest {
 
       System.out.println("End test");
 
-      CreateStudentDBTest.teardown("studentdbtest");
+      TestUtils.teardown("studentdbtest");
    }
 }

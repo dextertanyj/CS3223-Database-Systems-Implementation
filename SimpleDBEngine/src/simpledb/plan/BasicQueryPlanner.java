@@ -3,6 +3,7 @@ package simpledb.plan;
 import java.util.ArrayList;
 import java.util.List;
 
+import simpledb.materialize.SortPlan;
 import simpledb.metadata.MetadataMgr;
 import simpledb.parse.Parser;
 import simpledb.parse.QueryData;
@@ -48,6 +49,13 @@ public class BasicQueryPlanner implements QueryPlanner {
 
       // Step 4: Project on the field names
       p = new ProjectPlan(p, data.fields());
+
+      // Step 5. Sort on the field names
+      if (data.sortclauses() != null) {
+         p = new SortPlan(tx, p, data.sortclauses());
+
+      }
+
       return p;
    }
 }

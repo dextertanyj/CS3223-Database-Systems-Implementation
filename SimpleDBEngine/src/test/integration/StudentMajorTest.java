@@ -16,9 +16,9 @@ import simpledb.tx.Transaction;
 
 public class StudentMajorTest {
    public static void main(String[] args) {
-      CreateStudentDBTest.setup("studentdbtest");
+      TestUtils.setup("studentdbtest");
       run("studentdbtest");
-      CreateStudentDBTest.teardown("studentdbtest");
+      TestUtils.teardown("studentdbtest");
    }
 
    public static void run(String path) {
