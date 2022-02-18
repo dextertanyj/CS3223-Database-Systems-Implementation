@@ -76,6 +76,7 @@ public class IndexInfo {
     */
    public int blocksAccessed() {
       int rpb = tx.blockSize() / idxLayout.slotSize();
+      // TODO: Fix integer rounding
       int numblocks = si.recordsOutput() / rpb;
       if (this.type.equals(IndexType.HASH)) {
          return HashIndex.searchCost(numblocks, rpb);

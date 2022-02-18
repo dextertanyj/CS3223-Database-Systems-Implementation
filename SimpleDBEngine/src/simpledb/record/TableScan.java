@@ -114,6 +114,15 @@ public class TableScan implements UpdateScan {
       return new RID(rp.block().number(), currentslot);
    }
 
+   // Additional methods for nested loop join
+   public void resetSlot() {
+      currentslot = 0;
+   }
+
+   public boolean atLastSlot() {
+      return rp.nextAfter(currentslot) >= 0;
+   }
+
    // Private auxiliary methods
 
    private void moveToBlock(int blknum) {

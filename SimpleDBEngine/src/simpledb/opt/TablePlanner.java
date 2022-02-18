@@ -4,8 +4,10 @@ import java.util.Map;
 
 import simpledb.index.planner.IndexJoinPlan;
 import simpledb.index.planner.IndexSelectPlan;
+import simpledb.join.LoopJoinPlan;
 import simpledb.metadata.IndexInfo;
 import simpledb.metadata.MetadataMgr;
+import simpledb.materialize.MaterializePlan;
 import simpledb.materialize.MergeJoinPlan;
 import simpledb.multibuffer.MultibufferProductPlan;
 import simpledb.plan.Plan;
@@ -76,16 +78,25 @@ class TablePlanner {
       if (joinpred == null)
          return null;
       Plan p = null;
+      Plan loop = makeLoopJoin(current, currsch);
       Plan index = makeIndexJoin(current, currsch);
       Plan merge = makeMergeJoin(current, currsch);
-      if (index == null && merge == null) {
+      if (loop == null && index == null && merge == null) {
          p = makeProductJoin(current, currsch);
-      } else if (index == null) {
-         p = merge;
-      } else if (merge == null) {
-         p = index;
       } else {
-         p = (index.blocksAccessed() < merge.blocksAccessed()) ? index : merge;
+         int loop_cost = loop == null ? Integer.MAX_VALUE : loop.blocksAccessed();
+         int index_cost = index == null ? Integer.MAX_VALUE : index.blocksAccessed();
+         // TODO: Add sort merge cost.
+         int merge_cost = merge == null ? Integer.MAX_VALUE : merge.blocksAccessed();
+         System.out.printf("%s, %s, %s\n", loop_cost, index_cost, merge_cost);
+         int cost = Math.min(loop_cost, Math.min(index_cost, merge_cost));
+         if (cost == loop_cost) {
+            p = loop;
+         } else if (cost == index_cost) {
+            p = index;
+         } else {
+            p = merge;
+         }
       }
       return p;
    }
@@ -109,6 +120,21 @@ class TablePlanner {
             IndexInfo ii = indexes.get(fldname);
             System.out.println("index on " + fldname + " used");
             return new IndexSelectPlan(myplan, ii, val);
+         }
+      }
+      return null;
+   }
+
+   private Plan makeLoopJoin(Plan current, Schema currsch) {
+      if (!(current instanceof TablePlan) && !(current instanceof MaterializePlan)) {
+         return null;
+      }
+      for (String fldname : myschema.fields()) {
+         String outerfield = mypred.equatesWithField(fldname);
+         if (outerfield != null && currsch.hasField(outerfield)) {
+            Plan p = new LoopJoinPlan(myplan, current, fldname, outerfield);
+            p = addSelectPred(p);
+            return addJoinPred(p, currsch);
          }
       }
       return null;
