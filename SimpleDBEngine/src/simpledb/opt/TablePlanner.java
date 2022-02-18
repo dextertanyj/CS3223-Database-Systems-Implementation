@@ -6,6 +6,7 @@ import simpledb.index.planner.IndexJoinPlan;
 import simpledb.index.planner.IndexSelectPlan;
 import simpledb.metadata.IndexInfo;
 import simpledb.metadata.MetadataMgr;
+import simpledb.materialize.MergeJoinPlan;
 import simpledb.multibuffer.MultibufferProductPlan;
 import simpledb.plan.Plan;
 import simpledb.plan.SelectPlan;
@@ -74,9 +75,18 @@ class TablePlanner {
       Predicate joinpred = mypred.joinSubPred(myschema, currsch);
       if (joinpred == null)
          return null;
-      Plan p = makeIndexJoin(current, currsch);
-      if (p == null)
+      Plan p = null;
+      Plan index = makeIndexJoin(current, currsch);
+      Plan merge = makeMergeJoin(current, currsch);
+      if (index == null && merge == null) {
          p = makeProductJoin(current, currsch);
+      } else if (index == null) {
+         p = merge;
+      } else if (merge == null) {
+         p = index;
+      } else {
+         p = (index.blocksAccessed() < merge.blocksAccessed()) ? index : merge;
+      }
       return p;
    }
 
@@ -99,6 +109,18 @@ class TablePlanner {
             IndexInfo ii = indexes.get(fldname);
             System.out.println("index on " + fldname + " used");
             return new IndexSelectPlan(myplan, ii, val);
+         }
+      }
+      return null;
+   }
+
+   private Plan makeMergeJoin(Plan current, Schema currsch) {
+      for (String fldname : myschema.fields()) {
+         String outerfield = mypred.equatesWithField(fldname);
+         if (outerfield != null && currsch.hasField(outerfield)) {
+            Plan p = new MergeJoinPlan(tx, myplan, current, fldname, outerfield);
+            p = addSelectPred(p);
+            return addJoinPred(p, currsch);
          }
       }
       return null;
