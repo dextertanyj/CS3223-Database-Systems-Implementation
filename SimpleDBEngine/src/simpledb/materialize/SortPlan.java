@@ -50,6 +50,15 @@ public class SortPlan implements Plan {
       return new SortScan(runs, comp);
    }
 
+   public Scan openComplete() {
+      Scan src = p.open();
+      List<TempTable> runs = splitIntoRuns(src);
+      src.close();
+      while (runs.size() > 1)
+         runs = doAMergeIteration(runs);
+      return new SortScan(runs, comp);
+   }
+
    /**
     * Return the number of blocks in the sorted table,
     * which is the same as it would be in a

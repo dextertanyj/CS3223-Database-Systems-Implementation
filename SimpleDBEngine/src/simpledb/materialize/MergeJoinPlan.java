@@ -14,7 +14,7 @@ import simpledb.tx.Transaction;
  * @author Edward Sciore
  */
 public class MergeJoinPlan implements Plan {
-   private Plan p1, p2;
+   private SortPlan p1, p2;
    private String fldname1, fldname2;
    private Schema sch = new Schema();
 
@@ -50,8 +50,8 @@ public class MergeJoinPlan implements Plan {
     * @see simpledb.plan.Plan#open()
     */
    public Scan open() {
-      Scan s1 = p1.open();
-      SortScan s2 = (SortScan) p2.open();
+      SortScan s1 = (SortScan) p1.openComplete();
+      SortScan s2 = (SortScan) p2.openComplete();
       return new MergeJoinScan(s1, s2, fldname1, fldname2);
    }
 
