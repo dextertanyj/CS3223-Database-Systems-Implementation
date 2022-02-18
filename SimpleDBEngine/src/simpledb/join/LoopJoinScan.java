@@ -24,8 +24,32 @@ public class LoopJoinScan implements Scan {
     }
 
     public boolean next() {
-        // TODO: Fill in the blanks
-        return false;
+        while (true) {
+            if (inner.atLastSlot()) {
+                if (outer.atLastSlot()) {
+                    if (inner.next()) {
+                        outer.resetSlot();
+                    } else {
+                        inner.close();
+                        if (outer.next()) {
+                            inner.beforeFirst();
+                            inner.next();
+                        } else {
+                            outer.close();
+                            return false;
+                        }
+                    }
+                } else {
+                    inner.resetSlot();
+                    outer.next();
+                }
+            } else {
+                inner.next();
+            }
+            if (inner.getVal(inner_field).equals(outer.getVal(outer_field))) {
+                return true;
+            }
+        }
     }
 
     public int getInt(String fldname) {
