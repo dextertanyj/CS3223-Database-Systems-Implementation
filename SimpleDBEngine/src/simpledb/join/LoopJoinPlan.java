@@ -19,46 +19,22 @@ public class LoopJoinPlan implements Plan {
         sch.addAll(outer.schema());
     }
 
-    /**
-     * Opens an indexjoin scan for this query
-     * 
-     * @see simpledb.plan.Plan#open()
-     */
     public Scan open() {
         TableScan inner_scan = (TableScan) inner.open();
         TableScan outer_scan = (TableScan) outer.open();
         return new LoopJoinScan(inner_scan, outer_scan, inner_field, outer_field);
     }
 
-    /**
-     * Estimates the number of block accesses to compute the join.
-     * The formula is:
-     * 
-     * <pre>
-     *  B(indexjoin(p1,p2,idx)) = B(p1) + R(p1)*B(idx)
-     *       + R(indexjoin(p1,p2,idx)
-     * </pre>
-     * 
-     * @see simpledb.plan.Plan#blocksAccessed()
-     */
     public int blocksAccessed() {
         return outer.blocksAccessed()
                 + (outer.blocksAccessed() * inner.blocksAccessed())
                 + recordsOutput();
     }
 
-    /**
-     * Estimates the number of output records in the join.
-     * The formula is:
-     * 
-     * <pre>
-     * R(indexjoin(p1, p2, idx)) = R(p1) * R(idx)
-     * </pre>
-     * 
-     * @see simpledb.plan.Plan#recordsOutput()
-     */
     public int recordsOutput() {
-        return inner.recordsOutput() * outer.recordsOutput();
+        int maxvals = Math.max(inner.distinctValues(inner_field),
+                outer.distinctValues(outer_field));
+        return (inner.recordsOutput() * outer.recordsOutput()) / maxvals;
     }
 
     /**

@@ -8,34 +8,42 @@ public class LoopJoinScan implements Scan {
     private TableScan inner;
     private TableScan outer;
     private String inner_field, outer_field;
+    private boolean opened;
 
     public LoopJoinScan(TableScan inner, TableScan outer, String inner_field, String outer_field) {
         this.inner = inner;
         this.outer = outer;
         this.inner_field = inner_field;
         this.outer_field = outer_field;
+        beforeFirst();
+        this.opened = false;
     }
 
     public void beforeFirst() {
         outer.beforeFirst();
-        outer.next();
         inner.beforeFirst();
-        inner.next();
     }
 
     public boolean next() {
+        // Handle the opening special case.
+        if (!opened) {
+            opened = true;
+            inner.next();
+            outer.next();
+            if (inner.getVal(inner_field).equals(outer.getVal(outer_field))) {
+                return true;
+            }
+        }
         while (true) {
             if (inner.atLastSlot()) {
                 if (outer.atLastSlot()) {
                     if (inner.next()) {
                         outer.resetSlot();
                     } else {
-                        inner.close();
                         if (outer.next()) {
                             inner.beforeFirst();
                             inner.next();
                         } else {
-                            outer.close();
                             return false;
                         }
                     }

@@ -120,7 +120,7 @@ public class TableScan implements UpdateScan {
    }
 
    public boolean atLastSlot() {
-      return rp.nextAfter(currentslot) >= 0;
+      return rp.nextAfter(currentslot) < 0;
    }
 
    // Private auxiliary methods
