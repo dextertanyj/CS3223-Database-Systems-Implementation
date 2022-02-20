@@ -86,7 +86,6 @@ class TablePlanner {
       } else {
          int loop_cost = loop == null ? Integer.MAX_VALUE : loop.blocksAccessed();
          int index_cost = index == null ? Integer.MAX_VALUE : index.blocksAccessed();
-         // TODO: Add sort merge cost.
          int merge_cost = merge == null ? Integer.MAX_VALUE : merge.blocksAccessed();
          System.out.printf("%s, %s, %s\n", loop_cost, index_cost, merge_cost);
          int cost = Math.min(loop_cost, Math.min(index_cost, merge_cost));

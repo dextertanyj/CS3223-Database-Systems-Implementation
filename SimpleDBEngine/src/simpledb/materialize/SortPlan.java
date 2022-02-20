@@ -69,9 +69,12 @@ public class SortPlan implements Plan {
     * @see simpledb.plan.Plan#blocksAccessed()
     */
    public int blocksAccessed() {
-      // does not include the one-time cost of sorting
+      int buffers = tx.availableBuffs();
+      int run_count = p.blocksAccessed() / buffers;
+      int iterations = (int) Math.ceil(Math.log(run_count) / Math.log(2)); // Runs are merged two at a time
+      int sort_cost = 2 * p.blocksAccessed() * (1 + iterations);
       Plan mp = new MaterializePlan(tx, p); // not opened; just for analysis
-      return mp.blocksAccessed();
+      return mp.blocksAccessed() + sort_cost;
    }
 
    /**
