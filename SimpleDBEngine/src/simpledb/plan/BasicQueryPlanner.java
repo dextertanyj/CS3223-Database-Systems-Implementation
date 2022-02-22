@@ -49,7 +49,11 @@ public class BasicQueryPlanner implements QueryPlanner {
       p = new SelectPlan(p, data.pred());
 
       // Step 4: Project on the field names
-      p = new ProjectPlan(p, data.fields());
+      if (data.aggFns() != null && data.groupFields() == null) {
+         p = new AggProjectPlan(p, data.aggFns());
+      } else {
+         p = new ProjectPlan(p, data.fields());
+      }
 
       // Step 5. Group by selected field names
       if (data.groupFields() != null) {
