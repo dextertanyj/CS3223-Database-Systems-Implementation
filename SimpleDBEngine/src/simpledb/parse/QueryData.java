@@ -5,6 +5,7 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 
+import simpledb.materialize.AggregationFn;
 import simpledb.materialize.SortClause;
 import simpledb.query.Predicate;
 
@@ -18,6 +19,8 @@ public class QueryData {
    private Collection<String> tables;
    private Predicate pred;
    private List<SortClause> sortclauses;
+   private List<String> groupFields;
+   private List<AggregationFn> aggFns;
 
    /**
     * Saves the field and table list and predicate.
@@ -31,6 +34,19 @@ public class QueryData {
       this.tables = tables;
       this.pred = pred;
       this.sortclauses = sortclauses;
+   }
+
+   public QueryData(
+      List<String> fields,
+      Collection<String> tables,
+      Predicate pred,
+      List<SortClause> sortclauses,
+      List<String> groupFields,
+      List<AggregationFn> aggFns
+   ) {
+      this(fields, tables, pred, null);
+      this.groupFields = groupFields;
+      this.aggFns = aggFns;
    }
 
    /**
@@ -63,6 +79,14 @@ public class QueryData {
 
    public List<SortClause> sortclauses() {
       return sortclauses;
+   }
+
+   public List<AggregationFn> aggFns() {
+      return aggFns;
+   }
+
+   public List<String> groupFields() {
+      return groupFields;
    }
 
    public String toString() {

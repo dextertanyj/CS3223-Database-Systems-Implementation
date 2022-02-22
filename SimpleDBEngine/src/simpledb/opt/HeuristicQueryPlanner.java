@@ -3,6 +3,7 @@ package simpledb.opt;
 import java.util.ArrayList;
 import java.util.Collection;
 
+import simpledb.materialize.GroupByPlan;
 import simpledb.materialize.SortPlan;
 import simpledb.metadata.MetadataMgr;
 import simpledb.parse.QueryData;
@@ -56,10 +57,14 @@ public class HeuristicQueryPlanner implements QueryPlanner {
       // Step 4. Project on the field names
       currentplan = new ProjectPlan(currentplan, data.fields());
 
-      // Step 5. Sort on the field names
+      // Step 5. Group by selected field names
+      if (data.groupFields() != null) {
+         currentplan = new GroupByPlan(tx, currentplan, data.groupFields(), data.aggFns());
+      }
+      
+      // Step 6. Sort on the field names
       if (data.sortclauses() != null) {
          currentplan = new SortPlan(tx, currentplan, data.sortclauses());
-
       }
 
       return currentplan;
