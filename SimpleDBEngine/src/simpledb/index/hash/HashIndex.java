@@ -35,6 +35,10 @@ public class HashIndex implements Index {
 		this.layout = layout;
 	}
 
+	public int getHashValue() {
+		return NUM_BUCKETS;
+	}
+
 	/**
 	 * Positions the index before the first index record
 	 * having the specified search key.
@@ -51,6 +55,20 @@ public class HashIndex implements Index {
 		int bucket = searchkey.hashCode() % NUM_BUCKETS;
 		String tblname = idxname + bucket;
 		ts = new TableScan(tx, tblname, layout);
+	}
+
+	public void beforeFirstBlock(int partitionIdx) {
+		close();
+		String tblname = idxname + partitionIdx;
+		ts = new TableScan(tx, tblname, layout);
+	}
+
+	public boolean nextRecord() {
+		if (ts.next()) {
+			return true;
+		} else {
+			return false;
+		}
 	}
 
 	/**

@@ -81,4 +81,8 @@ public class TablePlan implements Plan {
    public Schema schema() {
       return layout.schema();
    }
+
+   public String tblname() {
+      return tblname;
+   }
 }

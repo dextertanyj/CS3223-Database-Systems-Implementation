@@ -2,8 +2,10 @@ package simpledb.opt;
 
 import java.util.Map;
 
+import simpledb.index.IndexType;
 import simpledb.index.planner.IndexJoinPlan;
 import simpledb.index.planner.IndexSelectPlan;
+import simpledb.join.HashJoinPlan;
 import simpledb.join.LoopJoinPlan;
 import simpledb.metadata.IndexInfo;
 import simpledb.metadata.MetadataMgr;
@@ -29,6 +31,7 @@ class TablePlanner {
    private Schema myschema;
    private Map<String, IndexInfo> indexes;
    private Transaction tx;
+   private MetadataMgr mdm;
 
    /**
     * Creates a new table planner.
@@ -47,6 +50,7 @@ class TablePlanner {
       myplan = new TablePlan(tx, tblname, mdm);
       myschema = myplan.schema();
       indexes = mdm.getIndexInfo(tblname, tx);
+      this.mdm = mdm;
    }
 
    /**
@@ -162,6 +166,27 @@ class TablePlanner {
          }
       }
       return null;
+   }
+
+   // TODO integrate this method with makeJoinPlan()
+   private Plan makeHashJoin(Plan current, Schema currsch) {
+      TablePlan currentPlan = (TablePlan) current;
+
+      for (String fldname : myschema.fields()) {
+         String outerfield = mypred.equatesWithField(fldname);
+         if (outerfield != null && currsch.hasField(outerfield)) {
+            mdm.createIndex(outerfield + "idx", myplan.tblname(), outerfield, IndexType.HASH, tx);
+            IndexInfo myplanIi = mdm.getIndexInfo(myplan.tblname(), tx).get(fldname);
+
+            mdm.createIndex(outerfield + "idx", currentPlan.tblname(), outerfield, IndexType.HASH, tx);
+            IndexInfo currentPlanIi = mdm.getIndexInfo(currentPlan.tblname(), tx).get(fldname);
+
+            Plan p = new HashJoinPlan(myplan, currentPlan, myplanIi, currentPlanIi, fldname, tx);
+            p = addSelectPred(p);
+            return addJoinPred(p, currsch);
+         }
+      }
+      return null; 
    }
 
    private Plan makeProductJoin(Plan current, Schema currsch) {
