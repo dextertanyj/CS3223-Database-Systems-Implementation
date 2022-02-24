@@ -53,14 +53,14 @@ public class HashJoinTable {
   }
 
   public void clear() {
+    beforeFirst();
     for (int i = 0; i < hashTable.size(); i++) {
       TableScan ts = hashTable.get(i);
-      ts.beforeFirst();
       while (ts.next()) {
         ts.delete();
       }
-      ts.beforeFirst();
     }
+    beforeFirst();
   }
 
   public void close() {

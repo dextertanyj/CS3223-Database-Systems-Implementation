@@ -5,19 +5,12 @@ import java.util.ArrayList;
 import simpledb.index.hash.HashIndex;
 import simpledb.materialize.TempTable;
 import simpledb.metadata.IndexInfo;
-import simpledb.metadata.MetadataMgr;
 import simpledb.plan.Plan;
 import simpledb.query.Scan;
 import simpledb.record.Schema;
 import simpledb.record.TableScan;
 import simpledb.tx.Transaction;
 
-/**
- * The Plan class corresponding to the <i>indexjoin</i>
- * relational algebra operator.
- * 
- * @author Edward Sciore
- */
 public class HashJoinPlan implements Plan {
    private Plan p1, p2;
    private IndexInfo ii1, ii2;
@@ -25,15 +18,6 @@ public class HashJoinPlan implements Plan {
    private Schema sch = new Schema();
    private Transaction tx;
 
-   /**
-    * Implements the join operator,
-    * using the specified LHS and RHS plans.
-    * 
-    * @param p1        the left-hand plan
-    * @param p2        the right-hand plan
-    * @param ii        information about the right-hand index
-    * @param joinfield the left-hand field used for joining
-    */
    public HashJoinPlan(Plan p1, Plan p2, IndexInfo ii1, IndexInfo ii2, String joinfield, Transaction tx) {
       this.p1 = p1;
       this.p2 = p2;
@@ -75,12 +59,6 @@ public class HashJoinPlan implements Plan {
       return Math.max(p1.recordsOutput(), p2.recordsOutput());
    }
 
-   /**
-    * Estimates the number of distinct values for the
-    * specified field.
-    * 
-    * @see simpledb.plan.Plan#distinctValues(java.lang.String)
-    */
    public int distinctValues(String fldname) {
       if (p1.schema().hasField(fldname))
          return p1.distinctValues(fldname);
@@ -88,11 +66,6 @@ public class HashJoinPlan implements Plan {
          return p2.distinctValues(fldname);
    }
 
-   /**
-    * Returns the schema of the index join.
-    * 
-    * @see simpledb.plan.Plan#schema()
-    */
    public Schema schema() {
       return sch;
    }

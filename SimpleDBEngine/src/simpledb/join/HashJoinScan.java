@@ -13,7 +13,7 @@ public class HashJoinScan implements Scan {
   private HashIndex lhsIdx, rhsIdx;
   private String joinfield;
   private HashJoinTable hashTable;
-  private int currBlockIdx = 0;
+  private int currPartitionIdx = 0;
 
   public HashJoinScan(
     TableScan lhs,
@@ -33,7 +33,7 @@ public class HashJoinScan implements Scan {
   }
 
   public void beforeFirst() {
-    currBlockIdx = 0;
+    currPartitionIdx = 0;
     lhs.beforeFirst();
     rhs.beforeFirst();
     fillHashTable(0);
@@ -55,12 +55,12 @@ public class HashJoinScan implements Scan {
   public boolean next() {
     while(true) {
       if (!rhsIdx.nextRecord()) {
-        currBlockIdx++;
-        if (currBlockIdx > hashTable.partitionValue()) {
+        currPartitionIdx++;
+        if (currPartitionIdx > hashTable.partitionValue()) {
           return false;
         }
-        rhsIdx.beforeFirstBlock(currBlockIdx);
-        fillHashTable(currBlockIdx); 
+        rhsIdx.beforeFirstBlock(currPartitionIdx);
+        fillHashTable(currPartitionIdx); 
       } else {
         rhs.moveToRid(rhsIdx.getDataRid());
         Constant val = rhs.getVal(joinfield);
