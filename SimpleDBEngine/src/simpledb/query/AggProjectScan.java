@@ -7,14 +7,12 @@ import simpledb.materialize.AggregationFn;
 
 public class AggProjectScan implements Scan {
   private Scan s;
-  private boolean isFirstProcessed;
   private HashSet<String> fieldnames;
   private List<AggregationFn> aggFns;
 
   public AggProjectScan(Scan s, List<AggregationFn> aggFns, HashSet<String> fieldnames) {
     this.s = s;
     this.aggFns = aggFns;
-    this.isFirstProcessed = false;
     this.fieldnames = fieldnames;
   }
 
@@ -23,15 +21,12 @@ public class AggProjectScan implements Scan {
   }
 
   public boolean next() {
-    if (!s.next()) {
-      return false;
-    }
-    if (!isFirstProcessed) {
-      isFirstProcessed = true;
+    if (s.next()) {
       for (AggregationFn fn : aggFns) {
         fn.processFirst(s);
       }
-    } else {
+    }
+    while (s.next()) {
       for (AggregationFn fn : aggFns) {
         fn.processNext(s);
       }

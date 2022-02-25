@@ -3,11 +3,6 @@ package simpledb.materialize;
 import simpledb.query.Constant;
 import simpledb.query.Scan;
 
-/**
- * The <i>max</i> aggregation function.
- * 
- * @author Edward Sciore
- */
 public class MinFn implements AggregationFn {
    private String fldname;
    private Constant val;
