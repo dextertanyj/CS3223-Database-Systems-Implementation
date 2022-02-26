@@ -5,11 +5,23 @@ import java.util.List;
 
 import simpledb.materialize.AggregationFn;
 
+/**
+ * The scan class corresponding to the projection of aggregation functions
+ * without group by clauses.
+ */
 public class AggProjectScan implements Scan {
   private Scan s;
   private HashSet<String> fieldnames;
   private List<AggregationFn> aggFns;
 
+  /**
+   * Creates a aggregation project scan 
+   * having the specified aggregation functions and fieldnames.
+   * 
+   * @param s the underlying scan
+   * @param aggFns the aggregation functions to be projected on
+   * @param fieldnames the set of fieldnames to be projected on
+   */
   public AggProjectScan(Scan s, List<AggregationFn> aggFns, HashSet<String> fieldnames) {
     this.s = s;
     this.aggFns = aggFns;

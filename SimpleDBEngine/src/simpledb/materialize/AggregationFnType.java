@@ -1,5 +1,8 @@
 package simpledb.materialize;
 
+/**
+ * An enum that converts strings to aggregation Functions.
+ */
 public enum AggregationFnType {
   SUM("SUM"),
   COUNT("COUNT"),
@@ -9,6 +12,12 @@ public enum AggregationFnType {
 
   private final String str;
 
+  /**
+   * The constructor method of the enum.
+   * 
+   * @param str the corresponding string value that would 
+   *            invoke the construction of its associated aggregation function
+   */
   private AggregationFnType(String str) {
       this.str = str;
   }
@@ -17,6 +26,13 @@ public enum AggregationFnType {
       return this.str;
   }
 
+  /**
+   * Creates a new aggregation function, based on the input string.
+   * 
+   * @param str the input string that determines the type of aggregation function to be created
+   * @param fldname the fieldname to generate the aggregation function on
+   * @return the corresponding aggregation function
+   */
   public static AggregationFn createAggregationFn(String str, String fldname) {
     if (SUM.str.equals(str)) {
       return new AvgFn(fldname);
