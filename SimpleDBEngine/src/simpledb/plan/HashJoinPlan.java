@@ -20,6 +20,7 @@ public class HashJoinPlan implements Plan {
     private Schema sch = new Schema();
     private Transaction tx;
     private int depth;
+    private EnhancedTempTable resulttable;
 
     public HashJoinPlan(Transaction tx, Plan p1, Plan p2, String fldname1, String fldname2) {
         this(tx, p1, p2, fldname1, fldname2, 1);
@@ -34,19 +35,34 @@ public class HashJoinPlan implements Plan {
         this.depth = depth;
         sch.addAll(p1.schema());
         sch.addAll(p2.schema());
+        this.resulttable = new EnhancedTempTable(tx, sch);
     }
 
-    public Scan open() {
+    public HashJoinPlan(Transaction tx, Plan p1, Plan p2, String fldname1, String fldname2, int depth,
+            EnhancedTempTable resulttable) {
+        this.tx = tx;
+        this.p1 = p1;
+        this.p2 = p2;
+        this.fldname1 = fldname1;
+        this.fldname2 = fldname2;
+        this.depth = depth;
+        sch.addAll(p1.schema());
+        sch.addAll(p2.schema());
+        this.resulttable = resulttable;
+    }
+
+    public UpdateScan open() {
         // After max depth, we use sort merge join.
         if (depth > MAX_DEPTH) {
             Plan p = new MergeJoinPlan(tx, p1, p2, fldname1, fldname2);
-            p.open();
+            copyScan(p.open());
+        } else {
+            int outputBuffers = tx.availableBuffs() - 1;
+            List<EnhancedTempTable> p1_buckets = splitIntoBuckets(p1, fldname1, outputBuffers);
+            List<EnhancedTempTable> p2_buckets = splitIntoBuckets(p2, fldname2, outputBuffers);
+            join(p1_buckets, p2_buckets);
         }
-        int outputBuffers = tx.availableBuffs() - 1;
-        List<EnhancedTempTable> p1_buckets = splitIntoBuckets(p1, fldname1, outputBuffers);
-        List<EnhancedTempTable> p2_buckets = splitIntoBuckets(p2, fldname2, outputBuffers);
-        EnhancedTempTable result = join(p1_buckets, p2_buckets);
-        return result.open();
+        return resulttable.open();
     }
 
     private List<EnhancedTempTable> splitIntoBuckets(Plan t, String fldname, int outputBuffers) {
@@ -57,7 +73,6 @@ public class HashJoinPlan implements Plan {
             EnhancedTempTable table = new EnhancedTempTable(tx, t.schema());
             buckets.add(table);
             UpdateScan scan = table.open();
-            scan.beforeFirst();
             scans.add(scan);
         }
         while (s.next()) {
@@ -73,40 +88,31 @@ public class HashJoinPlan implements Plan {
         return buckets;
     }
 
-    private EnhancedTempTable join(List<EnhancedTempTable> p1_buckets, List<EnhancedTempTable> p2_buckets) {
-        EnhancedTempTable result = new EnhancedTempTable(tx, sch);
-        UpdateScan resultScan = result.open();
-        resultScan.beforeFirst();
+    private void join(List<EnhancedTempTable> p1_buckets, List<EnhancedTempTable> p2_buckets) {
+        UpdateScan resultScan = null;
         while (p1_buckets.size() > 0) {
             EnhancedTempTable p1_partition = p1_buckets.remove(0);
             EnhancedTempTable p2_partition = p2_buckets.remove(0);
-            int available_buffers = tx.availableBuffs() - 1; // Output buffer has already been allocated.
-            if (tx.size(p1_partition.tableName()) > available_buffers
-                    && tx.size(p2_partition.tableName()) > available_buffers) {
-                Scan s = new HashJoinPlan(tx, p1_partition, p2_partition, fldname1, fldname2, depth + 1).open();
-                s.beforeFirst();
-                while (s.next()) {
-                    resultScan.insert();
-                    for (String fldname : sch.fields()) {
-                        resultScan.setVal(fldname, s.getVal(fldname));
-                    }
-                }
-                s.close();
-            } else if (tx.size(p1_partition.tableName()) > available_buffers) {
+            int available_buffers = tx.availableBuffs() - 2;
+            if (tx.size(p1_partition.tableName() + ".tbl") > available_buffers
+                    && tx.size(p2_partition.tableName() + ".tbl") > available_buffers) {
+                resultScan = new HashJoinPlan(tx, p1_partition, p2_partition, fldname1, fldname2, depth + 1,
+                        resulttable).open();
+            } else if (tx.size(p1_partition.tableName() + ".tbl") > available_buffers) {
+                resultScan = resulttable.open();
                 hashAndJoin(p2_partition, p1_partition, fldname2, fldname1, resultScan);
             } else {
+                resultScan = resulttable.open();
                 hashAndJoin(p1_partition, p2_partition, fldname1, fldname2, resultScan);
             }
+            resultScan.close();
         }
-        resultScan.close();
-        return result;
     }
 
     private void hashAndJoin(EnhancedTempTable outerTable, EnhancedTempTable innerTable, String outerJoinFld,
             String innerJoinFld,
             UpdateScan result) {
         Scan s = outerTable.open();
-        s.beforeFirst();
         List<List<InMemoryRecord>> map = new ArrayList<>();
         for (int i = 0; i < IN_MEMORY_HASH_SIZE; i++) {
             map.add(new ArrayList<>());
@@ -121,7 +127,6 @@ public class HashJoinPlan implements Plan {
         }
         s.close();
         s = innerTable.open();
-        s.beforeFirst();
         while (s.next()) {
             int hash = ((int) Math.pow(s.getVal(innerJoinFld).hashCode(), depth + 1)) % IN_MEMORY_HASH_SIZE;
             for (InMemoryRecord record : map.get(hash)) {
@@ -137,6 +142,19 @@ public class HashJoinPlan implements Plan {
                 }
             }
         }
+        s.close();
+    }
+
+    private void copyScan(Scan s) {
+        UpdateScan result = resulttable.open();
+        while (s.next()) {
+            result.insert();
+            for (String fldname : sch.fields()) {
+                result.setVal(fldname, s.getVal(fldname));
+            }
+        }
+        result.close();
+        s.close();
     }
 
     public int blocksAccessed() {
