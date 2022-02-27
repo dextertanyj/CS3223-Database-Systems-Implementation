@@ -7,6 +7,10 @@ import simpledb.query.Constant;
 public class InMemoryRecord {
     HashMap<String, Constant> values;
 
+    public InMemoryRecord() {
+        values = new HashMap<>();
+    }
+
     public Constant getVal(String fldname) {
         return values.get(fldname);
     }

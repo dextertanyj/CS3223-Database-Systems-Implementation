@@ -10,6 +10,7 @@ import simpledb.metadata.MetadataMgr;
 import simpledb.materialize.MaterializePlan;
 import simpledb.materialize.MergeJoinPlan;
 import simpledb.multibuffer.MultibufferProductPlan;
+import simpledb.plan.HashJoinPlan;
 import simpledb.plan.Plan;
 import simpledb.plan.SelectPlan;
 import simpledb.plan.TablePlan;
@@ -80,6 +81,7 @@ class TablePlanner {
       Plan p = null;
       Plan loop = makeLoopJoin(current, currsch);
       Plan index = makeIndexJoin(current, currsch);
+      Plan hash = makeHashJoin(current, currsch);
       Plan merge = makeMergeJoin(current, currsch);
       if (loop == null && index == null && merge == null) {
          p = makeProductJoin(current, currsch);
@@ -87,14 +89,17 @@ class TablePlanner {
          int loop_cost = loop == null ? Integer.MAX_VALUE : loop.blocksAccessed();
          int index_cost = index == null ? Integer.MAX_VALUE : index.blocksAccessed();
          int merge_cost = merge == null ? Integer.MAX_VALUE : merge.blocksAccessed();
-         System.out.printf("%s, %s, %s\n", loop_cost, index_cost, merge_cost);
-         int cost = Math.min(loop_cost, Math.min(index_cost, merge_cost));
-         if (cost == loop_cost) {
-            p = loop;
-         } else if (cost == index_cost) {
+         int hash_cost = merge == null ? Integer.MAX_VALUE : hash.blocksAccessed();
+         System.out.printf("%s, %s, %s, %s\n", loop_cost, index_cost, merge_cost, hash_cost);
+         int cost = Math.min(loop_cost, Math.min(index_cost, Math.min(merge_cost, hash_cost)));
+         if (cost == index_cost) {
             p = index;
-         } else {
+         } else if (cost == hash_cost) {
+            p = hash;
+         } else if (cost == merge_cost) {
             p = merge;
+         } else {
+            p = loop;
          }
       }
       return p;
@@ -144,6 +149,18 @@ class TablePlanner {
          String outerfield = mypred.equatesWithField(fldname);
          if (outerfield != null && currsch.hasField(outerfield)) {
             Plan p = new MergeJoinPlan(tx, myplan, current, fldname, outerfield);
+            p = addSelectPred(p);
+            return addJoinPred(p, currsch);
+         }
+      }
+      return null;
+   }
+
+   private Plan makeHashJoin(Plan current, Schema currsch) {
+      for (String fldname : myschema.fields()) {
+         String outerfield = mypred.equatesWithField(fldname);
+         if (outerfield != null && currsch.hasField(outerfield)) {
+            Plan p = new HashJoinPlan(tx, myplan, current, fldname, outerfield);
             p = addSelectPred(p);
             return addJoinPred(p, currsch);
          }
