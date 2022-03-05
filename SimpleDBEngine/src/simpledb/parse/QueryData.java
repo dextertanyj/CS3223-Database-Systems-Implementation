@@ -18,19 +18,21 @@ public class QueryData {
    private Collection<String> tables;
    private Predicate pred;
    private List<SortClause> sortclauses;
+   private boolean isDistinct = false;
 
    /**
     * Saves the field and table list and predicate.
     */
-   public QueryData(List<String> fields, Collection<String> tables, Predicate pred) {
-      this(fields, tables, pred, null);
+   public QueryData(List<String> fields, Collection<String> tables, Predicate pred, boolean isDistinct) {
+      this(fields, tables, pred, null, isDistinct);
    }
 
-   public QueryData(List<String> fields, Collection<String> tables, Predicate pred, List<SortClause> sortclauses) {
+   public QueryData(List<String> fields, Collection<String> tables, Predicate pred, List<SortClause> sortclauses, boolean isDistinct) {
       this.fields = fields;
       this.tables = tables;
       this.pred = pred;
       this.sortclauses = sortclauses;
+      this.isDistinct = isDistinct;
    }
 
    /**
@@ -65,8 +67,15 @@ public class QueryData {
       return sortclauses;
    }
 
+   public boolean isDistinct() {
+      return isDistinct;
+   }
+
    public String toString() {
       String result = "select ";
+      if (isDistinct) {
+         result += "distinct ";
+      }
       for (String fldname : fields)
          result += fldname + ", ";
       result = result.substring(0, result.length() - 2); // remove final comma

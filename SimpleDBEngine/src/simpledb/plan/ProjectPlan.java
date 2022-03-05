@@ -2,9 +2,12 @@ package simpledb.plan;
 
 import java.util.List;
 
+import simpledb.materialize.SortClause;
+import simpledb.materialize.SortPlan;
 import simpledb.query.ProjectScan;
 import simpledb.query.Scan;
 import simpledb.record.Schema;
+import simpledb.tx.Transaction;
 
 /**
  * The Plan class corresponding to the <i>project</i>
@@ -15,6 +18,7 @@ import simpledb.record.Schema;
 public class ProjectPlan implements Plan {
    private Plan p;
    private Schema schema = new Schema();
+   private boolean isDistinct;
 
    /**
     * Creates a new project node in the query tree,
@@ -25,6 +29,23 @@ public class ProjectPlan implements Plan {
     */
    public ProjectPlan(Plan p, List<String> fieldlist) {
       this.p = p;
+      this.isDistinct = false;
+      for (String fldname : fieldlist)
+         schema.add(fldname, p.schema());
+   }
+ 
+   /**
+    * Overloaded constructor that creates a new project node in the query tree.
+    * Allows for distinct projections to be specified.
+    *
+    * @param p the subquery
+    * @param fieldlist the list of fields
+    * @param isDistinct if the projection is distinct
+    * @param tx the calling transaction
+    */
+   public ProjectPlan(Plan p, List<String> fieldlist, boolean isDistinct, Transaction tx) {
+      this.p = new SortPlan(tx, p, SortClause.generateDefaultSort(fieldlist));
+      this.isDistinct = isDistinct;
       for (String fldname : fieldlist)
          schema.add(fldname, p.schema());
    }
@@ -36,7 +57,7 @@ public class ProjectPlan implements Plan {
     */
    public Scan open() {
       Scan s = p.open();
-      return new ProjectScan(s, schema.fields());
+      return new ProjectScan(s, schema.fields(), isDistinct);
    }
 
    /**

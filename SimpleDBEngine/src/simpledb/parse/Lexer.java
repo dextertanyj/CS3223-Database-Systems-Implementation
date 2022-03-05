@@ -188,6 +188,7 @@ public class Lexer {
             "insert", "into", "values", "delete", "update", "set",
             "create", "table", "int", "varchar", "view", "as", "index", "on",
             "using", IndexType.HASH.toString(), IndexType.TREE.toString(),
-            "order", "by", SortOrder.ASCENDING.toString(), SortOrder.DESCENDING.toString());
+            "order", "by", SortOrder.ASCENDING.toString(), SortOrder.DESCENDING.toString(),
+            "distinct");
    }
 }

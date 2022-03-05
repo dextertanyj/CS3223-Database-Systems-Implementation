@@ -66,6 +66,11 @@ public class Parser {
 
    public QueryData query() {
       lex.eatKeyword("select");
+      boolean isDistinct = false;
+      if (lex.matchKeyword("distinct")) {
+         lex.eatKeyword("distinct");
+         isDistinct = true;
+      }
       List<String> fields = selectList();
       lex.eatKeyword("from");
       Collection<String> tables = tableList();
@@ -78,9 +83,9 @@ public class Parser {
          lex.eatKeyword("order");
          lex.eatKeyword("by");
          List<SortClause> orderclauses = orderList();
-         return new QueryData(fields, tables, pred, orderclauses);
+         return new QueryData(fields, tables, pred, orderclauses, isDistinct);
       }
-      return new QueryData(fields, tables, pred);
+      return new QueryData(fields, tables, pred, isDistinct);
    }
 
    private List<String> selectList() {
