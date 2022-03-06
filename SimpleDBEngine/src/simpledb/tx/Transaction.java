@@ -109,6 +109,24 @@ public class Transaction {
    }
 
    /**
+    * Frees the reserved buffer page identified by its ID.
+    * 
+    * @param int the ID of the reserved buffer page to free.
+    */
+   public void free(int reservedId) {
+      mybuffers.free(reservedId);
+   }
+
+   /**
+    * Returns a unique ID representing a reserved buffer page.
+    * 
+    * @return a unique ID representing a reserved buffer page.
+    */
+   public int reserve() {
+      return mybuffers.reserve();
+   }
+
+   /**
     * Return the integer value stored at the
     * specified offset of the specified block.
     * The method first obtains an SLock on the block,

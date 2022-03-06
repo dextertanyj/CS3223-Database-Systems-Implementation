@@ -5,9 +5,11 @@ import java.util.List;
 
 import simpledb.materialize.EnhancedTempTable;
 import simpledb.materialize.MergeJoinPlan;
+import simpledb.multibuffer.MultibufferHashTable;
 import simpledb.query.Scan;
 import simpledb.query.UpdateScan;
 import simpledb.record.InMemoryRecord;
+import simpledb.record.Layout;
 import simpledb.record.Schema;
 import simpledb.tx.Transaction;
 
@@ -94,16 +96,20 @@ public class HashJoinPlan implements Plan {
             EnhancedTempTable p1_partition = p1_buckets.remove(0);
             EnhancedTempTable p2_partition = p2_buckets.remove(0);
             int available_buffers = tx.availableBuffs() - 2;
-            if (tx.size(p1_partition.tableName() + ".tbl") > available_buffers
-                    && tx.size(p2_partition.tableName() + ".tbl") > available_buffers) {
+            int p1_size = tx.size(p1_partition.tableName() + ".tbl");
+            int p2_size = tx.size(p2_partition.tableName() + ".tbl");
+            if (p1_size > available_buffers
+                    && p2_size > available_buffers) {
                 resultScan = new HashJoinPlan(tx, p1_partition, p2_partition, fldname1, fldname2, depth + 1,
                         resulttable).open();
-            } else if (tx.size(p1_partition.tableName() + ".tbl") > available_buffers) {
+            } else if (p1_size > available_buffers) {
                 resultScan = resulttable.open();
-                hashAndJoin(p2_partition, p1_partition, fldname2, fldname1, resultScan);
+                hashAndJoin(p2_partition, p1_partition, fldname2, fldname1, resultScan,
+                        Math.min(p2_size, available_buffers));
             } else {
                 resultScan = resulttable.open();
-                hashAndJoin(p1_partition, p2_partition, fldname1, fldname2, resultScan);
+                hashAndJoin(p1_partition, p2_partition, fldname1, fldname2, resultScan,
+                        Math.min(p1_size, available_buffers));
             }
             resultScan.close();
         }
@@ -111,25 +117,22 @@ public class HashJoinPlan implements Plan {
 
     private void hashAndJoin(EnhancedTempTable outerTable, EnhancedTempTable innerTable, String outerJoinFld,
             String innerJoinFld,
-            UpdateScan result) {
+            UpdateScan result, int buffer_count) {
         Scan s = outerTable.open();
-        List<List<InMemoryRecord>> map = new ArrayList<>();
-        for (int i = 0; i < IN_MEMORY_HASH_SIZE; i++) {
-            map.add(new ArrayList<>());
-        }
+        MultibufferHashTable hashtable = new MultibufferHashTable(tx, buffer_count, IN_MEMORY_HASH_SIZE);
         while (s.next()) {
             int hash = ((int) Math.pow(s.getVal(outerJoinFld).hashCode(), depth + 1)) % IN_MEMORY_HASH_SIZE;
-            InMemoryRecord record = new InMemoryRecord();
+            InMemoryRecord record = new InMemoryRecord(outerTable.getLayout());
             for (String fldname : outerTable.getLayout().schema().fields()) {
                 record.setVal(fldname, s.getVal(fldname));
             }
-            map.get(hash).add(record);
+            hashtable.insert(hash, record);
         }
         s.close();
         s = innerTable.open();
         while (s.next()) {
             int hash = ((int) Math.pow(s.getVal(innerJoinFld).hashCode(), depth + 1)) % IN_MEMORY_HASH_SIZE;
-            for (InMemoryRecord record : map.get(hash)) {
+            for (InMemoryRecord record : hashtable.getBucket(hash)) {
                 if (s.getVal(innerJoinFld).equals(record.getVal(outerJoinFld))) {
                     result.insert();
                     for (String fldname : sch.fields()) {
@@ -158,8 +161,21 @@ public class HashJoinPlan implements Plan {
     }
 
     public int blocksAccessed() {
-        // TODO: Fill in blocks accessed count.
-        return 0;
+        Layout p1_layout = new Layout(p1.schema());
+        Layout p2_layout = new Layout(p2.schema());
+        int cost = (p1.blocksAccessed() + p2.blocksAccessed()) * 2;
+        int p1_blocks = p1.recordsOutput() / (tx.blockSize() / p1_layout.slotSize());
+        int p2_blocks = p2.recordsOutput() / (tx.blockSize() / p2_layout.slotSize());
+        int estimated_buffers = tx.availableBuffs();
+        int min_blocks = Math.min(p1_blocks, p2_blocks);
+        int max_blocks = Math.max(p1_blocks, p2_blocks);
+        int temp = (int) Math.ceil(min_blocks / estimated_buffers);
+        while (temp > estimated_buffers) {
+            cost += min_blocks * 2;
+            temp = (int) Math.ceil(temp / estimated_buffers);
+        }
+        cost += max_blocks;
+        return cost;
     }
 
     public int recordsOutput() {
