@@ -1,7 +1,8 @@
 package simpledb.query;
 
-import java.util.HashMap;
 import java.util.List;
+
+import simpledb.record.InMemoryRecord;
 
 /**
  * The scan class corresponding to the <i>project</i> relational
@@ -15,7 +16,7 @@ public class ProjectScan implements Scan {
    private Scan s;
    private List<String> fieldlist;
    private final boolean isDistinct;
-   private HashMap<String, Constant> prevVals = new HashMap<>();
+   private InMemoryRecord prevVals;
 
    /**
     * Create a project scan having the specified
@@ -41,8 +42,9 @@ public class ProjectScan implements Scan {
       this.s = s;
       this.fieldlist = fieldlist;
       this.isDistinct = isDistinct;
-      for (String field : fieldlist) {
-         this.prevVals.put(field, null);
+      if (this.isDistinct) {
+         this.prevVals = new InMemoryRecord(fieldlist);
+         this.prevVals.setFieldlist();
       }
    }
 
@@ -59,16 +61,17 @@ public class ProjectScan implements Scan {
    }
 
    private boolean isDistinctNext() {
-      HashMap<String, Constant> currVals = new HashMap<>();
+      InMemoryRecord currVals = new InMemoryRecord(fieldlist);
+      currVals.setFieldlist();
       while (true) {
          if (!s.next()) {
             return false;
          }
          for (String field : fieldlist) {
-            currVals.put(field, s.getVal(field));
+            currVals.setVal(field, s.getVal(field));
          }
          if (!currVals.equals(prevVals)) {
-            prevVals.putAll(currVals);;
+            prevVals.putAll(currVals);
             return true;
          } 
       }
