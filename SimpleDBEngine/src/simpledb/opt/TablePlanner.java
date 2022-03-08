@@ -4,11 +4,10 @@ import java.util.Map;
 
 import simpledb.index.planner.IndexJoinPlan;
 import simpledb.index.planner.IndexSelectPlan;
-import simpledb.join.LoopJoinPlan;
 import simpledb.metadata.IndexInfo;
 import simpledb.metadata.MetadataMgr;
-import simpledb.materialize.MaterializePlan;
 import simpledb.materialize.MergeJoinPlan;
+import simpledb.multibuffer.MultibufferJoinPlan;
 import simpledb.multibuffer.MultibufferProductPlan;
 import simpledb.plan.HashJoinPlan;
 import simpledb.plan.Plan;
@@ -129,13 +128,10 @@ class TablePlanner {
    }
 
    private Plan makeLoopJoin(Plan current, Schema currsch) {
-      if (!(current instanceof TablePlan) && !(current instanceof MaterializePlan)) {
-         return null;
-      }
       for (String fldname : myschema.fields()) {
          String outerfield = mypred.equatesWithField(fldname);
          if (outerfield != null && currsch.hasField(outerfield)) {
-            Plan p = new LoopJoinPlan(myplan, current, fldname, outerfield);
+            Plan p = new MultibufferJoinPlan(tx, myplan, current, fldname, outerfield);
             p = addSelectPred(p);
             return addJoinPred(p, currsch);
          }

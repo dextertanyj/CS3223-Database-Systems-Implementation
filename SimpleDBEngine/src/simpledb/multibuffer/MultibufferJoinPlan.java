@@ -1,33 +1,36 @@
-package simpledb.join;
+package simpledb.multibuffer;
 
 import simpledb.plan.Plan;
+import simpledb.plan.TablePlan;
 import simpledb.query.Scan;
 import simpledb.record.Schema;
-import simpledb.record.TableScan;
+import simpledb.tx.Transaction;
 
-public class LoopJoinPlan implements Plan {
-    private Plan inner, outer;
+public class MultibufferJoinPlan implements Plan {
+    private Transaction tx;
+    private TablePlan outer;
+    private Plan inner;
     private String inner_field, outer_field;
     private Schema sch = new Schema();
 
-    public LoopJoinPlan(Plan inner, Plan outer, String inner_field, String outer_field) {
-        this.inner = inner;
+    public MultibufferJoinPlan(Transaction tx, TablePlan outer, Plan inner, String outer_field, String inner_field) {
+        this.tx = tx;
         this.outer = outer;
-        this.inner_field = inner_field;
+        this.inner = inner;
         this.outer_field = outer_field;
+        this.inner_field = inner_field;
         sch.addAll(inner.schema());
         sch.addAll(outer.schema());
     }
 
     public Scan open() {
-        TableScan inner_scan = (TableScan) inner.open();
-        TableScan outer_scan = (TableScan) outer.open();
-        return new LoopJoinScan(inner_scan, outer_scan, inner_field, outer_field);
+        Scan inner_scan = inner.open();
+        return new MultibufferJoinScan(tx, outer.tblname(), outer.layout(), inner_scan, outer_field, inner_field);
     }
 
     public int blocksAccessed() {
         return outer.blocksAccessed()
-                + (outer.blocksAccessed() * inner.blocksAccessed())
+                + ((outer.blocksAccessed() / (tx.availableBuffs() - 2)) * inner.blocksAccessed())
                 + recordsOutput();
     }
 
