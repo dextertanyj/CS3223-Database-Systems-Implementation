@@ -93,15 +93,16 @@ class TablePlanner {
          int merge_cost = merge == null ? Integer.MAX_VALUE : merge.blocksAccessed();
          int hash_cost = hash == null ? Integer.MAX_VALUE : hash.blocksAccessed();
          int cost = Math.min(loop_cost, Math.min(index_cost, Math.min(merge_cost, hash_cost)));
-         if (cost == index_cost) {
-            p = index;
-         } else if (cost == hash_cost) {
-            p = hash;
-         } else if (cost == merge_cost) {
-            p = merge;
-         } else {
-            p = loop;
-         }
+         // if (cost == index_cost) {
+         //    p = index;
+         // } else if (cost == hash_cost) {
+         //    p = hash;
+         // } else if (cost == merge_cost) {
+         //    p = merge;
+         // } else {
+         //    p = loop;
+         // }
+         p = hash;
       }
       return p;
    }

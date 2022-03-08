@@ -1,6 +1,5 @@
 package simpledb.parse;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
@@ -21,7 +20,7 @@ public class QueryData {
    private boolean isDistinct = false;
 
    /**
-    * Saves the field and table list and predicate.
+    * Saves the field and table list and predicate and if a distinct projection is required.
     */
    public QueryData(List<String> fields, Collection<String> tables, Predicate pred, boolean isDistinct) {
       this(fields, tables, pred, null, isDistinct);

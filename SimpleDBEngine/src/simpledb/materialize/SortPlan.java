@@ -1,9 +1,11 @@
 package simpledb.materialize;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import simpledb.plan.Plan;
+import simpledb.plan.QueryPlanPrinter;
 import simpledb.query.Scan;
 import simpledb.query.UpdateScan;
 import simpledb.record.Schema;
@@ -171,5 +173,10 @@ public class SortPlan implements Plan {
       for (String fldname : sch.fields())
          dest.setVal(fldname, src.getVal(fldname));
       return src.next();
+   }
+
+   public QueryPlanPrinter getPlanDesc() {
+      String clauses = Arrays.toString(comp.clauses().toArray());
+      return p.getPlanDesc().add("Sort: " + clauses);
    }
 }

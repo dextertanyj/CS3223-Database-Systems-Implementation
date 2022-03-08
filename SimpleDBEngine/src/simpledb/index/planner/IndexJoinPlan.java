@@ -4,6 +4,7 @@ import simpledb.index.Index;
 import simpledb.index.query.IndexJoinScan;
 import simpledb.metadata.IndexInfo;
 import simpledb.plan.Plan;
+import simpledb.plan.QueryPlanPrinter;
 import simpledb.query.Scan;
 import simpledb.record.Schema;
 import simpledb.record.TableScan;
@@ -102,5 +103,11 @@ public class IndexJoinPlan implements Plan {
     */
    public Schema schema() {
       return sch;
+   }
+
+   public QueryPlanPrinter getPlanDesc() {
+      QueryPlanPrinter printer = QueryPlanPrinter.getJoinPlanPrinter(p1.getPlanDesc(), p2.getPlanDesc());
+      String toAdd = QueryPlanPrinter.getJoinPlanDesc("Index join", joinfield, joinfield);
+      return printer.add(toAdd);
    }
 }

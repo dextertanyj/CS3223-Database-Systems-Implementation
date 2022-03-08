@@ -3,18 +3,22 @@ package simpledb.materialize;
 import java.util.Optional;
 
 import simpledb.plan.Plan;
+import simpledb.plan.QueryPlanPrinter;
 import simpledb.record.Schema;
 import simpledb.record.TableScan;
 import simpledb.tx.Transaction;
 
 public class EnhancedTempTable extends TempTable implements Plan {
     Schema sch;
+    // Plan p1, p2;
     Optional<Integer> numblocks;
     Optional<Integer> numrecs;
 
     public EnhancedTempTable(Transaction tx, Schema sch) {
         super(tx, sch);
         this.sch = sch;
+        // this.p1 = p1;
+        // this.p2 = p2;
     }
 
     public int blocksAccessed() {
@@ -59,5 +63,12 @@ public class EnhancedTempTable extends TempTable implements Plan {
         s.close();
         numrecs = Optional.of(reccount);
         numblocks = Optional.of(blockcount);
+    }
+
+    //TODO: verify correctness
+    public QueryPlanPrinter getPlanDesc() {
+        // QueryPlanPrinter printer = QueryPlanPrinter.getJoinPlanPrinter(p1.getPlanDesc(), p2.getPlanDesc());
+        // return printer;
+        return null;
     }
 }

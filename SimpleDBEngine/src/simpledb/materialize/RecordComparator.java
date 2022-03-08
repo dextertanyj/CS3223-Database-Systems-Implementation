@@ -25,6 +25,10 @@ public class RecordComparator implements Comparator<Scan> {
       this.clauses = clauses;
    }
 
+   public List<SortClause> clauses() {
+      return clauses;
+   }
+
    /**
     * Compare the current records of the two specified scans.
     * The sort fields are considered in turn.

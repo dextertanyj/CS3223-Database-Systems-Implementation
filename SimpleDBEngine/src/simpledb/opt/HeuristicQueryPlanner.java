@@ -59,9 +59,9 @@ public class HeuristicQueryPlanner implements QueryPlanner {
       // Step 5. Sort on the field names
       if (data.sortclauses() != null) {
          currentplan = new SortPlan(tx, currentplan, data.sortclauses());
-
       }
 
+      System.out.println((currentplan.getPlanDesc().printQueryPlan()));
       return currentplan;
    }
 

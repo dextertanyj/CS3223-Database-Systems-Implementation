@@ -196,4 +196,10 @@ public class HashJoinPlan implements Plan {
     public Schema schema() {
         return sch;
     }
+
+    public QueryPlanPrinter getPlanDesc() {
+        QueryPlanPrinter printer = QueryPlanPrinter.getJoinPlanPrinter(p1.getPlanDesc(), p2.getPlanDesc());
+        String toAdd = QueryPlanPrinter.getJoinPlanDesc("Hash join", fldname1, fldname2);
+        return printer.add(toAdd);
+    }
 }

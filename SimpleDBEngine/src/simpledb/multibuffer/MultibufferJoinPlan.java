@@ -2,6 +2,7 @@ package simpledb.multibuffer;
 
 import simpledb.plan.Plan;
 import simpledb.plan.TablePlan;
+import simpledb.plan.QueryPlanPrinter;
 import simpledb.query.Scan;
 import simpledb.query.Term;
 import simpledb.record.Schema;
@@ -68,5 +69,11 @@ public class MultibufferJoinPlan implements Plan {
      */
     public Schema schema() {
         return sch;
+    }
+
+    public QueryPlanPrinter getPlanDesc() {
+        QueryPlanPrinter printer = QueryPlanPrinter.getJoinPlanPrinter(inner.getPlanDesc(), outer.getPlanDesc());
+        String toAdd = QueryPlanPrinter.getJoinPlanDesc("Multibuffer join plan", inner_field, outer_field);
+        return printer.add(toAdd);
     }
 }
