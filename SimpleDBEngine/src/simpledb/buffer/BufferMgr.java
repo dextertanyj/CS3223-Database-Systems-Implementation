@@ -89,6 +89,29 @@ public class BufferMgr {
       }
    }
 
+   /**
+    * Returns a reserved buffer page with no associated file block.
+    * 
+    * @return a reserved buffer page with no associated file block.
+    */
+   public synchronized Buffer reserve() {
+      try {
+         long timestamp = System.currentTimeMillis();
+         Buffer buff = chooseUnpinnedBuffer();
+         while (buff == null && !waitingTooLong(timestamp)) {
+            wait(MAX_TIME);
+            buff = chooseUnpinnedBuffer();
+         }
+         if (buff == null) {
+            throw new BufferAbortException();
+         }
+         numAvailable--;
+         return buff;
+      } catch (InterruptedException e) {
+         throw new BufferAbortException();
+      }
+   }
+
    private boolean waitingTooLong(long starttime) {
       return System.currentTimeMillis() - starttime > MAX_TIME;
    }
