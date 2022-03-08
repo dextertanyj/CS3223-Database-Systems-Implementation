@@ -30,7 +30,7 @@ public class MultibufferJoinPlan implements Plan {
 
     public int blocksAccessed() {
         return outer.blocksAccessed()
-                + (outer.blocksAccessed() * inner.blocksAccessed())
+                + ((outer.blocksAccessed() / (tx.availableBuffs() - 2)) * inner.blocksAccessed())
                 + recordsOutput();
     }
 
