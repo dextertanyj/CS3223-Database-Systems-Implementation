@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import simpledb.materialize.EnhancedTempTable;
+import simpledb.materialize.MaterializePlan;
 import simpledb.materialize.MergeJoinPlan;
 import simpledb.multibuffer.MultibufferHashTable;
 import simpledb.query.Scan;
@@ -60,8 +61,8 @@ public class HashJoinPlan implements Plan {
             copyScan(p.open());
         } else {
             int outputBuffers = tx.availableBuffs() - 1;
-            List<EnhancedTempTable> p1_buckets = splitIntoBuckets(p1, fldname1, outputBuffers);
-            List<EnhancedTempTable> p2_buckets = splitIntoBuckets(p2, fldname2, outputBuffers);
+            List<EnhancedTempTable> p1_buckets = splitIntoBuckets(new MaterializePlan(tx, p1), fldname1, outputBuffers);
+            List<EnhancedTempTable> p2_buckets = splitIntoBuckets(new MaterializePlan(tx, p2), fldname2, outputBuffers);
             join(p1_buckets, p2_buckets);
         }
         return resulttable.open();
@@ -145,6 +146,7 @@ public class HashJoinPlan implements Plan {
                 }
             }
         }
+        hashtable.close();
         s.close();
     }
 
