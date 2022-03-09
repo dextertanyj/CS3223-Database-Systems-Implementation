@@ -2,6 +2,7 @@ package simpledb.multibuffer;
 
 import simpledb.query.Constant;
 import simpledb.query.Scan;
+import simpledb.query.Term;
 import simpledb.record.Layout;
 import simpledb.tx.Transaction;
 
@@ -10,17 +11,15 @@ public class MultibufferJoinScan implements Scan {
     private String filename;
     private Layout outerlayout;
     private Scan outer, inner;
-    private String inner_field, outer_field;
+    private Term term;
     private int chunksize, nextblknum, filesize;
 
-    public MultibufferJoinScan(Transaction tx, String tblname, Layout layout, Scan inner, String outer_field,
-            String inner_field) {
+    public MultibufferJoinScan(Transaction tx, String tblname, Layout layout, Scan inner, Term term) {
         this.tx = tx;
         this.inner = inner;
         this.filename = tblname + ".tbl";
         this.outerlayout = layout;
-        this.outer_field = outer_field;
-        this.inner_field = inner_field;
+        this.term = term;
         this.filesize = tx.size(filename);
         this.chunksize = BufferNeeds.bestFactor(tx.availableBuffs(), filesize);
         beforeFirst();
@@ -43,7 +42,7 @@ public class MultibufferJoinScan implements Scan {
                     return false;
                 }
             }
-            if (inner.getVal(inner_field).equals(outer.getVal(outer_field))) {
+            if (term.isSatisfied(outer, inner)) {
                 return true;
             }
         }

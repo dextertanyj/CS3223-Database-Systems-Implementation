@@ -14,7 +14,10 @@ import simpledb.plan.Plan;
 import simpledb.plan.SelectPlan;
 import simpledb.plan.TablePlan;
 import simpledb.query.Constant;
+import simpledb.query.Expression;
+import simpledb.query.Operator;
 import simpledb.query.Predicate;
+import simpledb.query.Term;
 import simpledb.record.Schema;
 import simpledb.tx.Transaction;
 
@@ -131,7 +134,19 @@ class TablePlanner {
       for (String fldname : myschema.fields()) {
          String outerfield = mypred.equatesWithField(fldname);
          if (outerfield != null && currsch.hasField(outerfield)) {
-            Plan p = new MultibufferJoinPlan(tx, myplan, current, fldname, outerfield);
+            Plan p = new MultibufferJoinPlan(tx, myplan, current,
+                  new Term(Operator.EQ, new Expression(fldname), new Expression(outerfield)));
+            p = addSelectPred(p);
+            return addJoinPred(p, currsch);
+         }
+      }
+      Schema combined = new Schema();
+      combined.addAll(myschema);
+      combined.addAll(currsch);
+      for (String fldname : myschema.fields()) {
+         Term term = mypred.comparesWithField(fldname);
+         if (term != null && term.appliesTo(combined)) {
+            Plan p = new MultibufferJoinPlan(tx, myplan, current, term);
             p = addSelectPred(p);
             return addJoinPred(p, currsch);
          }
