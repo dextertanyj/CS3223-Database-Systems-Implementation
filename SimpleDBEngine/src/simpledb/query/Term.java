@@ -54,6 +54,44 @@ public class Term {
       return false;
    }
 
+   public boolean isSatisfied(Scan scan1, Scan scan2) {
+      if (!lhs.isFieldName() || !rhs.isFieldName()) {
+         throw new RuntimeException("Expected both expressions in term to be fields.");
+      }
+      Constant lhsval = null;
+      Constant rhsval = null;
+      if (scan1.hasField(lhs.asFieldName())) {
+         lhsval = lhs.evaluate(scan1);
+      } else if (scan2.hasField(lhs.asFieldName())) {
+         lhsval = lhs.evaluate(scan2);
+      } else {
+         throw new RuntimeException("Field not found.");
+      }
+
+      if (scan1.hasField(rhs.asFieldName())) {
+         rhsval = rhs.evaluate(scan1);
+      } else if (scan2.hasField(rhs.asFieldName())) {
+         rhsval = rhs.evaluate(scan2);
+      } else {
+         throw new RuntimeException("Field not found.");
+      }
+      switch (op) {
+         case EQ:
+            return lhsval.equals(rhsval);
+         case NEQ:
+            return !lhsval.equals(rhsval);
+         case GTE:
+            return lhsval.compareTo(rhsval) >= 0;
+         case GT:
+            return lhsval.compareTo(rhsval) > 0;
+         case LTE:
+            return lhsval.compareTo(rhsval) <= 0;
+         case LT:
+            return lhsval.compareTo(rhsval) < 0;
+      }
+      return false;
+   }
+
    /**
     * Calculate the extent to which selecting on the term reduces
     * the number of records output by a query.
@@ -118,6 +156,31 @@ public class Term {
     * @return either the name of the other field, or null
     */
    public String equatesWithField(String fldname) {
+      if (!op.equals(Operator.EQ)) {
+         return null;
+      }
+      if (lhs.isFieldName() &&
+            lhs.asFieldName().equals(fldname) &&
+            rhs.isFieldName())
+         return rhs.asFieldName();
+      else if (rhs.isFieldName() &&
+            rhs.asFieldName().equals(fldname) &&
+            lhs.isFieldName())
+         return lhs.asFieldName();
+      else
+         return null;
+   }
+
+   /**
+    * Determine if this term is of the form "F1 (relational operator) F2"
+    * where F1 is the specified field and F2 is another field.
+    * If so, the method returns the name of that field.
+    * If not, the method returns null.
+    * 
+    * @param fldname the name of the field
+    * @return either the name of the other field, or null
+    */
+   public String comparesWithField(String fldname) {
       if (lhs.isFieldName() &&
             lhs.asFieldName().equals(fldname) &&
             rhs.isFieldName())
