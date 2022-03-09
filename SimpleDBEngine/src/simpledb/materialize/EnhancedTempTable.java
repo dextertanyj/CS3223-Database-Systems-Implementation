@@ -10,15 +10,15 @@ import simpledb.tx.Transaction;
 
 public class EnhancedTempTable extends TempTable implements Plan {
     Schema sch;
-    // Plan p1, p2;
+    Plan p1, p2;
     Optional<Integer> numblocks;
     Optional<Integer> numrecs;
 
-    public EnhancedTempTable(Transaction tx, Schema sch) {
+    public EnhancedTempTable(Transaction tx, Schema sch, Plan p1, Plan p2) {
         super(tx, sch);
         this.sch = sch;
-        // this.p1 = p1;
-        // this.p2 = p2;
+        this.p1 = p1;
+        this.p2 = p2;
     }
 
     public int blocksAccessed() {
@@ -65,10 +65,10 @@ public class EnhancedTempTable extends TempTable implements Plan {
         numblocks = Optional.of(blockcount);
     }
 
-    //TODO: verify correctness
     public QueryPlanPrinter getPlanDesc() {
-        // QueryPlanPrinter printer = QueryPlanPrinter.getJoinPlanPrinter(p1.getPlanDesc(), p2.getPlanDesc());
-        // return printer;
-        return null;
+        if (p2 == null) {
+            return p1.getPlanDesc();
+        }
+        return QueryPlanPrinter.getJoinPlanPrinter(p1.getPlanDesc(), p2.getPlanDesc());
     }
 }
