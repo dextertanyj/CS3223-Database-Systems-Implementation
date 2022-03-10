@@ -5,6 +5,8 @@ import java.util.Collection;
 import java.util.List;
 
 import simpledb.index.IndexType;
+import simpledb.materialize.AggregationFn;
+import simpledb.materialize.AggregationFnType;
 import simpledb.materialize.SortClause;
 import simpledb.materialize.SortOrder;
 import simpledb.query.Constant;
@@ -30,6 +32,29 @@ public class Parser {
 
    public String field() {
       return lex.eatId();
+   }
+
+   public Pair<String, AggregationFn> selectField() {
+      if (lex.matchKeyword(AggregationFnType.SUM.toString().toLowerCase())) {
+         return selectFieldWithAggregate(AggregationFnType.SUM);
+      } else if (lex.matchKeyword(AggregationFnType.COUNT.toString().toLowerCase())) {
+         return selectFieldWithAggregate(AggregationFnType.COUNT);
+      } else if (lex.matchKeyword(AggregationFnType.AVG.toString().toLowerCase())) {
+         return selectFieldWithAggregate(AggregationFnType.AVG);
+      } else if (lex.matchKeyword(AggregationFnType.MIN.toString().toLowerCase())) {
+         return selectFieldWithAggregate(AggregationFnType.MIN);
+      } else if (lex.matchKeyword(AggregationFnType.MAX.toString().toLowerCase())) {
+         return selectFieldWithAggregate(AggregationFnType.MAX);
+      }
+      return new Pair<>(field(), null);
+   }
+
+   public Pair<String, AggregationFn> selectFieldWithAggregate(AggregationFnType type) {
+      lex.eatKeyword(type.toString().toLowerCase());
+      lex.eatDelim('(');
+      String field = field();
+      lex.eatDelim(')');
+      return new Pair<>(field, AggregationFnType.createAggregationFn(type.toString(), field));
    }
 
    public Constant constant() {
@@ -66,7 +91,7 @@ public class Parser {
 
    public QueryData query() {
       lex.eatKeyword("select");
-      List<String> fields = selectList();
+      Pair<List<String>, List<AggregationFn>> pair = selectList();
       lex.eatKeyword("from");
       Collection<String> tables = tableList();
       Predicate pred = new Predicate();
@@ -74,23 +99,43 @@ public class Parser {
          lex.eatKeyword("where");
          pred = predicate();
       }
+
+      List<String> groupclauses = new ArrayList<>();
+      if (lex.matchKeyword("group")) {
+         lex.eatKeyword("group");
+         if (lex.matchKeyword("by")) {
+            lex.eatKeyword("by");
+            groupclauses = groupList();
+         }
+      }
+
+      List<SortClause> orderclauses = new ArrayList<>();
       if (lex.matchKeyword("order")) {
          lex.eatKeyword("order");
          lex.eatKeyword("by");
-         List<SortClause> orderclauses = orderList();
-         return new QueryData(fields, tables, pred, orderclauses);
+         orderclauses = orderList();
       }
-      return new QueryData(fields, tables, pred);
+      return new QueryData(pair.getFirst(), tables, pred, orderclauses, groupclauses, pair.getSecond());
    }
 
-   private List<String> selectList() {
-      List<String> L = new ArrayList<String>();
-      L.add(field());
+   private Pair<List<String>, List<AggregationFn>> selectList() {
+      List<String> selectFieldList = new ArrayList<String>();
+      List<AggregationFn> aggregateList = new ArrayList<>();
+      Pair<List<String>, List<AggregationFn>> listPair = new Pair<>(selectFieldList, aggregateList);
+      selectListHelper(listPair);
+      return listPair;
+   }
+
+   private void selectListHelper(Pair<List<String>, List<AggregationFn>> listPair) {
+      Pair<String, AggregationFn> pair = selectField();
+      listPair.getFirst().add(pair.getFirst());
+      if (!pair.isSecondEmpty()) {
+         listPair.getSecond().add(pair.getSecond());
+      }
       if (lex.matchDelim(',')) {
          lex.eatDelim(',');
-         L.addAll(selectList());
+         selectListHelper(listPair);
       }
-      return L;
    }
 
    private Collection<String> tableList() {
@@ -118,6 +163,21 @@ public class Parser {
       if (lex.matchDelim(',')) {
          lex.eatDelim(',');
          L.addAll(orderList());
+      }
+      return L;
+   }
+
+   /**
+    * consumes all the elements in the group by clause
+    * @return a list of field names of the group by attributes
+    */
+   private List<String> groupList() {
+      List<String> L = new ArrayList<String>();
+      String fieldname = field();
+      L.add(fieldname);
+      if (lex.matchDelim(',')) {
+         lex.eatDelim(',');
+         L.addAll(groupList());
       }
       return L;
    }

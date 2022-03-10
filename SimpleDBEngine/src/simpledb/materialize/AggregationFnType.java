@@ -4,11 +4,11 @@ package simpledb.materialize;
  * An enum that converts strings to aggregation Functions.
  */
 public enum AggregationFnType {
-  SUM("SUM"),
-  COUNT("COUNT"),
-  AVG("AVG"),
-  MIN("MIN"),
-  MAX("MAX");
+  SUM("sum"),
+  COUNT("count"),
+  AVG("avg"),
+  MIN("min"),
+  MAX("max");
 
   private final String str;
 

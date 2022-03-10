@@ -56,11 +56,11 @@ public class HeuristicQueryPlanner implements QueryPlanner {
       }
 
       // Step 4. Project on the field names
-      if (data.aggFns() != null && data.groupFields() == null) {
-         currentplan = new AggProjectPlan(currentplan, data.aggFns());
-      } else {
-         currentplan = new ProjectPlan(currentplan, data.fields());
-      }
+      // if (data.aggFns().size() != 0 && data.groupFields().size() == 0) {
+      //    currentplan = new AggProjectPlan(currentplan, data.aggFns());
+      // } else {
+      currentplan = new ProjectPlan(currentplan, data.fields());
+      //}
 
       // Step 5. Group by selected field names
       if (data.groupFields() != null) {

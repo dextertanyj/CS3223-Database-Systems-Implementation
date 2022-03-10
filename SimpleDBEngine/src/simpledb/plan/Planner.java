@@ -1,5 +1,10 @@
 package simpledb.plan;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import simpledb.materialize.AggregationFn;
+import simpledb.parse.BadSyntaxException;
 import simpledb.parse.CreateIndexData;
 import simpledb.parse.CreateTableData;
 import simpledb.parse.CreateViewData;
@@ -9,6 +14,7 @@ import simpledb.parse.ModifyData;
 import simpledb.parse.Parser;
 import simpledb.parse.QueryData;
 import simpledb.tx.Transaction;
+import test.integration.AggregateTest;
 
 /**
  * The object that executes SQL statements.
@@ -71,9 +77,51 @@ public class Planner {
 
    // SimpleDB does not verify queries, although it should.
    private void verifyQuery(QueryData data) {
+      // fail if attribute in select list do not appear in group clause
+      checkAggregate(data.fields(), data.aggFns(), data.groupFields());
    }
 
    // SimpleDB does not verify updates, although it should.
    private void verifyUpdate(Object data) {
+   }
+
+   private static void checkAggregate(List<String> selectList, List<AggregationFn> aggregationFnList, List<String> groupList) {
+
+      // if no group by clause, all select clauses must be aggregated or none
+      // basically checking all fields in selectLst matches exactly to fields in aggreagationFns
+      if (groupList.size() == 0) {
+         if (aggregationFnList.size() > 0 && aggregationFnList.size() != selectList.size()) {
+            throw new BadSyntaxException();
+         } 
+      }
+
+      // if got group by clause, if the select statement does not exist in the aggregationList, then it must exist in the groupList
+      if (groupList.size() > 0) {
+         // for select statements that does not exist in aggList,
+         // if those fields also dont exist in groupList, then throw error
+         List<String> fieldsNotInAggregateList = getFieldsNotInAggregateList(selectList, aggregationFnList);
+         for (String s : fieldsNotInAggregateList) {
+            if (!groupList.contains(s)) {
+               throw new BadSyntaxException();
+            }
+         }
+      }
+   }
+
+   private static List<String> getFieldsNotInAggregateList(List<String> selectList, List<AggregationFn> aggregationFnList) {
+      List<String> resultList = new ArrayList<>();
+      for (String selectField : selectList) {
+         boolean fieldExists = false;
+         for (AggregationFn aggregate : aggregationFnList) {
+            if (aggregate.fieldNameValue().equals(selectField)) {
+               fieldExists = true;
+               break;
+            }
+         }
+         if (!fieldExists) {
+            resultList.add(selectField);
+         }
+      }
+      return resultList;
    }
 }

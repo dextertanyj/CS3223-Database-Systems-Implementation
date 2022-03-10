@@ -30,6 +30,7 @@ public class AggProjectPlan implements Plan {
    public AggProjectPlan(Plan p, List<AggregationFn> aggFns) {
       this.p = p;
       this.aggFns = aggFns;
+      fieldnames = new HashSet<>();
       for (AggregationFn aggFn : aggFns) {
          fieldnames.add(aggFn.fieldName());
          schema.add(aggFn.fieldName(), p.schema());

@@ -35,6 +35,13 @@ public interface AggregationFn {
    String fieldName();
 
    /**
+    * Return the pure name of the new aggregation field.
+    * 
+    * @return the pure name of the new aggregation field
+    */
+    String fieldNameValue();
+
+   /**
     * Return the computed aggregation value.
     * 
     * @return the computed aggregation value

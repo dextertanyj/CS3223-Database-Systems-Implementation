@@ -5,7 +5,9 @@ import java.io.StreamTokenizer;
 import java.io.StringReader;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.regex.Pattern; 
 
+import simpledb.materialize.AggregationFnType;
 import simpledb.materialize.SortOrder;
 import simpledb.index.IndexType;
 import simpledb.query.Operator;
@@ -188,6 +190,7 @@ public class Lexer {
             "insert", "into", "values", "delete", "update", "set",
             "create", "table", "int", "varchar", "view", "as", "index", "on",
             "using", IndexType.HASH.toString(), IndexType.TREE.toString(),
+            "group",
             "order", "by", SortOrder.ASCENDING.toString(), SortOrder.DESCENDING.toString());
    }
 }
