@@ -6,12 +6,18 @@ import simpledb.index.planner.IndexJoinPlan;
 import simpledb.index.planner.IndexSelectPlan;
 import simpledb.metadata.IndexInfo;
 import simpledb.metadata.MetadataMgr;
+import simpledb.materialize.MergeJoinPlan;
+import simpledb.multibuffer.MultibufferJoinPlan;
 import simpledb.multibuffer.MultibufferProductPlan;
+import simpledb.plan.HashJoinPlan;
 import simpledb.plan.Plan;
 import simpledb.plan.SelectPlan;
 import simpledb.plan.TablePlan;
 import simpledb.query.Constant;
+import simpledb.query.Expression;
+import simpledb.query.Operator;
 import simpledb.query.Predicate;
+import simpledb.query.Term;
 import simpledb.record.Schema;
 import simpledb.tx.Transaction;
 
@@ -74,9 +80,29 @@ class TablePlanner {
       Predicate joinpred = mypred.joinSubPred(myschema, currsch);
       if (joinpred == null)
          return null;
-      Plan p = makeIndexJoin(current, currsch);
-      if (p == null)
+      Plan p = null;
+      Plan loop = makeLoopJoin(current, currsch);
+      Plan index = makeIndexJoin(current, currsch);
+      Plan hash = makeHashJoin(current, currsch);
+      Plan merge = makeMergeJoin(current, currsch);
+      if (loop == null && index == null && merge == null && hash == null) {
          p = makeProductJoin(current, currsch);
+      } else {
+         int loop_cost = loop == null ? Integer.MAX_VALUE : loop.blocksAccessed();
+         int index_cost = index == null ? Integer.MAX_VALUE : index.blocksAccessed();
+         int merge_cost = merge == null ? Integer.MAX_VALUE : merge.blocksAccessed();
+         int hash_cost = hash == null ? Integer.MAX_VALUE : hash.blocksAccessed();
+         int cost = Math.min(loop_cost, Math.min(index_cost, Math.min(merge_cost, hash_cost)));
+         if (cost == index_cost) {
+            p = index;
+         } else if (cost == hash_cost) {
+            p = hash;
+         } else if (cost == merge_cost) {
+            p = merge;
+         } else {
+            p = loop;
+         }
+      }
       return p;
    }
 
@@ -99,6 +125,54 @@ class TablePlanner {
             IndexInfo ii = indexes.get(fldname);
             System.out.println("index on " + fldname + " used");
             return new IndexSelectPlan(myplan, ii, val);
+         }
+      }
+      return null;
+   }
+
+   private Plan makeLoopJoin(Plan current, Schema currsch) {
+      for (String fldname : myschema.fields()) {
+         String outerfield = mypred.equatesWithField(fldname);
+         if (outerfield != null && currsch.hasField(outerfield)) {
+            Plan p = new MultibufferJoinPlan(tx, myplan, current,
+                  new Term(Operator.EQ, new Expression(fldname), new Expression(outerfield)));
+            p = addSelectPred(p);
+            return addJoinPred(p, currsch);
+         }
+      }
+      Schema combined = new Schema();
+      combined.addAll(myschema);
+      combined.addAll(currsch);
+      for (String fldname : myschema.fields()) {
+         Term term = mypred.comparesWithField(fldname);
+         if (term != null && term.appliesTo(combined)) {
+            Plan p = new MultibufferJoinPlan(tx, myplan, current, term);
+            p = addSelectPred(p);
+            return addJoinPred(p, currsch);
+         }
+      }
+      return null;
+   }
+
+   private Plan makeMergeJoin(Plan current, Schema currsch) {
+      for (String fldname : myschema.fields()) {
+         String outerfield = mypred.equatesWithField(fldname);
+         if (outerfield != null && currsch.hasField(outerfield)) {
+            Plan p = new MergeJoinPlan(tx, myplan, current, fldname, outerfield);
+            p = addSelectPred(p);
+            return addJoinPred(p, currsch);
+         }
+      }
+      return null;
+   }
+
+   private Plan makeHashJoin(Plan current, Schema currsch) {
+      for (String fldname : myschema.fields()) {
+         String outerfield = mypred.equatesWithField(fldname);
+         if (outerfield != null && currsch.hasField(outerfield)) {
+            Plan p = new HashJoinPlan(tx, myplan, current, fldname, outerfield);
+            p = addSelectPred(p);
+            return addJoinPred(p, currsch);
          }
       }
       return null;

@@ -49,19 +49,15 @@ public class BasicQueryPlanner implements QueryPlanner {
       p = new SelectPlan(p, data.pred());
 
       // Step 4: Project on the field names
-      if (data.aggFns() != null && data.groupFields() == null) {
-         p = new AggProjectPlan(p, data.aggFns());
-      } else {
-         p = new ProjectPlan(p, data.fields());
-      }
+      p = new ProjectPlan(p, data.fields(), data.isDistinct(), tx);
 
       // Step 5. Group by selected field names
-      if (data.groupFields() != null) {
+      if (data.aggFns().size() != 0) {
          p = new GroupByPlan(tx, p, data.groupFields(), data.aggFns());
       }
 
       // Step 6. Sort on the field names
-      if (data.sortclauses() != null) {
+      if (data.sortclauses().size() != 0) {
          p = new SortPlan(tx, p, data.sortclauses());
       }
 

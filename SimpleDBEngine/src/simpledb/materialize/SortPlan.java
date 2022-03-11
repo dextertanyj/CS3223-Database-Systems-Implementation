@@ -50,6 +50,15 @@ public class SortPlan implements Plan {
       return new SortScan(runs, comp);
    }
 
+   public Scan openComplete() {
+      Scan src = p.open();
+      List<TempTable> runs = splitIntoRuns(src);
+      src.close();
+      while (runs.size() > 1)
+         runs = doAMergeIteration(runs);
+      return new SortScan(runs, comp);
+   }
+
    /**
     * Return the number of blocks in the sorted table,
     * which is the same as it would be in a
@@ -60,9 +69,12 @@ public class SortPlan implements Plan {
     * @see simpledb.plan.Plan#blocksAccessed()
     */
    public int blocksAccessed() {
-      // does not include the one-time cost of sorting
+      int buffers = tx.availableBuffs();
+      int run_count = p.blocksAccessed() / buffers;
+      int iterations = (int) Math.ceil(Math.log(run_count) / Math.log(2)); // Runs are merged two at a time
+      int sort_cost = 2 * p.blocksAccessed() * (1 + iterations);
       Plan mp = new MaterializePlan(tx, p); // not opened; just for analysis
-      return mp.blocksAccessed();
+      return mp.blocksAccessed() + sort_cost;
    }
 
    /**

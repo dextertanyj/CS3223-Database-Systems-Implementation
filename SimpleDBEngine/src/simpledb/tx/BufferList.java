@@ -16,6 +16,7 @@ import simpledb.file.BlockId;
  */
 class BufferList {
    private Map<BlockId, Buffer> buffers = new HashMap<>();
+   private Map<Integer, Buffer> reserved = new HashMap<>();
    private List<BlockId> pins = new ArrayList<>();
    private BufferMgr bm;
 
@@ -60,6 +61,29 @@ class BufferList {
    }
 
    /**
+    * Frees the reserved buffer page identified by its ID.
+    * 
+    * @param int the ID of the reserved buffer page to free.
+    */
+   public void free(int reservedId) {
+      Buffer buff = reserved.get(reservedId);
+      bm.unpin(buff);
+      reserved.remove(reservedId);
+   }
+
+   /**
+    * Returns a unique ID representing a reserved buffer page.
+    * 
+    * @return a unique ID representing a reserved buffer page.
+    */
+   public int reserve() {
+      Buffer buff = bm.reserve();
+      int index = reserved.size();
+      reserved.put(index, buff);
+      return index;
+   }
+
+   /**
     * Unpin any buffers still pinned by this transaction.
     */
    void unpinAll() {
@@ -67,7 +91,11 @@ class BufferList {
          Buffer buff = buffers.get(blk);
          bm.unpin(buff);
       }
+      for (Buffer buff : reserved.values()) {
+         bm.unpin(buff);
+      }
       buffers.clear();
+      reserved.clear();
       pins.clear();
    }
 }

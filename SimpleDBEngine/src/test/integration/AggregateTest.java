@@ -21,8 +21,8 @@ public class AggregateTest {
          
          System.out.println("Aggregation result:");
          while (s.next()) {
-            int max = s.getInt("countofsid");
-            System.out.println("max" + "\t" + max);
+            int max1 = s.getInt("countofsid");
+            System.out.println("max" + "\t" + max1);
          }
          s.close();
          tx.commit();

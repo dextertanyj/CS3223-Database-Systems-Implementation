@@ -150,6 +150,25 @@ public class Predicate {
       return null;
    }
 
+   /**
+    * Determine if there is a term of the form "F1 (relational operator) F2"
+    * where F1 is the specified field and F2 is another field.
+    * If so, the method returns the term.
+    * If not, the method returns null.
+    * 
+    * @param fldname the name of the field
+    * @return the term relating the two fields, or null
+    */
+   public Term comparesWithField(String fldname) {
+      for (Term t : terms) {
+         String s = t.comparesWithField(fldname);
+         if (s != null) {
+            return t;
+         }
+      }
+      return null;
+   }
+
    public String toString() {
       Iterator<Term> iter = terms.iterator();
       if (!iter.hasNext())

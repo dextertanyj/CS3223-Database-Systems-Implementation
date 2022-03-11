@@ -7,7 +7,6 @@ import simpledb.materialize.GroupByPlan;
 import simpledb.materialize.SortPlan;
 import simpledb.metadata.MetadataMgr;
 import simpledb.parse.QueryData;
-import simpledb.plan.AggProjectPlan;
 import simpledb.plan.Plan;
 import simpledb.plan.Planner;
 import simpledb.plan.ProjectPlan;
@@ -56,19 +55,17 @@ public class HeuristicQueryPlanner implements QueryPlanner {
       }
 
       // Step 4. Project on the field names
-      // if (data.aggFns().size() != 0 && data.groupFields().size() == 0) {
-      //    currentplan = new AggProjectPlan(currentplan, data.aggFns());
-      // } else {
-      currentplan = new ProjectPlan(currentplan, data.fields());
-      //}
+      currentplan = new ProjectPlan(currentplan, data.fields(), data.isDistinct(), tx);
+   
+
 
       // Step 5. Group by selected field names
-      if (data.groupFields() != null) {
+      if (data.aggFns().size() != 0) {
          currentplan = new GroupByPlan(tx, currentplan, data.groupFields(), data.aggFns());
       }
       
       // Step 6. Sort on the field names
-      if (data.sortclauses() != null) {
+      if (data.sortclauses().size() != 0) {
          currentplan = new SortPlan(tx, currentplan, data.sortclauses());
       }
 
