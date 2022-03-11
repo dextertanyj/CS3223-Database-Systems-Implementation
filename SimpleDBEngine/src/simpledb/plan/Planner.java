@@ -85,35 +85,52 @@ public class Planner {
    private void verifyUpdate(Object data) {
    }
 
+   /**
+    * Throws BadSyntaxException error if the query uses group by clause inappropriately.
+    * @param selectList the list of select fields from the query
+    * @param aggregationFnList the list of aggregation functions from the query
+    * @param groupList the list of group fields from the query
+    */
    private static void checkAggregate(List<String> selectList, List<AggregationFn> aggregationFnList, List<String> groupList) {
-
-      // if no group by clause, all select clauses must be aggregated or none
-      // basically checking all fields in selectLst matches exactly to fields in aggreagationFns
       if (groupList.size() == 0) {
          if (aggregationFnList.size() > 0 && aggregationFnList.size() != selectList.size()) {
             throw new BadSyntaxException();
          } 
       }
 
-      // if got group by clause, if the select statement does not exist in the aggregationList, then it must exist in the groupList
       if (groupList.size() > 0) {
-         // for select statements that does not exist in aggList,
-         // if those fields also dont exist in groupList, then throw error
          List<String> fieldsNotInAggregateList = getFieldsNotInAggregateList(selectList, aggregationFnList);
          for (String s : fieldsNotInAggregateList) {
             if (!groupList.contains(s)) {
                throw new BadSyntaxException();
             }
          }
+         for (String s : groupList) {
+            boolean hasError = true;
+            for (String selectField : selectList) {
+               if (selectField.equals(s) || selectField.contains(s)) {
+                  hasError = false;
+               }
+            }
+            if (hasError) {
+               throw new BadSyntaxException();
+            }
+         }
       }
    }
 
+   /**
+    * Get select fields that are not found in the aggregationFnList.
+    * @param selectList the list of select fields from the query
+    * @param aggregationFnList the list of aggregation functions from the query
+    * @return a list of string containing fields from the selectList that do not appear in the aggregationFnList
+    */
    private static List<String> getFieldsNotInAggregateList(List<String> selectList, List<AggregationFn> aggregationFnList) {
       List<String> resultList = new ArrayList<>();
       for (String selectField : selectList) {
          boolean fieldExists = false;
          for (AggregationFn aggregate : aggregationFnList) {
-            if (aggregate.fieldNameValue().equals(selectField)) {
+            if (aggregate.fieldName().equals(selectField)) {
                fieldExists = true;
                break;
             }

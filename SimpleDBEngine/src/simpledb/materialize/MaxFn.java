@@ -52,10 +52,6 @@ public class MaxFn implements AggregationFn {
       return "maxof" + fldname;
    }
 
-   public String fieldNameValue() {
-      return fldname;
-   }
-
    /**
     * Return the current maximum.
     * 

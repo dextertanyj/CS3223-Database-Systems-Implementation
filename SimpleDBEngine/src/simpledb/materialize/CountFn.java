@@ -54,10 +54,6 @@ public class CountFn implements AggregationFn {
       return "countof" + fldname;
    }
 
-   public String fieldNameValue() {
-      return fldname;
-   }
-
    /**
     * Return the current count.
     * 

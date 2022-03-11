@@ -34,7 +34,12 @@ public class Parser {
       return lex.eatId();
    }
 
-   public Pair<String, AggregationFn> selectField() {
+   /**
+    * Consumes a select attribute or aggregation attribute in the select clause of the query.
+    * @return a pair of string and aggregation function if a aggregation attribute exists, 
+    * null for the aggregation function otherwise
+    */
+   private Pair<String, AggregationFn> selectField() {
       if (lex.matchKeyword(AggregationFnType.SUM.toString().toLowerCase())) {
          return selectFieldWithAggregate(AggregationFnType.SUM);
       } else if (lex.matchKeyword(AggregationFnType.COUNT.toString().toLowerCase())) {
@@ -49,12 +54,18 @@ public class Parser {
       return new Pair<>(field(), null);
    }
 
-   public Pair<String, AggregationFn> selectFieldWithAggregate(AggregationFnType type) {
+   /**
+    * Helper method to consume the aggregation keywords.
+    * @param type AggregationFnType enum
+    * @return a pair of select field name and the aggregate function
+    */
+   private Pair<String, AggregationFn> selectFieldWithAggregate(AggregationFnType type) {
       lex.eatKeyword(type.toString().toLowerCase());
       lex.eatDelim('(');
       String field = field();
       lex.eatDelim(')');
-      return new Pair<>(field, AggregationFnType.createAggregationFn(type.toString(), field));
+      AggregationFn agg = AggregationFnType.createAggregationFn(type.toString(), field);
+      return new Pair<>(agg.fieldName(), agg);
    }
 
    public Constant constant() {
@@ -87,8 +98,10 @@ public class Parser {
       return pred;
    }
 
-   // Methods for parsing queries
-
+   /**
+    * Parses the query.
+    * @return a QueryData object that encompasses all information about the query
+    */
    public QueryData query() {
       lex.eatKeyword("select");
       boolean isDistinct = false;
@@ -123,6 +136,10 @@ public class Parser {
       return new QueryData(pair.getFirst(), tables, pred, orderclauses, groupclauses, pair.getSecond(), isDistinct);
    }
 
+   /**
+    * Consumes all select fields including aggregated attributes.
+    * @return a pair of list of strings and list of aggregation functions
+    */
    private Pair<List<String>, List<AggregationFn>> selectList() {
       List<String> selectFieldList = new ArrayList<String>();
       List<AggregationFn> aggregateList = new ArrayList<>();
@@ -173,7 +190,7 @@ public class Parser {
    }
 
    /**
-    * consumes all the elements in the group by clause
+    * consumes all the elements in the group by clause.
     * @return a list of field names of the group by attributes
     */
    private List<String> groupList() {

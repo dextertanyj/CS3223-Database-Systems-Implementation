@@ -43,10 +43,6 @@ public class AvgFn implements AggregationFn {
       return "avgof" + fldname;
    }
 
-   public String fieldNameValue() {
-      return fldname;
-   }
-
    /**
     * Return the current average.
     */

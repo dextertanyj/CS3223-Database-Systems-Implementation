@@ -40,10 +40,6 @@ public class SumFn implements AggregationFn {
       return "sumof" + fldname;
    }
 
-   public String fieldNameValue() {
-      return fldname;
-   }
-
    /**
     * Return the current sum.
     */

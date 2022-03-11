@@ -5,9 +5,6 @@ import java.io.StreamTokenizer;
 import java.io.StringReader;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.regex.Pattern; 
-
-import simpledb.materialize.AggregationFnType;
 import simpledb.materialize.SortOrder;
 import simpledb.index.IndexType;
 import simpledb.query.Operator;

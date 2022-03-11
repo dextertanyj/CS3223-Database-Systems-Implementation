@@ -94,7 +94,7 @@ public class QueryData {
       String predstring = pred.toString();
       if (!predstring.equals(""))
          result += " where " + predstring;
-      if (sortclauses != null) {
+      if (sortclauses.size() != 0) {
          result += " order by ";
          Iterator<SortClause> iter = sortclauses.iterator();
          result += iter.next().toString();
