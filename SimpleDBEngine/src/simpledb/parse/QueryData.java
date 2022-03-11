@@ -4,6 +4,7 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 
+import simpledb.materialize.AggregationFn;
 import simpledb.materialize.SortClause;
 import simpledb.query.Predicate;
 
@@ -17,20 +18,20 @@ public class QueryData {
    private Collection<String> tables;
    private Predicate pred;
    private List<SortClause> sortclauses;
+   private List<String> groupFields;
+   private List<AggregationFn> aggFns;
    private boolean isDistinct = false;
 
    /**
     * Saves the field and table list and predicate and if a distinct projection is required.
     */
-   public QueryData(List<String> fields, Collection<String> tables, Predicate pred, boolean isDistinct) {
-      this(fields, tables, pred, null, isDistinct);
-   }
-
-   public QueryData(List<String> fields, Collection<String> tables, Predicate pred, List<SortClause> sortclauses, boolean isDistinct) {
+   public QueryData(List<String> fields, Collection<String> tables, Predicate pred, List<SortClause> sortclauses, List<String> groupFields, List<AggregationFn> aggFns, boolean isDistinct) {
       this.fields = fields;
       this.tables = tables;
       this.pred = pred;
       this.sortclauses = sortclauses;
+      this.groupFields = groupFields;
+      this.aggFns = aggFns;
       this.isDistinct = isDistinct;
    }
 
@@ -66,6 +67,14 @@ public class QueryData {
       return sortclauses;
    }
 
+   public List<AggregationFn> aggFns() {
+      return aggFns;
+   }
+
+   public List<String> groupFields() {
+      return groupFields;
+   }
+   
    public boolean isDistinct() {
       return isDistinct;
    }
@@ -85,7 +94,7 @@ public class QueryData {
       String predstring = pred.toString();
       if (!predstring.equals(""))
          result += " where " + predstring;
-      if (sortclauses != null) {
+      if (sortclauses.size() != 0) {
          result += " order by ";
          Iterator<SortClause> iter = sortclauses.iterator();
          result += iter.next().toString();
