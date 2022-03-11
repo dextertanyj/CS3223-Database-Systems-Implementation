@@ -131,37 +131,48 @@ public class SortPlan implements Plan {
    private List<TempTable> doAMergeIteration(List<TempTable> runs) {
       List<TempTable> result = new ArrayList<>();
       while (runs.size() > 1) {
-         TempTable p1 = runs.remove(0);
-         TempTable p2 = runs.remove(0);
-         result.add(mergeTwoRuns(p1, p2));
+         result.add(mergeRuns(runs));
       }
       if (runs.size() == 1)
          result.add(runs.get(0));
       return result;
    }
 
-   private TempTable mergeTwoRuns(TempTable p1, TempTable p2) {
-      Scan src1 = p1.open();
-      Scan src2 = p2.open();
+   private TempTable mergeRuns(List<TempTable> runs) {
       TempTable result = new TempTable(tx, sch);
       UpdateScan dest = result.open();
+      int tablecount = Math.min(runs.size(), tx.availableBuffs());
 
-      boolean hasmore1 = src1.next();
-      boolean hasmore2 = src2.next();
-      while (hasmore1 && hasmore2)
-         if (comp.compare(src1, src2) < 0)
-            hasmore1 = copy(src1, dest);
-         else
-            hasmore2 = copy(src2, dest);
+      List<Scan> scans = new ArrayList<>(tablecount);
+      List<Boolean> hasmore = new ArrayList<>(tablecount);
+      for (int i = 0; i < tablecount; i++) {
+         TempTable tbl = runs.remove(0);
+         Scan s = tbl.open();
+         scans.add(s);
+         hasmore.add(s.next());
+      }
 
-      if (hasmore1)
-         while (hasmore1)
-            hasmore1 = copy(src1, dest);
-      else
-         while (hasmore2)
-            hasmore2 = copy(src2, dest);
-      src1.close();
-      src2.close();
+      while (hasmore.contains(true)) {
+         int chosen = -1;
+         for (int i = 0; i < tablecount; i++) {
+            if (hasmore.get(i)) {
+               if (chosen == -1) {
+                  chosen = i;
+               }
+               if (chosen == i) {
+                  continue;
+               }
+               if (comp.compare(scans.get(i), scans.get(chosen)) < 0) {
+                  chosen = i;
+               }
+            }
+         }
+         hasmore.set(chosen, copy(scans.get(chosen), dest));
+      }
+
+      for (Scan s : scans) {
+         s.close();
+      }
       dest.close();
       return result;
    }
