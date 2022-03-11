@@ -32,8 +32,9 @@ public class IndexInfo {
     * 
     * @param idxname   the name of the index
     * @param fldname   the name of the indexed field
-    * @param tx        the calling transaction
+    * @param type      the type of the index: hash or btree
     * @param tblSchema the schema of the table
+    * @param tx        the calling transaction
     * @param si        the statistics for the table
     */
    public IndexInfo(String idxname, String fldname, IndexType type, Schema tblSchema,
@@ -129,5 +130,9 @@ public class IndexInfo {
          sch.addStringField("dataval", fldlen);
       }
       return new Layout(sch);
+   }
+
+   public String indexTypeString() {
+      return type.toString();
    }
 }

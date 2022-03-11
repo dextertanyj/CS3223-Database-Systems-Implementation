@@ -4,6 +4,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import simpledb.plan.Plan;
+import simpledb.plan.QueryPlanPrinter;
 import simpledb.query.Scan;
 import simpledb.record.Schema;
 import simpledb.tx.Transaction;
@@ -109,5 +110,11 @@ public class MergeJoinPlan implements Plan {
     */
    public Schema schema() {
       return sch;
+   }
+
+   public QueryPlanPrinter getPlanDesc() {
+      QueryPlanPrinter printer = QueryPlanPrinter.getJoinPlanPrinter(p1.getPlanDesc().remove(), p2.getPlanDesc().remove());
+      String toAdd = QueryPlanPrinter.getJoinPlanDesc("Merge join", fldname1, fldname2);
+      return printer.add(toAdd);
    }
 }

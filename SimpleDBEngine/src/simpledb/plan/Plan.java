@@ -1,5 +1,7 @@
 package simpledb.plan;
 
+import java.util.List;
+
 import simpledb.query.Scan;
 import simpledb.record.Schema;
 
@@ -51,4 +53,11 @@ public interface Plan {
     * @return the query's schema
     */
    public Schema schema();
+
+   /**
+    * Gets the description of the query plan.
+    *
+    * @return the query plan description
+    */
+   public QueryPlanPrinter getPlanDesc();
 }

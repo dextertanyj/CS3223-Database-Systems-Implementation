@@ -23,7 +23,7 @@ public class QueryData {
    private boolean isDistinct = false;
 
    /**
-    * Saves the field and table list and predicate.
+    * Saves the field and table list and predicate and if a distinct projection is required.
     */
    public QueryData(List<String> fields, Collection<String> tables, Predicate pred, List<SortClause> sortclauses, List<String> groupFields, List<AggregationFn> aggFns, boolean isDistinct) {
       this.fields = fields;

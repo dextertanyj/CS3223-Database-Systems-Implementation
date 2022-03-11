@@ -1,8 +1,11 @@
 package simpledb.multibuffer;
 
+import java.util.Arrays;
+
 import simpledb.materialize.MaterializePlan;
 import simpledb.materialize.TempTable;
 import simpledb.plan.Plan;
+import simpledb.plan.QueryPlanPrinter;
 import simpledb.query.Scan;
 import simpledb.query.UpdateScan;
 import simpledb.record.Schema;
@@ -127,5 +130,11 @@ public class MultibufferProductPlan implements Plan {
       src.close();
       dest.close();
       return t;
+   }
+
+   public QueryPlanPrinter getPlanDesc() {
+      QueryPlanPrinter printer = QueryPlanPrinter.getJoinPlanPrinter(lhs.getPlanDesc().remove(), rhs.getPlanDesc().remove());
+      String toAdd = String.format("Multibuffer product on: " + Arrays.toString(schema.fields().toArray()));
+      return printer.add(toAdd);
    }
 }

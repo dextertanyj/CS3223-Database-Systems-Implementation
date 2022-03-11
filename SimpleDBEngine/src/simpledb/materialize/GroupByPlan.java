@@ -1,8 +1,10 @@
 package simpledb.materialize;
 
+import java.util.Arrays;
 import java.util.List;
 
 import simpledb.plan.Plan;
+import simpledb.plan.QueryPlanPrinter;
 import simpledb.query.Scan;
 import simpledb.record.Schema;
 import simpledb.tx.Transaction;
@@ -105,5 +107,17 @@ public class GroupByPlan implements Plan {
     */
    public Schema schema() {
       return sch;
+   }
+
+   public QueryPlanPrinter getPlanDesc() {
+      String[] aggFnString = new String[aggfns.size()];
+      for (int i = 0; i < aggfns.size(); ++i) {
+         aggFnString[i] = aggfns.get(i).fieldName();
+      }
+      String toAdd = String.format(
+            "Group by: %s, Aggregated on: %s",
+            Arrays.toString(groupfields.toArray()),
+            Arrays.toString(aggFnString));
+      return p.getPlanDesc().add(toAdd);
    }
 }

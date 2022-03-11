@@ -1,5 +1,7 @@
 package simpledb.plan;
 
+import java.util.Arrays;
+
 import simpledb.query.Scan;
 import simpledb.record.Schema;
 
@@ -39,5 +41,9 @@ public class OptimizedProductPlan implements Plan {
 
    public Schema schema() {
       return bestplan.schema();
+   }
+
+   public QueryPlanPrinter getPlanDesc() {
+      return bestplan.getPlanDesc().add("Optimised product plan on: " + Arrays.toString(bestplan.schema().fields().toArray()));
    }
 }

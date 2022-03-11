@@ -38,7 +38,7 @@ public class HashJoinPlan implements Plan {
         this.depth = depth;
         sch.addAll(p1.schema());
         sch.addAll(p2.schema());
-        this.resulttable = new EnhancedTempTable(tx, sch);
+        this.resulttable = new EnhancedTempTable(tx, sch, p1, p2);
     }
 
     public HashJoinPlan(Transaction tx, Plan p1, Plan p2, String fldname1, String fldname2, int depth,
@@ -73,7 +73,7 @@ public class HashJoinPlan implements Plan {
         ArrayList<UpdateScan> scans = new ArrayList<>();
         Scan s = t.open();
         for (int i = 0; i < outputBuffers; i++) {
-            EnhancedTempTable table = new EnhancedTempTable(tx, t.schema());
+            EnhancedTempTable table = new EnhancedTempTable(tx, t.schema(), t, null);
             buckets.add(table);
             UpdateScan scan = table.open();
             scans.add(scan);
@@ -195,5 +195,11 @@ public class HashJoinPlan implements Plan {
 
     public Schema schema() {
         return sch;
+    }
+
+    public QueryPlanPrinter getPlanDesc() {
+        QueryPlanPrinter printer = QueryPlanPrinter.getJoinPlanPrinter(p1.getPlanDesc(), p2.getPlanDesc());
+        String toAdd = QueryPlanPrinter.getJoinPlanDesc("Hash join", fldname1, fldname2);
+        return printer.add(toAdd);
     }
 }

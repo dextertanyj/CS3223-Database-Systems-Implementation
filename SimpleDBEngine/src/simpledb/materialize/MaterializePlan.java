@@ -1,6 +1,9 @@
 package simpledb.materialize;
 
+import java.util.Arrays;
+
 import simpledb.plan.Plan;
+import simpledb.plan.QueryPlanPrinter;
 import simpledb.query.Scan;
 import simpledb.query.UpdateScan;
 import simpledb.record.Layout;
@@ -92,5 +95,9 @@ public class MaterializePlan implements Plan {
     */
    public Schema schema() {
       return srcplan.schema();
+   }
+
+   public QueryPlanPrinter getPlanDesc() {
+      return srcplan.getPlanDesc().add("Materialised: " + Arrays.toString(srcplan.schema().fields().toArray()));
    }
 }

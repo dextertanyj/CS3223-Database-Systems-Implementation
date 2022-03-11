@@ -91,4 +91,8 @@ public class SelectPlan implements Plan {
    public Schema schema() {
       return p.schema();
    }
+
+   public QueryPlanPrinter getPlanDesc() {
+      return p.getPlanDesc().add("Select: [" + pred.toString() + "]");
+   }
 }

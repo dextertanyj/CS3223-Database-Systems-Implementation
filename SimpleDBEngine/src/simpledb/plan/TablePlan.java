@@ -99,4 +99,8 @@ public class TablePlan implements Plan {
    public Layout layout() {
       return layout;
    }
+
+   public QueryPlanPrinter getPlanDesc() {
+      return new QueryPlanPrinter("Table: [" + tblname + "]");
+   }
 }

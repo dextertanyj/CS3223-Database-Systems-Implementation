@@ -1,5 +1,6 @@
 package simpledb.plan;
 
+import java.util.Arrays;
 import java.util.List;
 
 import simpledb.materialize.SortClause;
@@ -99,5 +100,16 @@ public class ProjectPlan implements Plan {
     */
    public Schema schema() {
       return schema;
+   }
+
+   public QueryPlanPrinter getPlanDesc() {
+      String prefix = "Project";
+      QueryPlanPrinter printer = p.getPlanDesc();
+      if (isDistinct) {
+         prefix += " distinct: ";
+      } else {
+         prefix += ": ";
+      }
+      return printer.add(prefix + Arrays.toString(schema.fields().toArray()));
    }
 }

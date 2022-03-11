@@ -4,6 +4,7 @@ import simpledb.index.Index;
 import simpledb.index.query.IndexSelectScan;
 import simpledb.metadata.IndexInfo;
 import simpledb.plan.Plan;
+import simpledb.plan.QueryPlanPrinter;
 import simpledb.query.Constant;
 import simpledb.query.Scan;
 import simpledb.record.Schema;
@@ -85,5 +86,10 @@ public class IndexSelectPlan implements Plan {
     */
    public Schema schema() {
       return p.schema();
+   }
+
+   public QueryPlanPrinter getPlanDesc() {
+      String toAdd = String.format("Select index: [value: %s, index: %s]", val.toString(), ii.indexTypeString());
+      return p.getPlanDesc().add(toAdd);
    }
 }

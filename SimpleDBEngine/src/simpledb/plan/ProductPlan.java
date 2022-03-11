@@ -1,5 +1,7 @@
 package simpledb.plan;
 
+import java.util.Arrays;
+
 import simpledb.query.ProductScan;
 import simpledb.query.Scan;
 import simpledb.record.Schema;
@@ -89,5 +91,11 @@ public class ProductPlan implements Plan {
     */
    public Schema schema() {
       return schema;
+   }
+
+   public QueryPlanPrinter getPlanDesc() {
+      QueryPlanPrinter printer = QueryPlanPrinter.getJoinPlanPrinter(p1.getPlanDesc(), p2.getPlanDesc());
+      String toAdd = String.format("Product plan on: " + Arrays.toString(schema.fields().toArray()));
+      return printer.add(toAdd);
    }
 }
