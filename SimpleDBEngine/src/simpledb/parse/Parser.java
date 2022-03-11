@@ -5,6 +5,8 @@ import java.util.Collection;
 import java.util.List;
 
 import simpledb.index.IndexType;
+import simpledb.materialize.AggregationFn;
+import simpledb.materialize.AggregationFnType;
 import simpledb.materialize.SortClause;
 import simpledb.materialize.SortOrder;
 import simpledb.query.Constant;
@@ -30,6 +32,40 @@ public class Parser {
 
    public String field() {
       return lex.eatId();
+   }
+
+   /**
+    * Consumes a select attribute or aggregation attribute in the select clause of the query.
+    * @return a pair of string and aggregation function if a aggregation attribute exists, 
+    * null for the aggregation function otherwise
+    */
+   private Pair<String, AggregationFn> selectField() {
+      if (lex.matchKeyword(AggregationFnType.SUM.toString().toLowerCase())) {
+         return selectFieldWithAggregate(AggregationFnType.SUM);
+      } else if (lex.matchKeyword(AggregationFnType.COUNT.toString().toLowerCase())) {
+         return selectFieldWithAggregate(AggregationFnType.COUNT);
+      } else if (lex.matchKeyword(AggregationFnType.AVG.toString().toLowerCase())) {
+         return selectFieldWithAggregate(AggregationFnType.AVG);
+      } else if (lex.matchKeyword(AggregationFnType.MIN.toString().toLowerCase())) {
+         return selectFieldWithAggregate(AggregationFnType.MIN);
+      } else if (lex.matchKeyword(AggregationFnType.MAX.toString().toLowerCase())) {
+         return selectFieldWithAggregate(AggregationFnType.MAX);
+      }
+      return new Pair<>(field(), null);
+   }
+
+   /**
+    * Helper method to consume the aggregation keywords.
+    * @param type AggregationFnType enum
+    * @return a pair of select field name and the aggregate function
+    */
+   private Pair<String, AggregationFn> selectFieldWithAggregate(AggregationFnType type) {
+      lex.eatKeyword(type.toString().toLowerCase());
+      lex.eatDelim('(');
+      String field = field();
+      lex.eatDelim(')');
+      AggregationFn agg = AggregationFnType.createAggregationFn(type.toString(), field);
+      return new Pair<>(agg.fieldName(), agg);
    }
 
    public Constant constant() {
@@ -62,8 +98,10 @@ public class Parser {
       return pred;
    }
 
-   // Methods for parsing queries
-
+   /**
+    * Parses the query.
+    * @return a QueryData object that encompasses all information about the query
+    */
    public QueryData query() {
       lex.eatKeyword("select");
       boolean isDistinct = false;
@@ -71,7 +109,7 @@ public class Parser {
          lex.eatKeyword("distinct");
          isDistinct = true;
       }
-      List<String> fields = selectList();
+      Pair<List<String>, List<AggregationFn>> pair = selectList();
       lex.eatKeyword("from");
       Collection<String> tables = tableList();
       Predicate pred = new Predicate();
@@ -79,23 +117,51 @@ public class Parser {
          lex.eatKeyword("where");
          pred = predicate();
       }
+
+      List<String> groupclauses = new ArrayList<>();
+      if (lex.matchKeyword("group")) {
+         lex.eatKeyword("group");
+         if (lex.matchKeyword("by")) {
+            lex.eatKeyword("by");
+            groupclauses = groupList();
+         }
+      }
+
+      List<SortClause> orderclauses = new ArrayList<>();
       if (lex.matchKeyword("order")) {
          lex.eatKeyword("order");
          lex.eatKeyword("by");
-         List<SortClause> orderclauses = orderList();
-         return new QueryData(fields, tables, pred, orderclauses, isDistinct);
+         orderclauses = orderList();
       }
-      return new QueryData(fields, tables, pred, isDistinct);
+      return new QueryData(pair.getFirst(), tables, pred, orderclauses, groupclauses, pair.getSecond(), isDistinct);
    }
 
-   private List<String> selectList() {
-      List<String> L = new ArrayList<String>();
-      L.add(field());
+   /**
+    * Consumes all select fields including aggregated attributes.
+    * @return a pair of list of strings and list of aggregation functions
+    */
+   private Pair<List<String>, List<AggregationFn>> selectList() {
+      List<String> selectFieldList = new ArrayList<String>();
+      List<AggregationFn> aggregateList = new ArrayList<>();
+      Pair<List<String>, List<AggregationFn>> listPair = new Pair<>(selectFieldList, aggregateList);
+      selectListHelper(listPair);
+      return listPair;
+   }
+
+   /**
+    * Helper method that recurses until all select fields in the select clause is consumed.
+    * @param listPair a pair containing a list of select fields and a list of aggregate functions
+    */
+   private void selectListHelper(Pair<List<String>, List<AggregationFn>> listPair) {
+      Pair<String, AggregationFn> pair = selectField();
+      listPair.getFirst().add(pair.getFirst());
+      if (!pair.isSecondEmpty()) {
+         listPair.getSecond().add(pair.getSecond());
+      }
       if (lex.matchDelim(',')) {
          lex.eatDelim(',');
-         L.addAll(selectList());
+         selectListHelper(listPair);
       }
-      return L;
    }
 
    private Collection<String> tableList() {
@@ -123,6 +189,21 @@ public class Parser {
       if (lex.matchDelim(',')) {
          lex.eatDelim(',');
          L.addAll(orderList());
+      }
+      return L;
+   }
+
+   /**
+    * consumes all the elements in the group by clause.
+    * @return a list of field names of the group by attributes
+    */
+   private List<String> groupList() {
+      List<String> L = new ArrayList<String>();
+      String fieldname = field();
+      L.add(fieldname);
+      if (lex.matchDelim(',')) {
+         lex.eatDelim(',');
+         L.addAll(groupList());
       }
       return L;
    }
