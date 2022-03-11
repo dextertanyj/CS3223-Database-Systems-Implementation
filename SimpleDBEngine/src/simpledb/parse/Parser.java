@@ -148,6 +148,10 @@ public class Parser {
       return listPair;
    }
 
+   /**
+    * Helper method that recurses until all select fields in the select clause is consumed.
+    * @param listPair a pair containing a list of select fields and a list of aggregate functions
+    */
    private void selectListHelper(Pair<List<String>, List<AggregationFn>> listPair) {
       Pair<String, AggregationFn> pair = selectField();
       listPair.getFirst().add(pair.getFirst());
