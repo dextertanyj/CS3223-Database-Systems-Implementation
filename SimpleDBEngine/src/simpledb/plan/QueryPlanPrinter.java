@@ -26,6 +26,14 @@ public class QueryPlanPrinter {
     this.list = list;
   }
 
+  /**
+   * Joins the query plan strings for join queries.
+   * 
+   * @param lhs the lhs query plan
+   * @param rhs the rhs query plan
+   * @param delimiter the character to separate the two query plan strings
+   * @return the joined query plan string
+   */
   private static String getJoinDelimiter(String lhs, String rhs, char delimiter) {
     final int position = 35;
     int freq = position - lhs.length();

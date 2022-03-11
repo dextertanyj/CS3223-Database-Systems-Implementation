@@ -110,6 +110,14 @@ public class GroupByPlan implements Plan {
    }
    
    public QueryPlanPrinter getPlanDesc() {
-      return p.getPlanDesc().add("Group by: [" + Arrays.toString(groupfields.toArray()) + "]");
+      String[] aggFnString = new String[aggfns.size()];
+      for (int i = 0; i < aggfns.size(); ++i) {
+         aggFnString[i] = aggfns.get(i).fieldName();
+      }
+      String toAdd = String.format(
+         "Group by: %s.\nAggregated on: %s",
+         Arrays.toString(groupfields.toArray()),
+         Arrays.toString(aggFnString));
+      return p.getPlanDesc().add(toAdd);
    }
 }
