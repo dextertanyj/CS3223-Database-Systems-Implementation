@@ -108,16 +108,16 @@ public class GroupByPlan implements Plan {
    public Schema schema() {
       return sch;
    }
-   
+
    public QueryPlanPrinter getPlanDesc() {
       String[] aggFnString = new String[aggfns.size()];
       for (int i = 0; i < aggfns.size(); ++i) {
          aggFnString[i] = aggfns.get(i).fieldName();
       }
       String toAdd = String.format(
-         "Group by: %s.\nAggregated on: %s",
-         Arrays.toString(groupfields.toArray()),
-         Arrays.toString(aggFnString));
+            "Group by: %s, Aggregated on: %s",
+            Arrays.toString(groupfields.toArray()),
+            Arrays.toString(aggFnString));
       return p.getPlanDesc().add(toAdd);
    }
 }

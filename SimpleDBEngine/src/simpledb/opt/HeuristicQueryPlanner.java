@@ -68,7 +68,7 @@ public class HeuristicQueryPlanner implements QueryPlanner {
          currentplan = new SortPlan(tx, currentplan, data.sortclauses());
       }
 
-      System.out.println((currentplan.getPlanDesc().printQueryPlan()));
+      // System.out.println((currentplan.getPlanDesc().printQueryPlan()));
       return currentplan;
    }
 

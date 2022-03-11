@@ -73,7 +73,7 @@ public class MultibufferJoinPlan implements Plan {
 
     public QueryPlanPrinter getPlanDesc() {
         QueryPlanPrinter printer = QueryPlanPrinter.getJoinPlanPrinter(inner.getPlanDesc(), outer.getPlanDesc());
-        String toAdd = String.format("Multibuffer join plan: [%s]", term.toString());
+        String toAdd = String.format("Multibuffer join on: [%s]", term.toString());
         return printer.add(toAdd);
     }
 }

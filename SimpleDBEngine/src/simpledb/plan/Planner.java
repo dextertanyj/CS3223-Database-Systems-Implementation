@@ -14,7 +14,6 @@ import simpledb.parse.ModifyData;
 import simpledb.parse.Parser;
 import simpledb.parse.QueryData;
 import simpledb.tx.Transaction;
-import test.integration.AggregateTest;
 
 /**
  * The object that executes SQL statements.
