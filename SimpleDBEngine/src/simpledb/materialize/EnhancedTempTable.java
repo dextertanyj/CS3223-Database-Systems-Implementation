@@ -8,6 +8,9 @@ import simpledb.record.Schema;
 import simpledb.record.TableScan;
 import simpledb.tx.Transaction;
 
+/**
+ * 
+ */
 public class EnhancedTempTable extends TempTable implements Plan {
     Schema sch;
     Plan p1, p2;

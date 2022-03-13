@@ -77,7 +77,7 @@ public class IndexInfo {
     */
    public int blocksAccessed() {
       int rpb = tx.blockSize() / idxLayout.slotSize();
-      int numblocks = Math.max(si.recordsOutput() / rpb, 1);
+      int numblocks = (int) Math.ceil(si.recordsOutput() / (double) rpb);
       if (this.type.equals(IndexType.HASH)) {
          return HashIndex.searchCost(numblocks, rpb);
       }

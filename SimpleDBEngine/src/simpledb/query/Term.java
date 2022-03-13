@@ -14,8 +14,7 @@ public class Term {
    private Operator op;
 
    /**
-    * Create a new term that compares two expressions
-    * for equality.
+    * Create a new term that compares two expressions.
     * 
     * @param lhs the LHS expression
     * @param rhs the RHS expression
@@ -27,12 +26,12 @@ public class Term {
    }
 
    /**
-    * Return true if both of the term's expressions
-    * evaluate to the same constant,
-    * with respect to the specified scan.
+    * Return true if both of the term's expressions satisfy the operator in the
+    * term after evaluating with respect to the provided scan.
     * 
     * @param s the scan
-    * @return true if both expressions have the same value in the scan
+    * @return true if both expressions statisfy the operator with respect to the
+    *         scan
     */
    public boolean isSatisfied(Scan s) {
       Constant lhsval = lhs.evaluate(s);
@@ -54,6 +53,16 @@ public class Term {
       return false;
    }
 
+   /**
+    * Return true if both of the term's expressions satisfy the operator in the
+    * term after evaluating with respect to the provided scans.
+    * Both expressions in the term are expected to be field names.
+    * 
+    * @param scan1 a provided scan
+    * @param scan2 a provided scan
+    * @return true if both expressions satisfy the operator with respect to the
+    *         provided scans
+    */
    public boolean isSatisfied(Scan scan1, Scan scan2) {
       if (!lhs.isFieldName() || !rhs.isFieldName()) {
          throw new RuntimeException("Expected both expressions in term to be fields.");

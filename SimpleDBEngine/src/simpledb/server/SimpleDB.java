@@ -20,7 +20,11 @@ import simpledb.tx.Transaction;
  */
 public class SimpleDB {
    public static int BLOCK_SIZE = 400;
+<<<<<<< HEAD
    public static int BUFFER_SIZE = 16;
+=======
+   public static int BUFFER_SIZE = 4;
+>>>>>>> Add javadocs
    public static String LOG_FILE = "simpledb.log";
 
    private FileMgr fm;

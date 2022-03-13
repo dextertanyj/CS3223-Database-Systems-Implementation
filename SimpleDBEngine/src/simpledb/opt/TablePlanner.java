@@ -67,10 +67,10 @@ class TablePlanner {
 
    /**
     * Constructs a join plan of the specified plan
-    * and the table. The plan will use an indexjoin, if possible.
-    * (Which means that if an indexselect is also possible,
-    * the indexjoin operator takes precedence.)
-    * The method returns null if no join is possible.
+    * and the table. The method considers a block based nested loop join,
+    * a GRACE hash join, a sort-merge join and an index join.
+    * It choose the least cost join and returns it.
+    * The method returns a cartesian product if no join is applicable.
     * 
     * @param current the specified plan
     * @return a join plan of the plan and this table
@@ -93,13 +93,18 @@ class TablePlanner {
          int merge_cost = merge == null ? Integer.MAX_VALUE : merge.blocksAccessed();
          int hash_cost = hash == null ? Integer.MAX_VALUE : hash.blocksAccessed();
          int cost = Math.min(loop_cost, Math.min(index_cost, Math.min(merge_cost, hash_cost)));
+         System.out.printf("%s, %s, %s, %s\n", loop_cost, index_cost, merge_cost, hash_cost);
          if (cost == index_cost) {
+            System.out.println("Index join used");
             p = index;
          } else if (cost == hash_cost) {
+            System.out.println("Hash join used");
             p = hash;
          } else if (cost == merge_cost) {
+            System.out.println("Merge join used");
             p = merge;
          } else {
+            System.out.println("Loop join used");
             p = loop;
          }
       }
@@ -130,6 +135,15 @@ class TablePlanner {
       return null;
    }
 
+   /**
+    * Constructs a multibuffer nested loop join plan of the specified plan and this
+    * table.
+    * 
+    * @param current the specified plan
+    * @param currsch the schema of the specified plan
+    * @return a multibuffer nested loop join plan of the specified plan and this
+    *         table
+    */
    private Plan makeLoopJoin(Plan current, Schema currsch) {
       for (String fldname : myschema.fields()) {
          String outerfield = mypred.equatesWithField(fldname);
@@ -154,6 +168,13 @@ class TablePlanner {
       return null;
    }
 
+   /**
+    * Constructs a merge sort join plan of the specified plan and this table.
+    * 
+    * @param current the specified plan
+    * @param currsch the schema of the specified plan
+    * @return a merge sort join plan of the specified plan and this table
+    */
    private Plan makeMergeJoin(Plan current, Schema currsch) {
       for (String fldname : myschema.fields()) {
          String outerfield = mypred.equatesWithField(fldname);
@@ -166,6 +187,14 @@ class TablePlanner {
       return null;
    }
 
+   /**
+    * Constructs a hash join plan of the specified plan and this
+    * table.
+    * 
+    * @param current the specified plan
+    * @param currsch the schema of the specified plan
+    * @return a hash join plan of the specified plan and this table
+    */
    private Plan makeHashJoin(Plan current, Schema currsch) {
       for (String fldname : myschema.fields()) {
          String outerfield = mypred.equatesWithField(fldname);
@@ -178,6 +207,14 @@ class TablePlanner {
       return null;
    }
 
+   /**
+    * Constructs an index join plan of the specified plan and this
+    * table.
+    * 
+    * @param current the specified plan
+    * @param currsch the schema of the specified plan
+    * @return a index join plan of the specified plan and this table
+    */
    private Plan makeIndexJoin(Plan current, Schema currsch) {
       for (String fldname : indexes.keySet()) {
          String outerfield = mypred.equatesWithField(fldname);
