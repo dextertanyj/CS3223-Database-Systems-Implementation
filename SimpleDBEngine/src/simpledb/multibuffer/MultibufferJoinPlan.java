@@ -98,7 +98,7 @@ public class MultibufferJoinPlan implements Plan {
     }
 
     /**
-     * Returns the schema of the index join.
+     * Returns the schema of the multi-buffer join.
      * 
      * @see simpledb.plan.Plan#schema()
      */

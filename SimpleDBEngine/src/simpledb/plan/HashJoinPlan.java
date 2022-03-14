@@ -14,6 +14,15 @@ import simpledb.record.Layout;
 import simpledb.record.Schema;
 import simpledb.tx.Transaction;
 
+/**
+ * The Plan class for the hash join operator.
+ * 
+ * This hash join operator does not guarentee which of its plans are used as the
+ * build and probe tables. The left-hand plan is preferentially chosen as the
+ * build table but if a partition size exceeds, the right hand plan may be used
+ * as the build table.
+ */
+
 public class HashJoinPlan implements Plan {
     private static int IN_MEMORY_HASH_SIZE = 100;
     private static int MAX_DEPTH = 3;
@@ -26,11 +35,32 @@ public class HashJoinPlan implements Plan {
     private int depth;
     private EnhancedTempTable resulttable;
 
+    /**
+     * Creates a new hash join plan using the specified plans joined on the
+     * specified fields.
+     * 
+     * @param tx       the calling transaction
+     * @param p1       the left-hand plan
+     * @param p2       the right-hand plan
+     * @param fldname1 the left-hand field used for joining
+     * @param fldname2 the right-hand field used for joining
+     */
     public HashJoinPlan(Transaction tx, Plan p1, Plan p2, String fldname1, String fldname2) {
         this(tx, p1, p2, fldname1, fldname2, 1);
     }
 
-    public HashJoinPlan(Transaction tx, Plan p1, Plan p2, String fldname1, String fldname2, int depth) {
+    /**
+     * Creates a recursive hash join plan using the specified plans joined on the
+     * specified fields.
+     * 
+     * @param tx       the calling transaction
+     * @param p1       the left-hand plan
+     * @param p2       the right-hand plan
+     * @param fldname1 the left-hand field used for joining
+     * @param fldname2 the right-hand field used for joining
+     * @param depth    the recursion depth of this call
+     */
+    private HashJoinPlan(Transaction tx, Plan p1, Plan p2, String fldname1, String fldname2, int depth) {
         this.tx = tx;
         this.p1 = p1;
         this.p2 = p2;
@@ -39,10 +69,25 @@ public class HashJoinPlan implements Plan {
         this.depth = depth;
         sch.addAll(p1.schema());
         sch.addAll(p2.schema());
-        this.resulttable = new EnhancedTempTable(tx, sch, p1, p2);
+        this.resulttable = new EnhancedTempTable(tx, sch);
     }
 
-    public HashJoinPlan(Transaction tx, Plan p1, Plan p2, String fldname1, String fldname2, int depth,
+    /**
+     * Creates a recursive hash join plan using the specified plans joined on the
+     * specified fields with the specified result table.
+     * 
+     * This overloaded constructed reduces IO overhead as results are appended to
+     * the result table directly without the need for copying.
+     * 
+     * @param tx          the calling transaction
+     * @param p1          the left-hand plan
+     * @param p2          the right-hand plan
+     * @param fldname1    the left-hand field used for joining
+     * @param fldname2    the right-hand field used for joining
+     * @param depth       the recursion depth of this call
+     * @param resulttable the result table of the calling hash join plan
+     */
+    private HashJoinPlan(Transaction tx, Plan p1, Plan p2, String fldname1, String fldname2, int depth,
             EnhancedTempTable resulttable) {
         this.tx = tx;
         this.p1 = p1;
@@ -71,12 +116,20 @@ public class HashJoinPlan implements Plan {
         return resulttable.open();
     }
 
+    /**
+     * Splits the records in provided plan into buckets.
+     * 
+     * @param t             the plan to split
+     * @param fldname       the fieldname to hash
+     * @param outputBuffers the number of output buffers available for use.
+     * @return a list of buckets containing the records of t.
+     */
     private List<EnhancedTempTable> splitIntoBuckets(Plan t, String fldname, int outputBuffers) {
         ArrayList<EnhancedTempTable> buckets = new ArrayList<>();
         ArrayList<UpdateScan> scans = new ArrayList<>();
         Scan s = t.open();
         for (int i = 0; i < outputBuffers; i++) {
-            EnhancedTempTable table = new EnhancedTempTable(tx, t.schema(), t, null);
+            EnhancedTempTable table = new EnhancedTempTable(tx, t.schema());
             buckets.add(table);
             UpdateScan scan = table.open();
             scans.add(scan);
@@ -94,6 +147,13 @@ public class HashJoinPlan implements Plan {
         return buckets;
     }
 
+    /**
+     * Joins the respective buckets of the provided lists of buckets and stores the
+     * resulting records into the resulttable of this join.
+     * 
+     * @param p1_buckets the buckets of the left-hand plan.
+     * @param p2_buckets the buckets of the right-hand plan.
+     */
     private void join(List<EnhancedTempTable> p1_buckets, List<EnhancedTempTable> p2_buckets) {
         UpdateScan resultScan = null;
         while (p1_buckets.size() > 0) {
@@ -119,6 +179,18 @@ public class HashJoinPlan implements Plan {
         }
     }
 
+    /**
+     * Constructs a hash table of records from the build table and probes it with
+     * records from the probe table.
+     * 
+     * @param outerTable   the build table
+     * @param innerTable   the probe table
+     * @param outerJoinFld the build table field used for joining
+     * @param innerJoinFld the probe table field used for joining
+     * @param result       the result table to store joined records
+     * @param buffer_count the number of buffers to reserve for the in memory hash
+     *                     table
+     */
     private void hashAndJoin(EnhancedTempTable outerTable, EnhancedTempTable innerTable, String outerJoinFld,
             String innerJoinFld,
             UpdateScan result, int buffer_count) {
@@ -165,6 +237,18 @@ public class HashJoinPlan implements Plan {
         s.close();
     }
 
+    /**
+     * Returns an estimate of the number of block accesses
+     * required to execute the query.
+     * 
+     * The method uses the current number of available buffers and assumes uniform
+     * distribution of records into buckets to calculate the number of blocks of
+     * each parition, and so this value may differ when the query scan is opened.
+     * 
+     * The method also does not account for if the max recursion depth is reached.
+     * 
+     * @see simpledb.plan.Plan#blocksAccessed()
+     */
     public int blocksAccessed() {
         Layout p1_layout = new Layout(p1.schema());
         Layout p2_layout = new Layout(p2.schema());
@@ -183,12 +267,24 @@ public class HashJoinPlan implements Plan {
         return cost;
     }
 
+    /**
+     * Estimates the number of output records in the join.
+     * 
+     * @see simpledb.plan.Plan#recordsOutput()
+     */
     public int recordsOutput() {
         int maxvals = Math.max(p1.distinctValues(fldname1),
                 p2.distinctValues(fldname2));
         return (p1.recordsOutput() * p2.recordsOutput()) / maxvals;
     }
 
+    /**
+     * Estimate the distinct number of field values in the join.
+     * Since the join does not increase or decrease field values,
+     * the estimate is the same as in the appropriate underlying query.
+     * 
+     * @see simpledb.plan.Plan#distinctValues(java.lang.String)
+     */
     public int distinctValues(String fldname) {
         if (p1.schema().hasField(fldname))
             return p1.distinctValues(fldname);
@@ -196,6 +292,12 @@ public class HashJoinPlan implements Plan {
             return p2.distinctValues(fldname);
     }
 
+    /**
+     * Return the schema of the join,
+     * which is the union of the schemas of the underlying queries.
+     * 
+     * @see simpledb.plan.Plan#schema()
+     */
     public Schema schema() {
         return sch;
     }
