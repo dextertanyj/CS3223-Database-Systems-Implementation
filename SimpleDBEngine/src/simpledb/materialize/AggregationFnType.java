@@ -35,7 +35,7 @@ public enum AggregationFnType {
    */
   public static AggregationFn createAggregationFn(String str, String fldname) {
     if (SUM.str.equals(str)) {
-      return new AvgFn(fldname);
+      return new SumFn(fldname);
     } else if (COUNT.str.equals(str)) {
       return new CountFn(fldname);
     } else if (AVG.str.equals(str)) {
