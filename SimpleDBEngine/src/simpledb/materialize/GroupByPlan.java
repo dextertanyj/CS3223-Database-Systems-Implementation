@@ -1,5 +1,7 @@
 package simpledb.materialize;
 
+import java.sql.Types;
+
 import java.util.Arrays;
 import java.util.List;
 
@@ -39,7 +41,11 @@ public class GroupByPlan implements Plan {
       for (String fldname : groupfields)
          sch.add(fldname, p.schema());
       for (AggregationFn fn : aggfns)
-         sch.addIntField(fn.fieldName());
+         if (p.schema().type(fn.sourceField()) == Types.INTEGER) {
+            sch.addIntField(fn.fieldName());
+         } else {
+            sch.addStringField(fn.fieldName(), p.schema().length(fn.sourceField()));
+         }
    }
 
    /**

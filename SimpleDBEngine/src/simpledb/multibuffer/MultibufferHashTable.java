@@ -11,6 +11,7 @@ import simpledb.tx.Transaction;
  */
 public class MultibufferHashTable {
     private List<List<InMemoryRecord>> map = new ArrayList<>();
+    private int buckets;
     private int recordsize;
     private Transaction tx;
     private List<Integer> reservedpageids = new ArrayList<>();
@@ -25,6 +26,7 @@ public class MultibufferHashTable {
             map.add(new ArrayList<>());
         }
         this.totalsize = blockcount * tx.blockSize();
+        this.buckets = buckets;
     }
 
     public void insert(int hash, InMemoryRecord record) {
@@ -32,11 +34,11 @@ public class MultibufferHashTable {
         if (recordsize > totalsize) {
             throw new RuntimeException("Buffer size exceeded.");
         }
-        map.get(hash).add(record);
+        map.get(hash % buckets).add(record);
     }
 
     public List<InMemoryRecord> getBucket(int hash) {
-        return map.get(hash);
+        return map.get(hash % buckets);
     }
 
     public void close() {

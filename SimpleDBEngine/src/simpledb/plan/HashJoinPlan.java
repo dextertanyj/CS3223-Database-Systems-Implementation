@@ -16,7 +16,8 @@ import simpledb.tx.Transaction;
 
 public class HashJoinPlan implements Plan {
     private static int IN_MEMORY_HASH_SIZE = 100;
-    private static int MAX_DEPTH = 5;
+    private static int MAX_DEPTH = 3;
+    private static int SEED = 0x9e3779b9;
 
     private Plan p1, p2;
     private String fldname1, fldname2;
@@ -79,8 +80,8 @@ public class HashJoinPlan implements Plan {
             scans.add(scan);
         }
         while (s.next()) {
-            int hash = s.getVal(fldname).hashCode();
-            int bucket = ((int) Math.pow(hash, depth)) % outputBuffers;
+            int hash = hash(s.getVal(fldname).hashCode(), depth);
+            int bucket = hash % outputBuffers;
             scans.get(bucket).insert();
             for (String field : t.schema().fields()) {
                 scans.get(bucket).setVal(field, s.getVal(field));
@@ -122,7 +123,7 @@ public class HashJoinPlan implements Plan {
         Scan s = outerTable.open();
         MultibufferHashTable hashtable = new MultibufferHashTable(tx, buffer_count, IN_MEMORY_HASH_SIZE);
         while (s.next()) {
-            int hash = ((int) Math.pow(s.getVal(outerJoinFld).hashCode(), depth + 1)) % IN_MEMORY_HASH_SIZE;
+            int hash = hash(s.getVal(outerJoinFld).hashCode(), depth + 1);
             InMemoryRecord record = new InMemoryRecord(outerTable.getLayout());
             for (String fldname : outerTable.getLayout().schema().fields()) {
                 record.setVal(fldname, s.getVal(fldname));
@@ -132,7 +133,7 @@ public class HashJoinPlan implements Plan {
         s.close();
         s = innerTable.open();
         while (s.next()) {
-            int hash = ((int) Math.pow(s.getVal(innerJoinFld).hashCode(), depth + 1)) % IN_MEMORY_HASH_SIZE;
+            int hash = hash(s.getVal(innerJoinFld).hashCode(), depth + 1);
             for (InMemoryRecord record : hashtable.getBucket(hash)) {
                 if (s.getVal(innerJoinFld).equals(record.getVal(outerJoinFld))) {
                     result.insert();
@@ -201,5 +202,9 @@ public class HashJoinPlan implements Plan {
         QueryPlanPrinter printer = QueryPlanPrinter.getJoinPlanPrinter(p1.getPlanDesc(), p2.getPlanDesc());
         String toAdd = QueryPlanPrinter.getJoinPlanDesc("Hash join", fldname1, fldname2);
         return printer.add(toAdd);
+    }
+
+    private int hash(int value, int depth) {
+        return Math.abs((SEED >> depth) ^ value);
     }
 }

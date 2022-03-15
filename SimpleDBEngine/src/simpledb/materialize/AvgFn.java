@@ -44,6 +44,13 @@ public class AvgFn implements AggregationFn {
    }
 
    /**
+    * Return the field's name.
+    */
+   public String sourceField() {
+      return fldname;
+   }
+
+   /**
     * Return the current average.
     */
    public Constant value() {

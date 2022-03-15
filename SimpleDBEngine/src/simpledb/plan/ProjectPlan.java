@@ -34,18 +34,21 @@ public class ProjectPlan implements Plan {
       for (String fldname : fieldlist)
          schema.add(fldname, p.schema());
    }
- 
+
    /**
     * Overloaded constructor that creates a new project node in the query tree.
     * Allows for distinct projections to be specified.
     *
-    * @param p the subquery
-    * @param fieldlist the list of fields
+    * @param p          the subquery
+    * @param fieldlist  the list of fields
     * @param isDistinct if the projection is distinct
-    * @param tx the calling transaction
+    * @param tx         the calling transaction
     */
    public ProjectPlan(Plan p, List<String> fieldlist, boolean isDistinct, Transaction tx) {
-      this.p = new SortPlan(tx, p, SortClause.generateDefaultSort(fieldlist));
+      this.p = p;
+      if (isDistinct) {
+         this.p = new SortPlan(tx, p, SortClause.generateDefaultSort(fieldlist));
+      }
       this.isDistinct = isDistinct;
       for (String fldname : fieldlist)
          schema.add(fldname, p.schema());

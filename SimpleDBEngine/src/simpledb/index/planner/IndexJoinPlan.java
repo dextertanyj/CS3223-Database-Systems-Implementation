@@ -107,7 +107,7 @@ public class IndexJoinPlan implements Plan {
 
    public QueryPlanPrinter getPlanDesc() {
       QueryPlanPrinter printer = QueryPlanPrinter.getJoinPlanPrinter(p1.getPlanDesc(), p2.getPlanDesc());
-      String toAdd = QueryPlanPrinter.getJoinPlanDesc("Index join", joinfield, joinfield);
+      String toAdd = QueryPlanPrinter.getJoinPlanDesc("Index join", joinfield, ii.fldname());
       return printer.add(toAdd);
    }
 }

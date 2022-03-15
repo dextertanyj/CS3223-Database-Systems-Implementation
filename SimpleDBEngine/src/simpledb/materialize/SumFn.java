@@ -41,6 +41,13 @@ public class SumFn implements AggregationFn {
    }
 
    /**
+    * Return the field's name.
+    */
+   public String sourceField() {
+      return fldname;
+   }
+
+   /**
     * Return the current sum.
     */
    public Constant value() {
