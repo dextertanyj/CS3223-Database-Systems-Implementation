@@ -151,6 +151,26 @@ public class Predicate {
    }
 
    /**
+    * Returns a copy of this predicate with the term removed.
+    *
+    * @param term the term to remove
+    * @return a copy of this predicate with the term removed.
+    */
+   public Predicate removeTerm(Term term) {
+      Predicate p = new Predicate();
+      for (Term t : terms) {
+         p.terms.add(t);
+      }
+      if (!p.terms.removeIf(x -> term.equals(x))) {
+         throw new RuntimeException("Term not in predicate.");
+      }
+      if (p.terms.size() == 0) {
+         return null;
+      }
+      return p;
+   }
+
+   /**
     * Determine if there is a term of the form "F1 (relational operator) F2"
     * where F1 is the specified field and F2 is another field.
     * If so, the method returns the term.

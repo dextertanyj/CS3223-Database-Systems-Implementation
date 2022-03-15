@@ -137,7 +137,7 @@ class TablePlanner {
             Plan p = new MultibufferJoinPlan(tx, myplan, current,
                   new Term(Operator.EQ, new Expression(fldname), new Expression(outerfield)));
             p = addSelectPred(p);
-            return addJoinPred(p, currsch);
+            return addJoinPred(p, currsch, new Term(Operator.EQ, new Expression(fldname), new Expression(outerfield)));
          }
       }
       Schema combined = new Schema();
@@ -148,7 +148,7 @@ class TablePlanner {
          if (term != null && term.appliesTo(combined)) {
             Plan p = new MultibufferJoinPlan(tx, myplan, current, term);
             p = addSelectPred(p);
-            return addJoinPred(p, currsch);
+            return addJoinPred(p, currsch, term);
          }
       }
       return null;
@@ -160,7 +160,7 @@ class TablePlanner {
          if (outerfield != null && currsch.hasField(outerfield)) {
             Plan p = new MergeJoinPlan(tx, myplan, current, fldname, outerfield);
             p = addSelectPred(p);
-            return addJoinPred(p, currsch);
+            return addJoinPred(p, currsch, new Term(Operator.EQ, new Expression(fldname), new Expression(outerfield)));
          }
       }
       return null;
@@ -172,7 +172,7 @@ class TablePlanner {
          if (outerfield != null && currsch.hasField(outerfield)) {
             Plan p = new HashJoinPlan(tx, myplan, current, fldname, outerfield);
             p = addSelectPred(p);
-            return addJoinPred(p, currsch);
+            return addJoinPred(p, currsch, new Term(Operator.EQ, new Expression(fldname), new Expression(outerfield)));
          }
       }
       return null;
@@ -206,6 +206,15 @@ class TablePlanner {
 
    private Plan addJoinPred(Plan p, Schema currsch) {
       Predicate joinpred = mypred.joinSubPred(currsch, myschema);
+      if (joinpred != null)
+         return new SelectPlan(p, joinpred);
+      else
+         return p;
+   }
+
+   private Plan addJoinPred(Plan p, Schema currsch, Term except) {
+      Predicate joinpred = mypred.joinSubPred(currsch, myschema);
+      joinpred = joinpred.removeTerm(except);
       if (joinpred != null)
          return new SelectPlan(p, joinpred);
       else
