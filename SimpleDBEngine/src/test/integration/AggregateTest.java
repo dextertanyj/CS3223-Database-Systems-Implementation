@@ -14,14 +14,14 @@ public class AggregateTest {
          Transaction tx = db.newTx();
          Planner planner = db.planner();
          
-         String qry = "Select sid from student group by sname";
+         String qry = "Select sname from student group by majorid";
          Plan p = planner.createQueryPlan(qry, tx);
          
          Scan s = p.open();
          
          System.out.println("Aggregation result:");
          while (s.next()) {
-            int max1 = s.getInt("sid");
+            String max1 = s.getString("sname");
             System.out.println("max" + "\t" + max1);
          }
          s.close();

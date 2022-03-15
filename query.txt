@@ -1,0 +1,2 @@
+select count(sid), majorid from STUDENT group by majorid
+select count(sid) from STUDENT

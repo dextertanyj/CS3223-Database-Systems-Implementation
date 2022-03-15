@@ -14,6 +14,7 @@ import simpledb.query.Scan;
 import simpledb.record.Schema;
 import simpledb.server.SimpleDB;
 import simpledb.tx.Transaction;
+import test.system.TestData;
 
 public class TestUtils {
     public static void setup(String path) {
@@ -156,6 +157,100 @@ public class TestUtils {
             // Ignore the error
         }
         System.out.println("Teardown complete.");
+    }
+
+    public static void systemSetup(String path) {
+        SimpleDB db = new SimpleDB(path);
+        
+        Transaction tx = db.newTx();
+        Planner planner = db.planner();
+        
+        // Initialise Student table
+        String stmt = "create table STUDENT(SId int, SName varchar(10), MajorId int, GradYear int)";
+        planner.executeUpdate(stmt, tx);
+        tx.commit();
+        tx = db.newTx();
+        
+        stmt = "create index studentid on STUDENT(SId) using hash";
+        planner.executeUpdate(stmt, tx);
+        tx.commit();
+        tx = db.newTx();
+        
+        stmt = "create index majorid on STUDENT(MajorId) using btree";
+        planner.executeUpdate(stmt, tx);
+        tx.commit();
+        tx = db.newTx();
+        
+        String[] studentData = TestData.studVals;
+        stmt = "insert into STUDENT(SId, SName, MajorId, GradYear) values ";
+        for (String s : studentData) {
+            planner.executeUpdate(stmt + s, tx);
+            tx.commit();
+            tx = db.newTx();
+        }
+        
+        // Initalise Dept table
+        stmt = "create table DEPT(DId int, DName varchar(8))";
+        planner.executeUpdate(stmt, tx);
+        tx.commit();
+        tx = db.newTx();
+        
+        stmt = "insert into DEPT(DId, DName) values ";
+        String[] deptVals = TestData.deptVals;
+        for (String s : deptVals) {
+            planner.executeUpdate(stmt + s, tx);
+            tx.commit();
+            tx = db.newTx();
+        }
+        
+        // Initialise Course table
+        stmt = "create table COURSE(CId int, Title varchar(20), DeptId int)";
+        planner.executeUpdate(stmt, tx);
+        tx.commit();
+        tx = db.newTx();
+        
+        stmt = "insert into COURSE(CId, Title, DeptId) values ";
+        String[] courseVals = TestData.courseVals;
+        for (String s : courseVals) {
+            planner.executeUpdate(stmt + s, tx);
+            tx.commit();
+            tx = db.newTx();
+        }
+        
+        // Initialise Section table
+        stmt = "create table SECTION(SectId int, CourseId int, Prof varchar(8), YearOffered int)";
+        planner.executeUpdate(stmt, tx);
+        tx.commit();
+        tx = db.newTx();
+        
+        stmt = "insert into SECTION(SectId, CourseId, Prof, YearOffered) values ";
+        String[] sectVals = TestData.sectionVals;
+        for (String s : sectVals) {
+            planner.executeUpdate(stmt + s, tx);
+            tx.commit();
+            tx = db.newTx();
+        }
+        
+        // Initialise Enroll table
+        stmt = "create table ENROLL(EId int, StudentId int, SectionId int, Grade varchar(2))";
+        planner.executeUpdate(stmt, tx);
+        tx.commit();
+        tx = db.newTx();
+        
+        stmt = "create index studentid on ENROLL(StudentId) using hash";
+        planner.executeUpdate(stmt, tx);
+        tx.commit();
+        tx = db.newTx();
+        
+        stmt = "insert into ENROLL(EId, StudentId, SectionId, Grade) values ";
+        String[] enrollVals = TestData.enrollVals;
+        for (String s : enrollVals) {
+            planner.executeUpdate(stmt + s, tx);
+            tx.commit();
+            tx = db.newTx();
+        }
+        
+        tx.commit();
     }
 
     public static void doQuery(Planner planner, Transaction tx, String cmd) {

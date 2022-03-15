@@ -14,7 +14,8 @@
   ],
   "java.project.outputPath": "build/bin",
   "java.project.referencedLibraries": [
-    "lib/junit-platform-console-standalone.jar"
+    "lib/junit-platform-console-standalone.jar",
+    "lib/mysql-jdbc.jar"
   ],
   "java.configuration.updateBuildConfiguration": "interactive",
   "java.jdt.ls.vmargs": "-XX:+UseParallelGC -XX:GCTimeRatio=4 -XX:AdaptiveSizePolicyWeight=90 -Dsun.zip.disableMemoryMapping=true -Xmx4G -Xms100m"

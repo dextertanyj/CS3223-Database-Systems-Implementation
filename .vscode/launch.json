@@ -1,0 +1,400 @@
+{
+  // Use IntelliSense to learn about possible attributes.
+  // Hover to view descriptions of existing attributes.
+  // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+  "version": "0.2.0",
+  "configurations": [
+
+    {
+      "type": "java",
+      "name": "Launch Current File",
+      "request": "launch",
+      "mainClass": "${file}"
+    },
+    {
+      "type": "java",
+      "name": "Launch SimpleIJ",
+      "request": "launch",
+      "mainClass": "SimpleIJ",
+      "projectName": "CS3223"
+    },
+    {
+      "type": "java",
+      "name": "Launch StudentMajorNoJDBC",
+      "request": "launch",
+      "mainClass": "StudentMajorNoJDBC",
+      "projectName": "CS3223"
+    },
+    {
+      "type": "java",
+      "name": "Launch ChangeMajor",
+      "request": "launch",
+      "mainClass": "embedded.ChangeMajor",
+      "projectName": "CS3223"
+    },
+    {
+      "type": "java",
+      "name": "Launch CreateStudentDB",
+      "request": "launch",
+      "mainClass": "embedded.CreateStudentDB",
+      "projectName": "CS3223"
+    },
+    {
+      "type": "java",
+      "name": "Launch FindMajors",
+      "request": "launch",
+      "mainClass": "embedded.FindMajors",
+      "projectName": "CS3223"
+    },
+    {
+      "type": "java",
+      "name": "Launch StudentMajor",
+      "request": "launch",
+      "mainClass": "embedded.StudentMajor",
+      "projectName": "CS3223"
+    },
+    {
+      "type": "java",
+      "name": "Launch ChangeMajor(1)",
+      "request": "launch",
+      "mainClass": "network.ChangeMajor",
+      "projectName": "CS3223"
+    },
+    {
+      "type": "java",
+      "name": "Launch CreateStudentDB(1)",
+      "request": "launch",
+      "mainClass": "network.CreateStudentDB",
+      "projectName": "CS3223"
+    },
+    {
+      "type": "java",
+      "name": "Launch FindMajors(1)",
+      "request": "launch",
+      "mainClass": "network.FindMajors",
+      "projectName": "CS3223"
+    },
+    {
+      "type": "java",
+      "name": "Launch StudentMajor(1)",
+      "request": "launch",
+      "mainClass": "network.StudentMajor",
+      "projectName": "CS3223"
+    },
+    {
+      "type": "java",
+      "name": "Launch BufferFileTest",
+      "request": "launch",
+      "mainClass": "simpledb.buffer.BufferFileTest",
+      "projectName": "CS3223"
+    },
+    {
+      "type": "java",
+      "name": "Launch BufferMgrTest",
+      "request": "launch",
+      "mainClass": "simpledb.buffer.BufferMgrTest",
+      "projectName": "CS3223"
+    },
+    {
+      "type": "java",
+      "name": "Launch BufferTest",
+      "request": "launch",
+      "mainClass": "simpledb.buffer.BufferTest",
+      "projectName": "CS3223"
+    },
+    {
+      "type": "java",
+      "name": "Launch FileTest",
+      "request": "launch",
+      "mainClass": "simpledb.file.FileTest",
+      "projectName": "CS3223"
+    },
+    {
+      "type": "java",
+      "name": "Launch JavaFileTest",
+      "request": "launch",
+      "mainClass": "simpledb.file.JavaFileTest",
+      "projectName": "CS3223"
+    },
+    {
+      "type": "java",
+      "name": "Launch RandomAccessFileTest",
+      "request": "launch",
+      "mainClass": "simpledb.file.RandomAccessFileTest",
+      "projectName": "CS3223"
+    },
+    {
+      "type": "java",
+      "name": "Launch LogTest",
+      "request": "launch",
+      "mainClass": "simpledb.log.LogTest",
+      "projectName": "CS3223"
+    },
+    {
+      "type": "java",
+      "name": "Launch CatalogTest",
+      "request": "launch",
+      "mainClass": "simpledb.metadata.CatalogTest",
+      "projectName": "CS3223"
+    },
+    {
+      "type": "java",
+      "name": "Launch MetadataMgrTest",
+      "request": "launch",
+      "mainClass": "simpledb.metadata.MetadataMgrTest",
+      "projectName": "CS3223"
+    },
+    {
+      "type": "java",
+      "name": "Launch TableMgrTest",
+      "request": "launch",
+      "mainClass": "simpledb.metadata.TableMgrTest",
+      "projectName": "CS3223"
+    },
+    {
+      "type": "java",
+      "name": "Launch LexerTest",
+      "request": "launch",
+      "mainClass": "simpledb.parse.LexerTest",
+      "projectName": "CS3223"
+    },
+    {
+      "type": "java",
+      "name": "Launch ParserTest",
+      "request": "launch",
+      "mainClass": "simpledb.parse.ParserTest",
+      "projectName": "CS3223"
+    },
+    {
+      "type": "java",
+      "name": "Launch ParserTestActions",
+      "request": "launch",
+      "mainClass": "simpledb.parse.ParserTestActions",
+      "projectName": "CS3223"
+    },
+    {
+      "type": "java",
+      "name": "Launch PredParserTest",
+      "request": "launch",
+      "mainClass": "simpledb.parse.PredParserTest",
+      "projectName": "CS3223"
+    },
+    {
+      "type": "java",
+      "name": "Launch TokenizerTest",
+      "request": "launch",
+      "mainClass": "simpledb.parse.TokenizerTest",
+      "projectName": "CS3223"
+    },
+    {
+      "type": "java",
+      "name": "Launch MultiTablePlanTest",
+      "request": "launch",
+      "mainClass": "simpledb.plan.MultiTablePlanTest",
+      "projectName": "CS3223"
+    },
+    {
+      "type": "java",
+      "name": "Launch PlannerStudentTest",
+      "request": "launch",
+      "mainClass": "simpledb.plan.PlannerStudentTest",
+      "projectName": "CS3223"
+    },
+    {
+      "type": "java",
+      "name": "Launch PlannerTest1",
+      "request": "launch",
+      "mainClass": "simpledb.plan.PlannerTest1",
+      "projectName": "CS3223"
+    },
+    {
+      "type": "java",
+      "name": "Launch PlannerTest2",
+      "request": "launch",
+      "mainClass": "simpledb.plan.PlannerTest2",
+      "projectName": "CS3223"
+    },
+    {
+      "type": "java",
+      "name": "Launch SingleTablePlanTest",
+      "request": "launch",
+      "mainClass": "simpledb.plan.SingleTablePlanTest",
+      "projectName": "CS3223"
+    },
+    {
+      "type": "java",
+      "name": "Launch ProductTest",
+      "request": "launch",
+      "mainClass": "simpledb.query.ProductTest",
+      "projectName": "CS3223"
+    },
+    {
+      "type": "java",
+      "name": "Launch ScanTest1",
+      "request": "launch",
+      "mainClass": "simpledb.query.ScanTest1",
+      "projectName": "CS3223"
+    },
+    {
+      "type": "java",
+      "name": "Launch ScanTest2",
+      "request": "launch",
+      "mainClass": "simpledb.query.ScanTest2",
+      "projectName": "CS3223"
+    },
+    {
+      "type": "java",
+      "name": "Launch LayoutTest",
+      "request": "launch",
+      "mainClass": "simpledb.record.LayoutTest",
+      "projectName": "CS3223"
+    },
+    {
+      "type": "java",
+      "name": "Launch RecordTest",
+      "request": "launch",
+      "mainClass": "simpledb.record.RecordTest",
+      "projectName": "CS3223"
+    },
+    {
+      "type": "java",
+      "name": "Launch TableScanTest",
+      "request": "launch",
+      "mainClass": "simpledb.record.TableScanTest",
+      "projectName": "CS3223"
+    },
+    {
+      "type": "java",
+      "name": "Launch StartServer",
+      "request": "launch",
+      "mainClass": "simpledb.server.StartServer",
+      "projectName": "CS3223"
+    },
+    {
+      "type": "java",
+      "name": "Launch ConcurrencyTest",
+      "request": "launch",
+      "mainClass": "simpledb.tx.ConcurrencyTest",
+      "projectName": "CS3223"
+    },
+    {
+      "type": "java",
+      "name": "Launch TxTest",
+      "request": "launch",
+      "mainClass": "simpledb.tx.TxTest",
+      "projectName": "CS3223"
+    },
+    {
+      "type": "java",
+      "name": "Launch PrintLogFile",
+      "request": "launch",
+      "mainClass": "simpledb.tx.recovery.PrintLogFile",
+      "projectName": "CS3223"
+    },
+    {
+      "type": "java",
+      "name": "Launch RecoveryTest",
+      "request": "launch",
+      "mainClass": "simpledb.tx.recovery.RecoveryTest",
+      "projectName": "CS3223"
+    },
+    {
+      "type": "java",
+      "name": "Launch AggregateTest",
+      "request": "launch",
+      "mainClass": "test.integration.AggregateTest",
+      "projectName": "CS3223"
+    },
+    {
+      "type": "java",
+      "name": "Launch ChangeMajorTest",
+      "request": "launch",
+      "mainClass": "test.integration.ChangeMajorTest",
+      "projectName": "CS3223"
+    },
+    {
+      "type": "java",
+      "name": "Launch CreateStudentDBTest",
+      "request": "launch",
+      "mainClass": "test.integration.CreateStudentDBTest",
+      "projectName": "CS3223"
+    },
+    {
+      "type": "java",
+      "name": "Launch FindMajorsTest",
+      "request": "launch",
+      "mainClass": "test.integration.FindMajorsTest",
+      "projectName": "CS3223"
+    },
+    {
+      "type": "java",
+      "name": "Launch IndexJoinTest",
+      "request": "launch",
+      "mainClass": "test.integration.IndexJoinTest",
+      "projectName": "CS3223"
+    },
+    {
+      "type": "java",
+      "name": "Launch IndexRetrievalTest",
+      "request": "launch",
+      "mainClass": "test.integration.IndexRetrievalTest",
+      "projectName": "CS3223"
+    },
+    {
+      "type": "java",
+      "name": "Launch IndexSelectTest",
+      "request": "launch",
+      "mainClass": "test.integration.IndexSelectTest",
+      "projectName": "CS3223"
+    },
+    {
+      "type": "java",
+      "name": "Launch IndexUpdateTest",
+      "request": "launch",
+      "mainClass": "test.integration.IndexUpdateTest",
+      "projectName": "CS3223"
+    },
+    {
+      "type": "java",
+      "name": "Launch MergeJoinTest",
+      "request": "launch",
+      "mainClass": "test.integration.MergeJoinTest",
+      "projectName": "CS3223"
+    },
+    {
+      "type": "java",
+      "name": "Launch SimpleIJTest",
+      "request": "launch",
+      "mainClass": "test.integration.SimpleIJTest",
+      "projectName": "CS3223"
+    },
+    {
+      "type": "java",
+      "name": "Launch SortTest",
+      "request": "launch",
+      "mainClass": "test.integration.SortTest",
+      "projectName": "CS3223"
+    },
+    {
+      "type": "java",
+      "name": "Launch StudentMajorTest",
+      "request": "launch",
+      "mainClass": "test.integration.StudentMajorTest",
+      "projectName": "CS3223"
+    },
+    {
+      "type": "java",
+      "name": "Launch JDBCResults",
+      "request": "launch",
+      "mainClass": "test.system.JDBCResults",
+      "projectName": "CS3223"
+    },
+    {
+      "type": "java",
+      "name": "Launch SimpleDBTest",
+      "request": "launch",
+      "mainClass": "test.system.SimpleDBTest",
+      "projectName": "CS3223"
+    }
+  ]
+}
