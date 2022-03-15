@@ -55,7 +55,7 @@ public class HeuristicQueryPlanner implements QueryPlanner {
       }
 
       // Step 4. Group by selected field names
-      if (data.aggFns().size() != 0) {
+      if (data.aggFns().size() != 0 || data.groupFields().size() != 0) {
          currentplan = new GroupByPlan(tx, currentplan, data.groupFields(), data.aggFns());
       }
 
