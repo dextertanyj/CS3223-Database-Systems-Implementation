@@ -213,8 +213,10 @@ public class Term {
       }
       Term term = (Term) obj;
       return this.op.equals(term.op)
-            && this.rhs.equals(term.rhs)
-            && this.lhs.equals(term.lhs);
+            && ((this.rhs.equals(term.rhs)
+                  && this.lhs.equals(term.lhs))
+                  || (this.rhs.equals(term.lhs)
+                        && this.lhs.equals(term.rhs)));
    }
 
    public String toString() {
