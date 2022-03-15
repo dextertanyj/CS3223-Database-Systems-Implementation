@@ -22,9 +22,10 @@ import simpledb.tx.Transaction;
 import test.integration.TestUtils;
 
 public class SimpleDBTest {
-    private static String fileDirectory = System.getProperty("user.dir");
+    private static String fileDirectory = System.getProperty("user.dir") + "/SimpleDBEngine/src/test/system/";
     public static void main(String args[]) {
-        if (!(new File(fileDirectory + "/studenttestdb").exists())) {
+        if (!(new File(System.getProperty("user.dir") + "/studenttestdb").exists())) {
+            System.out.println("file doesnt exist");
             TestUtils.systemSetup("studenttestdb");
         }
         SimpleDB db = new SimpleDB("studenttestdb");
@@ -33,9 +34,8 @@ public class SimpleDBTest {
         // Parse query file
         
         try {
-            
-            Files.delete(Paths.get(fileDirectory + "/result.txt"));
-            File file = new File(fileDirectory + "/query.txt");
+            Files.delete(Paths.get(fileDirectory + "result.txt"));
+            File file = new File(fileDirectory + "query.txt");
             BufferedReader br = new BufferedReader(new FileReader(file));
             String query;
             while ((query = br.readLine()) != null) {
@@ -54,7 +54,7 @@ public class SimpleDBTest {
             List<String> columns = schema.fields();
             int columncount = columns.size();
             
-            BufferedWriter buffWriter = new BufferedWriter(new FileWriter(fileDirectory + "/result.txt", true));
+            BufferedWriter buffWriter = new BufferedWriter(new FileWriter(fileDirectory + "result.txt", true));
             
             for (int i = 0; i < columncount; i++) {
                 String fldname = columns.get(i);

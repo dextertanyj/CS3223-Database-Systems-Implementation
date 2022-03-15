@@ -166,23 +166,23 @@ public class TestUtils {
         Planner planner = db.planner();
         
         // Initialise Student table
-        String stmt = "create table STUDENT(SId int, SName varchar(10), MajorId int, GradYear int)";
+        String stmt = "create table student(SId int, SName varchar(10), MajorId int, GradYear int)";
         planner.executeUpdate(stmt, tx);
         tx.commit();
         tx = db.newTx();
         
-        stmt = "create index studentid on STUDENT(SId) using hash";
+        stmt = "create index studentid on student(SId) using hash";
         planner.executeUpdate(stmt, tx);
         tx.commit();
         tx = db.newTx();
         
-        stmt = "create index majorid on STUDENT(MajorId) using btree";
+        stmt = "create index majorid on student(MajorId) using btree";
         planner.executeUpdate(stmt, tx);
         tx.commit();
         tx = db.newTx();
         
         String[] studentData = TestData.studVals;
-        stmt = "insert into STUDENT(SId, SName, MajorId, GradYear) values ";
+        stmt = "insert into student(SId, SName, MajorId, GradYear) values ";
         for (String s : studentData) {
             planner.executeUpdate(stmt + s, tx);
             tx.commit();
@@ -190,12 +190,12 @@ public class TestUtils {
         }
         
         // Initalise Dept table
-        stmt = "create table DEPT(DId int, DName varchar(8))";
+        stmt = "create table dept(DId int, DName varchar(8))";
         planner.executeUpdate(stmt, tx);
         tx.commit();
         tx = db.newTx();
         
-        stmt = "insert into DEPT(DId, DName) values ";
+        stmt = "insert into dept(DId, DName) values ";
         String[] deptVals = TestData.deptVals;
         for (String s : deptVals) {
             planner.executeUpdate(stmt + s, tx);
@@ -204,12 +204,12 @@ public class TestUtils {
         }
         
         // Initialise Course table
-        stmt = "create table COURSE(CId int, Title varchar(20), DeptId int)";
+        stmt = "create table course(CId int, Title varchar(20), DeptId int)";
         planner.executeUpdate(stmt, tx);
         tx.commit();
         tx = db.newTx();
         
-        stmt = "insert into COURSE(CId, Title, DeptId) values ";
+        stmt = "insert into course(CId, Title, DeptId) values ";
         String[] courseVals = TestData.courseVals;
         for (String s : courseVals) {
             planner.executeUpdate(stmt + s, tx);
@@ -218,12 +218,12 @@ public class TestUtils {
         }
         
         // Initialise Section table
-        stmt = "create table SECTION(SectId int, CourseId int, Prof varchar(8), YearOffered int)";
+        stmt = "create table section(SectId int, CourseId int, Prof varchar(8), YearOffered int)";
         planner.executeUpdate(stmt, tx);
         tx.commit();
         tx = db.newTx();
         
-        stmt = "insert into SECTION(SectId, CourseId, Prof, YearOffered) values ";
+        stmt = "insert into section(SectId, CourseId, Prof, YearOffered) values ";
         String[] sectVals = TestData.sectionVals;
         for (String s : sectVals) {
             planner.executeUpdate(stmt + s, tx);
@@ -232,17 +232,17 @@ public class TestUtils {
         }
         
         // Initialise Enroll table
-        stmt = "create table ENROLL(EId int, StudentId int, SectionId int, Grade varchar(2))";
+        stmt = "create table enroll(EId int, StudentId int, SectionId int, Grade varchar(2))";
         planner.executeUpdate(stmt, tx);
         tx.commit();
         tx = db.newTx();
         
-        stmt = "create index studentid on ENROLL(StudentId) using hash";
+        stmt = "create index studentid on enroll(StudentId) using hash";
         planner.executeUpdate(stmt, tx);
         tx.commit();
         tx = db.newTx();
         
-        stmt = "insert into ENROLL(EId, StudentId, SectionId, Grade) values ";
+        stmt = "insert into enroll(EId, StudentId, SectionId, Grade) values ";
         String[] enrollVals = TestData.enrollVals;
         for (String s : enrollVals) {
             planner.executeUpdate(stmt + s, tx);
