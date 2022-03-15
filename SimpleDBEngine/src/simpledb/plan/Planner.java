@@ -104,17 +104,6 @@ public class Planner {
                throw new BadSyntaxException();
             }
          }
-         for (String s : groupList) {
-            boolean hasError = true;
-            for (String selectField : selectList) {
-               if (selectField.equals(s) || selectField.contains(s)) {
-                  hasError = false;
-               }
-            }
-            if (hasError) {
-               throw new BadSyntaxException();
-            }
-         }
       }
    }
 
