@@ -133,7 +133,7 @@ public class HashJoinPlan implements Plan {
         s.close();
         s = innerTable.open();
         while (s.next()) {
-            int hash = hash(s.getVal(outerJoinFld).hashCode(), depth + 1);
+            int hash = hash(s.getVal(innerJoinFld).hashCode(), depth + 1);
             for (InMemoryRecord record : hashtable.getBucket(hash)) {
                 if (s.getVal(innerJoinFld).equals(record.getVal(outerJoinFld))) {
                     result.insert();
@@ -205,6 +205,6 @@ public class HashJoinPlan implements Plan {
     }
 
     private int hash(int value, int depth) {
-        return (SEED >> depth) ^ value;
+        return Math.abs((SEED >> depth) ^ value);
     }
 }
