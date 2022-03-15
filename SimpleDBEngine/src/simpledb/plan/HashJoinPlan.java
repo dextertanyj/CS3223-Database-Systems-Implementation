@@ -252,18 +252,19 @@ public class HashJoinPlan implements Plan {
     public int blocksAccessed() {
         Layout p1_layout = new Layout(p1.schema());
         Layout p2_layout = new Layout(p2.schema());
-        int cost = (p1.blocksAccessed() + p2.blocksAccessed()) * 2;
+        int cost = (p1.blocksAccessed() + p2.blocksAccessed()) * 2; // Partitioning cost
         int p1_blocks = p1.recordsOutput() / (tx.blockSize() / p1_layout.slotSize());
         int p2_blocks = p2.recordsOutput() / (tx.blockSize() / p2_layout.slotSize());
         int estimated_buffers = tx.availableBuffs();
         int min_blocks = Math.min(p1_blocks, p2_blocks);
         int max_blocks = Math.max(p1_blocks, p2_blocks);
+        // We assume the smaller table is always used as the build table.
         int temp = (int) Math.ceil(min_blocks / estimated_buffers);
         while (temp > estimated_buffers) {
             cost += min_blocks * 2;
-            temp = (int) Math.ceil(temp / estimated_buffers);
+            temp = (int) Math.ceil(temp / estimated_buffers - 2); // Recursive hashing
         }
-        cost += max_blocks;
+        cost += max_blocks; // Cost of probing the larger table.
         return cost;
     }
 
