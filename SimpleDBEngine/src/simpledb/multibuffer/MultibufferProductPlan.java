@@ -133,7 +133,7 @@ public class MultibufferProductPlan implements Plan {
    }
 
    public QueryPlanPrinter getPlanDesc() {
-      QueryPlanPrinter printer = QueryPlanPrinter.getJoinPlanPrinter(lhs.getPlanDesc().remove(), rhs.getPlanDesc().remove());
+      QueryPlanPrinter printer = QueryPlanPrinter.getJoinPlanPrinter(lhs.getPlanDesc().remove(), rhs.getPlanDesc());
       String toAdd = String.format("Multibuffer product on: " + Arrays.toString(schema.fields().toArray()));
       return printer.add(toAdd);
    }
