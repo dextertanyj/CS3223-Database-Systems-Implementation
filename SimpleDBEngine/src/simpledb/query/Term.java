@@ -134,6 +134,8 @@ public class Term {
     * @return either the constant or null
     */
    public Constant equatesWithConstant(String fldname) {
+      if (!op.equals(Operator.EQ))
+         return null;
       if (lhs.isFieldName() &&
             lhs.asFieldName().equals(fldname) &&
             !rhs.isFieldName())
