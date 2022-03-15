@@ -2,6 +2,7 @@ package simpledb.materialize;
 
 import simpledb.query.Constant;
 import simpledb.query.Scan;
+
 /**
  * The <i>min</i> aggregation function.
  */
@@ -40,6 +41,13 @@ public class MinFn implements AggregationFn {
     */
    public String fieldName() {
       return "minof" + fldname;
+   }
+
+   /**
+    * Return the field's name.
+    */
+   public String sourceField() {
+      return fldname;
    }
 
    /**
