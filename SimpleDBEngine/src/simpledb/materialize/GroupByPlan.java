@@ -40,12 +40,22 @@ public class GroupByPlan implements Plan {
       this.aggfns = aggfns;
       for (String fldname : groupfields)
          sch.add(fldname, p.schema());
-      for (AggregationFn fn : aggfns)
+      populateSchema();
+   }
+
+   private void populateSchema() {
+      for (AggregationFn fn : aggfns) {
          if (p.schema().type(fn.sourceField()) == Types.INTEGER) {
             sch.addIntField(fn.fieldName());
          } else {
-            sch.addStringField(fn.fieldName(), p.schema().length(fn.sourceField()));
+            if (fn instanceof CountFn)
+               sch.addIntField(fn.fieldName());
+            else if (fn instanceof MaxFn || fn instanceof MinFn)
+               sch.addStringField(fn.fieldName(), p.schema().length(fn.sourceField()));
+            else
+               throw new RuntimeException(fn.fieldName() + " cannot be performed as the field is a string");
          }
+      }
    }
 
    /**
