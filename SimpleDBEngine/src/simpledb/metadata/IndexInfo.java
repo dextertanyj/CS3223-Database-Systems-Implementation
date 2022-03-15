@@ -135,4 +135,8 @@ public class IndexInfo {
    public String indexTypeString() {
       return type.toString();
    }
+
+   public String fldname() {
+      return fldname;
+   }
 }

@@ -34,8 +34,7 @@ public class QueryPlanPrinter {
    * @param delimiter the character to separate the two query plan strings
    * @return the joined query plan string
    */
-  private static String getJoinDelimiter(String lhs, String rhs, char delimiter) {
-    final int position = 35;
+  private static String getJoinDelimiter(String lhs, String rhs, char delimiter, final int position) {
     int freq = position - lhs.length();
     char[] chars = new char[freq];
     Arrays.fill(chars, delimiter);
@@ -43,6 +42,26 @@ public class QueryPlanPrinter {
       chars[0] = ' '; chars[1] = '<'; chars[chars.length - 1] = ' ';
     }
     return lhs + new String(chars) + rhs;
+  }
+
+  /**
+   * Get the delimiter length required to prevent overlapping
+   * @param larger the query plan strings to be joined onto
+   * 
+   * @return the length of the delimiter
+   */
+  private static int getDelimiterLength(ArrayList<String> larger) {
+    int position = 5;
+    int maxLength = 0;
+    for (String query : larger) {
+      if (query.length() > maxLength) {
+        maxLength = query.length(); 
+      }
+    }
+    while (position - maxLength < 5) {
+      position += 5;
+    }
+    return position;
   }
 
   /**
@@ -100,13 +119,14 @@ public class QueryPlanPrinter {
 
     int diff = larger.size() - smaller.size();
     ArrayList<String> combined = new ArrayList<>();
+    final int position = getDelimiterLength(larger);
     for (int i = 0; i < larger.size() - 1; ++i) {
       if (diff - i > 0) {
         combined.add(larger.get(i));
       } else if (i == larger.size() - 2) {
-        combined.add(getJoinDelimiter(larger.get(i), smaller.get(i - diff), joinDelimiter));
+        combined.add(getJoinDelimiter(larger.get(i), smaller.get(i - diff), joinDelimiter, position));
       } else {
-        combined.add(getJoinDelimiter(larger.get(i), smaller.get(i - diff), normDelimiter));
+        combined.add(getJoinDelimiter(larger.get(i), smaller.get(i - diff), normDelimiter, position));
       }
     }
     combined.add(QueryPlanPrinter.pointerDown);
