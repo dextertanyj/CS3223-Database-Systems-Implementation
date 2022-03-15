@@ -13,6 +13,7 @@ public class MultibufferJoinScan implements Scan {
     private Scan outer, inner;
     private Term term;
     private int chunksize, nextblknum, filesize;
+    private boolean first = true;
 
     public MultibufferJoinScan(Transaction tx, String tblname, Layout layout, Scan inner, Term term) {
         this.tx = tx;
@@ -27,10 +28,14 @@ public class MultibufferJoinScan implements Scan {
 
     public void beforeFirst() {
         nextblknum = 0;
-        useNextChunk();
     }
 
     public boolean next() {
+        if (first && !useNextChunk()) {
+            return false;
+        } else if (first) {
+            first = false;
+        }
         while (true) {
             if (!outer.next()) {
                 if (inner.next()) {
@@ -88,7 +93,9 @@ public class MultibufferJoinScan implements Scan {
             end = filesize - 1;
         outer = new ChunkScan(tx, filename, outerlayout, nextblknum, end);
         inner.beforeFirst();
-        inner.next();
+        if (!inner.next()) {
+            return false;
+        }
         nextblknum = end + 1;
         return true;
     }
