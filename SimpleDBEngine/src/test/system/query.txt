@@ -18,5 +18,6 @@ Select max(sname), min(gradyear) from student
 Select distinct gradyear from student
 Select distinct gradyear, majorid from student
 Select sname, title from course, student where deptid > majorid
-Select avg(sid), dname from dept, student groupby dname where majorid = did
+Select avg(sid), dname from dept, student where majorid = did group by dname
+Select distinct majorid from student
 Select distinct title from dept, student, course where majorid = did and did = deptid

@@ -22,6 +22,7 @@ public class JDBCResults {
     public static void main(String[] args) {
         System.out.println("Connecting to a selected database...");
         // Open a connection
+        int queryNum = 1;
         try(Connection conn = DriverManager.getConnection(DB_URL, USER, PASS);) {		      
             System.out.println("Connected database successfully...");  
             ResultSet resultSet = conn.getMetaData().getCatalogs();
@@ -528,9 +529,11 @@ public class JDBCResults {
             while ((query = br.readLine()) != null) {
                 ResultSet rs = stmt.executeQuery(query);
                 outputResultSet(rs);
+                queryNum++;
             }
             System.out.println("Results generation completed");
         } catch (Exception e) {
+            System.out.println("Query " + queryNum + ": ");
             e.printStackTrace();
         } 
     }
