@@ -22,12 +22,12 @@ def main():
   sortList2 = []
   valueNum = 0
   for i in range(0, len(result1)):
-    if i == 0 or (result1[i - 1] == result2[i - 1] and result1[i - 1] == '-'):
+    if i == 0 or (result1[i - 1] == result2[i - 1] and '-' in result1[i - 1]):
       header1 = result1[i]
       header2 = result2[i]
       if not isHeaderEqual(header1, header2):
         printErrorMessageAndTerminate(formatErrorMessage(0, "query header not the same"))
-    elif result1[i] == result2[i] and result1[i] == '-':
+    elif result1[i] == result2[i] and '-' in result1[i]:
       sortList1.sort()
       sortList2.sort()
       if sortList1 != sortList2:

@@ -6,7 +6,7 @@ public class AggregateTest {
       try {
          TestUtils.setup("studentdb");
          SimpleDB db = new SimpleDB("studentdb");
-         String qry = "Select count(sid) from student";
+         String qry = "Select sid from student, empty where sid = id";
          TestUtils.doQuery(db.planner(), db.newTx(), qry);
       } catch (Exception e) {
          e.printStackTrace();

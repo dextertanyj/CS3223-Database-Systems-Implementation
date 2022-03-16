@@ -51,6 +51,8 @@ public class JDBCResults {
             stmt.executeUpdate(sqlString);
             sqlString = "create table enroll(EId int, StudentId int, SectionId int, Grade varchar(2))";
             stmt.executeUpdate(sqlString);
+            sqlString = "create table empty(Id int)";
+            stmt.executeUpdate(sqlString);
             
             // insert data
             sqlString = "insert into student(SId, SName, MajorId, GradYear) values ";
@@ -528,7 +530,7 @@ public class JDBCResults {
             String query;
             while ((query = br.readLine()) != null) {
                 ResultSet rs = stmt.executeQuery(query);
-                outputResultSet(rs);
+                outputResultSet(rs, queryNum);
                 queryNum++;
             }
             System.out.println("Results generation completed");
@@ -537,7 +539,7 @@ public class JDBCResults {
             e.printStackTrace();
         } 
     }
-    public static void outputResultSet(ResultSet rs) {
+    public static void outputResultSet(ResultSet rs, int queryNum) {
         try {
             BufferedWriter buffWriter = new BufferedWriter(new FileWriter(fileDirectory + "/answer.txt", true));
             ResultSetMetaData rsMetaData = rs.getMetaData();
@@ -568,7 +570,7 @@ public class JDBCResults {
                 }
                 buffWriter.newLine();
             }
-            buffWriter.append('-');
+            buffWriter.append("- " + queryNum);
             buffWriter.newLine();
             buffWriter.flush();
             buffWriter.close();

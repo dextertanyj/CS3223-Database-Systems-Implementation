@@ -142,6 +142,12 @@ public class TestUtils {
             }
             System.out.println("ENROLL records inserted.");
 
+            stmt = "create table EMPTY(Id int)";
+            planner.executeUpdate(stmt, tx);
+            tx.commit();
+            tx = db.newTx();
+            System.out.println("Table EMPTY created.");
+
             tx.commit();
         } catch (Exception e) {
             e.printStackTrace();
@@ -249,6 +255,12 @@ public class TestUtils {
             tx.commit();
             tx = db.newTx();
         }
+
+        // Initialise empty table
+        stmt = "create table empty(Id int)";
+        planner.executeUpdate(stmt, tx);
+        tx.commit();
+        tx = db.newTx();
         
         tx.commit();
     }

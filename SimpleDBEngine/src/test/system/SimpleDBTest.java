@@ -35,8 +35,10 @@ public class SimpleDBTest {
             File file = new File(fileDirectory + "query.txt");
             BufferedReader br = new BufferedReader(new FileReader(file));
             String query;
+            int queryNum = 1;
             while ((query = br.readLine()) != null) {
-                doQuery(db.planner(), db.newTx(), query);
+                doQuery(db.planner(), db.newTx(), query, queryNum);
+                queryNum++;
             }
             
         } catch(Exception e) {
@@ -44,7 +46,7 @@ public class SimpleDBTest {
         }
     }
     
-    public static void doQuery(Planner planner, Transaction tx, String cmd) {
+    public static void doQuery(Planner planner, Transaction tx, String cmd, int queryNum) {
         Plan plan = planner.createQueryPlan(cmd, tx);
         try {
             Schema schema = plan.schema();
@@ -82,7 +84,7 @@ public class SimpleDBTest {
                 }
                 buffWriter.newLine();
             }
-            buffWriter.append('-');
+            buffWriter.append("- " + queryNum);
             buffWriter.newLine();
             buffWriter.flush();
             buffWriter.close();
