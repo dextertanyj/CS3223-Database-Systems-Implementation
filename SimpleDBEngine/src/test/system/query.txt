@@ -1,1 +1,22 @@
-select sname from student
+Select sname from student where sid < 5
+Select sname from student where sid <= 5
+Select sname from student where sid > 5
+Select sname from student where sid >= 5
+Select sname from student where sid != 5
+Select sname from student where sid <> 5
+Select majorid from student where majorid = 1
+Select sid, sname, gradyear from student order by gradyear asc, sname desc
+Select sid, sname, gradyear from student order by gradyear desc, sname desc
+Select sid, sname, gradyear from student order by gradyear asc, sname asc
+Select sid, sname, gradyear from student order by gradyear, sname
+Select sid, sname, gradyear from student order by gradyear desc, sname asc, sid
+Select gradyear from student group by gradyear
+Select count(sname) from student group by gradyear
+Select count(sname), gradyear from student group by gradyear
+Select count(sname) from student
+Select max(sname), min(gradyear) from student
+Select distinct gradyear from student
+Select distinct gradyear, majorid from student
+Select sname, title from course, student where deptid > majorid
+Select avg(sid), dname from dept, student groupby dname where majorid = did
+Select distinct title from dept, student, course where majorid = did and did = deptid

@@ -3,12 +3,9 @@ package test.system;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
-import java.io.StringWriter;
 import java.nio.file.Files;
-import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
 import static java.sql.Types.INTEGER;
@@ -76,7 +73,7 @@ public class SimpleDBTest {
                         int ival = s.getInt(fldname);
                         val = String.valueOf(ival) + " ";
                     } else {
-                        val = s.getString(fldname + " ");
+                        val = s.getString(fldname) + " ";
                     }
                     if (i == columncount - 1) {
                         val = val.substring(0, val.length() - 1);
