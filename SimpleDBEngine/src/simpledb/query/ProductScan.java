@@ -46,8 +46,9 @@ public class ProductScan implements Scan {
     */
    public boolean next() {
       if (first && !s1.next()) {
-         first = false;
          return false;
+      } else if (first) {
+         first = false;
       }
       if (s2.next())
          return true;
