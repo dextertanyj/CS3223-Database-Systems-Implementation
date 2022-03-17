@@ -8,7 +8,7 @@ public class SelectIndexTest {
     try {
       SimpleDB db = new SimpleDB("studentdbtest");
 
-      String qry = "select SName from STUDENT where MajorId < 10";
+      String qry = "select SName, DName, GRADE from STUDENT, DEPT, ENROLL where majorid = did and studentid = sid";
       TestUtils.doQuery(db.planner(), db.newTx(), qry);
     } catch (Exception e) {
         e.printStackTrace();

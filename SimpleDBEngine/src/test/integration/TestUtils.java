@@ -30,17 +30,17 @@ public class TestUtils {
             tx = db.newTx();
             System.out.println("Table STUDENT created.");
 
-            stmt = "create index studentid on STUDENT(SId) using hash";
+            stmt = "create index sidindex on STUDENT(SId) using hash";
             planner.executeUpdate(stmt, tx);
             tx.commit();
             tx = db.newTx();
-            System.out.println("Index studentid on STUDENT created.");
+            System.out.println("Index sidindex on STUDENT created.");
 
-            stmt = "create index majorid on STUDENT(MajorId) using btree";
+            stmt = "create index majoridindex on STUDENT(MajorId) using btree";
             planner.executeUpdate(stmt, tx);
             tx.commit();
             tx = db.newTx();
-            System.out.println("Index majorid on STUDENT created.");
+            System.out.println("Index majoridindex on STUDENT created.");
 
             stmt = "insert into STUDENT(SId, SName, MajorId, GradYear) values ";
             String[] studvals = { "(1, 'joe', 10, 2021)",
@@ -121,11 +121,11 @@ public class TestUtils {
             tx = db.newTx();
             System.out.println("Table ENROLL created.");
 
-            stmt = "create index studentid on ENROLL(StudentId) using hash";
+            stmt = "create index studentidindex on ENROLL(StudentId) using hash";
             planner.executeUpdate(stmt, tx);
             tx.commit();
             tx = db.newTx();
-            System.out.println("Index studentid on ENROLL created.");
+            System.out.println("Index studentidindex on ENROLL created.");
 
             stmt = "insert into ENROLL(EId, StudentId, SectionId, Grade) values ";
             String[] enrollvals = { "(14, 1, 13, 'A')",

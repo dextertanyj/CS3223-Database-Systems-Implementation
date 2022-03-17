@@ -93,9 +93,6 @@ class TablePlanner {
          int merge_cost = merge == null ? Integer.MAX_VALUE : merge.blocksAccessed();
          int hash_cost = hash == null ? Integer.MAX_VALUE : hash.blocksAccessed();
          int cost = Math.min(loop_cost, Math.min(index_cost, Math.min(merge_cost, hash_cost)));
-         // System.out.printf("Join costs:\n");
-         // System.out.printf("Block Nested Loop: %s\nIndex Nested Loop: %s\nSort Merge:
-         // %s\nHash: %s\n", loop_cost, index_cost, merge_cost, hash_cost);
          if (cost == index_cost) {
             p = index;
          } else if (cost == hash_cost) {
@@ -220,7 +217,7 @@ class TablePlanner {
             IndexInfo ii = indexes.get(fldname);
             Plan p = new IndexJoinPlan(current, myplan, ii, outerfield);
             p = addSelectPred(p);
-            return addJoinPred(p, currsch);
+            return addJoinPred(p, currsch, new Term(Operator.EQ, new Expression(fldname), new Expression(outerfield)));
          }
       }
       return null;
