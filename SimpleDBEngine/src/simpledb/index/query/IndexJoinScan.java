@@ -48,6 +48,7 @@ public class IndexJoinScan implements Scan {
     */
    public void beforeFirst() {
       lhs.beforeFirst();
+      first = true;
    }
 
    /**
