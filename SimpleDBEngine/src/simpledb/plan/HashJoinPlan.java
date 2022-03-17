@@ -62,6 +62,8 @@ public class HashJoinPlan implements Plan {
             copyScan(p.open());
         } else {
             int outputBuffers = tx.availableBuffs() - 1;
+            // Materialize the input tables to ensure we have sufficient buffers during
+            // parititoning.
             List<EnhancedTempTable> p1_buckets = splitIntoBuckets(new MaterializePlan(tx, p1), fldname1, outputBuffers);
             List<EnhancedTempTable> p2_buckets = splitIntoBuckets(new MaterializePlan(tx, p2), fldname2, outputBuffers);
             join(p1_buckets, p2_buckets);
