@@ -88,10 +88,10 @@ class TablePlanner {
       if (loop == null && index == null && merge == null && hash == null) {
          p = makeProductJoin(current, currsch);
       } else {
-         int loop_cost = loop == null ? Integer.MAX_VALUE : 10;
-         int index_cost = index == null ? Integer.MAX_VALUE : 10;
-         int merge_cost = merge == null ? Integer.MAX_VALUE : 1;
-         int hash_cost = hash == null ? Integer.MAX_VALUE : 10;
+         int loop_cost = loop == null ? Integer.MAX_VALUE : loop.blocksAccessed();
+         int index_cost = index == null ? Integer.MAX_VALUE : index.blocksAccessed();
+         int merge_cost = merge == null ? Integer.MAX_VALUE : merge.blocksAccessed();
+         int hash_cost = hash == null ? Integer.MAX_VALUE : hash.blocksAccessed();
          int cost = Math.min(loop_cost, Math.min(index_cost, Math.min(merge_cost, hash_cost)));
          // System.out.printf("Join costs:\n");
          // System.out.printf("Block Nested Loop: %s\nIndex Nested Loop: %s\nSort Merge:
