@@ -8,19 +8,30 @@ import simpledb.record.Schema;
 import simpledb.record.TableScan;
 import simpledb.tx.Transaction;
 
+/**
+ * This class extends the TempTable class to comply with the Plan interface.
+ */
 public class EnhancedTempTable extends TempTable implements Plan {
     Schema sch;
-    Plan p1, p2;
     Optional<Integer> numblocks = Optional.empty();
     Optional<Integer> numrecs = Optional.empty();
 
-    public EnhancedTempTable(Transaction tx, Schema sch, Plan p1, Plan p2) {
+    /**
+     * Create an EnchancedTempTable with the provided schema
+     * 
+     * @param tx  the current transaction
+     * @param sch the schema of the table
+     */
+    public EnhancedTempTable(Transaction tx, Schema sch) {
         super(tx, sch);
         this.sch = sch;
-        this.p1 = p1;
-        this.p2 = p2;
     }
 
+    /**
+     * Returns the number of blocks in this EnhancedTempTable.
+     * 
+     * @return the number of blocks in this EnhancedTempTable.
+     */
     public int blocksAccessed() {
         if (numblocks.isEmpty()) {
             updateStats();
@@ -28,6 +39,11 @@ public class EnhancedTempTable extends TempTable implements Plan {
         return numblocks.get();
     }
 
+    /**
+     * Returns the number of records in this EnhancedTempTable.
+     * 
+     * @return the number of records in this EnhancedTempTable.
+     */
     public int recordsOutput() {
         if (numrecs.isEmpty()) {
             updateStats();
@@ -48,10 +64,18 @@ public class EnhancedTempTable extends TempTable implements Plan {
         return 1 + (recordsOutput() / 3);
     }
 
+    /**
+     * Returns the schema of this EnhancedTempTable.
+     * 
+     * @return the schema of this EnhancedTempTable.
+     */
     public Schema schema() {
         return sch;
     }
 
+    /**
+     * Calculate and cache the statistics of this EnhancedTempTable.
+     */
     private void updateStats() {
         TableScan s = (TableScan) super.open();
         int reccount = 0;
@@ -66,9 +90,6 @@ public class EnhancedTempTable extends TempTable implements Plan {
     }
 
     public QueryPlanPrinter getPlanDesc() {
-        if (p2 == null) {
-            return p1.getPlanDesc();
-        }
-        return QueryPlanPrinter.getJoinPlanPrinter(p1.getPlanDesc(), p2.getPlanDesc());
+        return null;
     }
 }

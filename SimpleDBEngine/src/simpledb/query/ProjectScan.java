@@ -34,8 +34,8 @@ public class ProjectScan implements Scan {
    /**
     * Overloaded constructor that allows specification of is distinct projection.
     *
-    * @param s the underlying scan
-    * @param fieldlist the list of field names
+    * @param s          the underlying scan
+    * @param fieldlist  the list of field names
     * @param isDistinct if the projection is distinct
     */
    public ProjectScan(Scan s, List<String> fieldlist, boolean isDistinct) {
@@ -44,7 +44,6 @@ public class ProjectScan implements Scan {
       this.isDistinct = isDistinct;
       if (this.isDistinct) {
          this.prevVals = new InMemoryRecord(fieldlist);
-         this.prevVals.setFieldlist();
       }
    }
 
@@ -62,7 +61,6 @@ public class ProjectScan implements Scan {
 
    private boolean isDistinctNext() {
       InMemoryRecord currVals = new InMemoryRecord(fieldlist);
-      currVals.setFieldlist();
       while (true) {
          if (!s.next()) {
             return false;
@@ -73,7 +71,7 @@ public class ProjectScan implements Scan {
          if (!currVals.equals(prevVals)) {
             prevVals.putAll(currVals);
             return true;
-         } 
+         }
       }
    }
 
