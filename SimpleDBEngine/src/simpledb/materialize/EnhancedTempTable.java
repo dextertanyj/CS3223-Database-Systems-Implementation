@@ -11,8 +11,8 @@ import simpledb.tx.Transaction;
 public class EnhancedTempTable extends TempTable implements Plan {
     Schema sch;
     Plan p1, p2;
-    Optional<Integer> numblocks;
-    Optional<Integer> numrecs;
+    Optional<Integer> numblocks = Optional.empty();
+    Optional<Integer> numrecs = Optional.empty();
 
     public EnhancedTempTable(Transaction tx, Schema sch, Plan p1, Plan p2) {
         super(tx, sch);
