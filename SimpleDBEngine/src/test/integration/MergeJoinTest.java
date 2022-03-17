@@ -10,7 +10,7 @@ public class MergeJoinTest {
         try {
             SimpleDB db = new SimpleDB("studentdbtest");
 
-            String qry = "Select SName, SId, MajorId, SectionId, Grade from Student, Enroll where SId = StudentId";
+            String qry = "select Prof, Title from COURSE, SECTION where CId = CourseId";
             TestUtils.doQuery(db.planner(), db.newTx(), qry);
         } catch (Exception e) {
             e.printStackTrace();
