@@ -27,7 +27,16 @@ public class MultibufferJoinScan implements Scan {
     }
 
     public void beforeFirst() {
+        if (outer != null) {
+            outer.close();
+        }
         nextblknum = 0;
+        int end = nextblknum + chunksize - 1;
+        if (end >= filesize)
+            end = filesize - 1;
+        outer = new ChunkScan(tx, filename, outerlayout, nextblknum, end);
+        nextblknum = end + 1;
+        first = true;
     }
 
     public boolean next() {
@@ -84,19 +93,24 @@ public class MultibufferJoinScan implements Scan {
     }
 
     private boolean useNextChunk() {
-        if (nextblknum >= filesize)
-            return false;
-        if (outer != null)
-            outer.close();
-        int end = nextblknum + chunksize - 1;
-        if (end >= filesize)
-            end = filesize - 1;
-        outer = new ChunkScan(tx, filename, outerlayout, nextblknum, end);
+        // For the first load, we do not need to reload the outer table.
+        if (first) {
+            first = false;
+        } else {
+            if (nextblknum >= filesize)
+                return false;
+            if (outer != null)
+                outer.close();
+            int end = nextblknum + chunksize - 1;
+            if (end >= filesize)
+                end = filesize - 1;
+            outer = new ChunkScan(tx, filename, outerlayout, nextblknum, end);
+            nextblknum = end + 1;
+        }
         inner.beforeFirst();
         if (!inner.next()) {
             return false;
         }
-        nextblknum = end + 1;
         return true;
     }
 }
